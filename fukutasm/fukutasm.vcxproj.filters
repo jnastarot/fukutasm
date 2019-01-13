@@ -1,0 +1,63 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Исходные файлы">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Файлы заголовков">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Файлы ресурсов">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Исходные файлы\assambler">
+      <UniqueIdentifier>{ca725dc5-771a-4682-9174-b40f17549d55}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\instruction">
+      <UniqueIdentifier>{e041b62c-8ef7-44e7-ac73-1a9d0e1d5db0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\code_holder">
+      <UniqueIdentifier>{1c758d8d-3ded-4207-9e29-ee4dc315b1e2}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="stdafx.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="fukutasm.h">
+      <Filter>Исходные файлы</Filter>
+    </ClInclude>
+    <ClInclude Include="fuku_instruction.h">
+      <Filter>Исходные файлы\instruction</Filter>
+    </ClInclude>
+    <ClInclude Include="fuku_code_holder.h">
+      <Filter>Исходные файлы\code_holder</Filter>
+    </ClInclude>
+    <ClInclude Include="fuku_assambler.h">
+      <Filter>Исходные файлы\assambler</Filter>
+    </ClInclude>
+    <ClInclude Include="fuku_assambler_macro.h">
+      <Filter>Исходные файлы\assambler</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="fukutasm.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="fuku_instruction.cpp">
+      <Filter>Исходные файлы\instruction</Filter>
+    </ClCompile>
+    <ClCompile Include="fuku_code_holder.cpp">
+      <Filter>Исходные файлы\code_holder</Filter>
+    </ClCompile>
+    <ClCompile Include="fuku_assambler.cpp">
+      <Filter>Исходные файлы\assambler</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
