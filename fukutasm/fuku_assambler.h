@@ -76,7 +76,7 @@
     asm_def_1op(name,_qw, fuasm_reg)\
     asm_def_1op(name,_qw, fuasm_op)
 
-#define asm_def_wdw_one_op(name) \
+#define asm_def_wdq_one_op(name) \
     asm_def_1op(name,_w, fuasm_reg)\
     asm_def_1op(name,_w, fuasm_op)\
     asm_def_1op(name,_w, fuasm_imm)\
@@ -172,25 +172,19 @@ class fuku_assambler{
     void emit_rex_32(fuku_register rm_reg, fuku_register reg);
     void emit_rex_32(const fuku_operand& rm_reg, fuku_register reg);
     void emit_rex_32(fuku_register rm_reg);
-    void emit_rex_32(const fuku_operand& op);
+    void emit_rex_32(const fuku_operand& rm_reg);
     void emit_optional_rex_32(fuku_register rm_reg, fuku_register reg);
     void emit_optional_rex_32(const fuku_operand& rm_reg, fuku_register reg);
     void emit_optional_rex_32(fuku_register rm_reg);
-    void emit_optional_rex_32(const fuku_operand& op);
+    void emit_optional_rex_32(const fuku_operand& rm_reg);
 
+    void emit_modrm(fuku_register rm_reg, fuku_register reg);
+    void emit_modrm(fuku_register rm_reg, int code);
 
-    void emit_rex(fuku_operand_size size);
-    void emit_rex(const fuku_operand& rm_reg, fuku_operand_size size);
-    void emit_rex(fuku_register reg, fuku_operand_size size);
-    void emit_rex(fuku_register rm_reg, fuku_register reg, fuku_operand_size size);
-    void emit_rex(const fuku_operand& rm_reg, fuku_register reg,  fuku_operand_size size);
-
-    void emit_modrm(fuku_register reg, fuku_register rm_reg);
-    void emit_modrm(int code, fuku_register rm_reg);
-
-    void emit_operand_x64(fuku_register_index reg, const fuku_operand& rm_reg);
-    void emit_operand_x86(fuku_register_index reg, const fuku_operand& rm_reg);
-    void emit_operand(fuku_register_index reg, const fuku_operand& rm_reg);
+    void emit_operand_x64(const fuku_operand& rm_reg,fuku_register_index reg);
+    void emit_operand_x86(const fuku_operand& rm_reg, fuku_register_index reg);
+    void emit_operand(const fuku_operand& rm_reg, fuku_register reg);
+    void emit_operand(const fuku_operand& rm_reg, int code);
 public:
     fuku_assambler();
     ~fuku_assambler();
@@ -205,20 +199,19 @@ public:
 
 //Data Transfer Instructions
     asm_def_full(mov)
-    asm_def_cond_2op(_,movcc, fuasm_reg, fuasm_reg)
-    asm_def_cond_2op(_,movcc, fuasm_reg, fuasm_op)
+    asm_def_cond_2op(movcc,, fuasm_reg, fuasm_reg)
+    asm_def_cond_2op(movcc,, fuasm_reg, fuasm_op)
     asm_def_direct_mov(xchg)
     asm_def_1op(bswap_dw,, fuasm_reg)
     asm_def_1op(bswap_qw,, fuasm_reg) 
     //XADD
     //CMPXCHG
     //CMPXCHG8B
-    asm_def_wdw_one_op(push)
-    asm_def_wdw_one_op(pop)
+    asm_def_wdq_one_op(push)
+    asm_def_wdq_one_op(pop)
     asm_def_noop(cwd)
     asm_def_noop(cdq)
     asm_def_noop(cqo)
-    //CBW/CWDE
     asm_def_movsxz(movsx)
     asm_def_movsxz(movzx)
 //Binary Arithmetic Instructions
@@ -263,20 +256,21 @@ public:
     gen_func_body_bit(bts)
     gen_func_body_bit(btr)
     gen_func_body_bit(btc)
-    asm_def_cond_1op(_,setcc, fuasm_reg)
-    asm_def_cond_1op(_,setcc, fuasm_op)
+    asm_def_cond_1op(setcc,, fuasm_reg)
+    asm_def_cond_1op(setcc,, fuasm_op)
     //TEST
     //CRC32
     //POPCNT
 //Control Transfer Instructions
-    asm_def_eip_one_op(_jmp)   
-    asm_def_cond_1op(_,jcc, fuasm_imm)
-    asm_def_eip_one_op(_call)
-    asm_def_noop_imm(_ret)
+    asm_def_eip_one_op(jmp)   
+    asm_def_cond_1op(jcc,, fuasm_imm)
+    asm_def_eip_one_op(call)
+    asm_def_noop_imm(ret)
     asm_def_noop(int3,)
-    asm_def_2op(enter,,fuasm_op, uint8_t)//enter size, nestinglevel
+    asm_def_2op(enter,,fuasm_imm, uint8_t)//enter size, nestinglevel
     asm_def_noop(,leave_)
 //String Instructions
+    asm_def_string_inst(outs)
     asm_def_string_inst(movs)
     asm_def_string_inst(cmps)
     asm_def_string_inst(scas)
@@ -331,7 +325,7 @@ public:
 #undef asm_def_full_shift
 #undef gen_func_body_bit
 #undef asm_def_r_op_one_op
-#undef asm_def_wdw_one_op
+#undef asm_def_wdq_one_op
 #undef asm_def_eip_one_op
 #undef asm_def_noop_imm
 #undef asm_def_string_inst

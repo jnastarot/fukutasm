@@ -39,7 +39,10 @@
     <ClInclude Include="fuku_assambler.h">
       <Filter>Исходные файлы\assambler</Filter>
     </ClInclude>
-    <ClInclude Include="fuku_assambler_macro.h">
+    <ClInclude Include="fuku_assambler_pattern_macro.h">
+      <Filter>Исходные файлы\assambler</Filter>
+    </ClInclude>
+    <ClInclude Include="fuku_assambler_func_macro.h">
       <Filter>Исходные файлы\assambler</Filter>
     </ClInclude>
   </ItemGroup>

@@ -270,6 +270,9 @@ bool fuku_is_8bit_reg(fuku_register reg);
 uint8_t fuku_to_capstone_reg(fuku_register reg);
 uint8_t capstone_to_fuku_reg(fuku_register reg);
 
+x86_insn fuku_to_capstone_jcc(fuku_condition cond);
+fuku_condition capstone_to_fuku_cond(x86_insn cond);
+
 #include "fuku_instruction.h"
 #include "fuku_code_holder.h"
 

@@ -157,7 +157,8 @@
   <ItemGroup>
     <ClInclude Include="fukutasm.h" />
     <ClInclude Include="fuku_assambler.h" />
-    <ClInclude Include="fuku_assambler_macro.h" />
+    <ClInclude Include="fuku_assambler_func_macro.h" />
+    <ClInclude Include="fuku_assambler_pattern_macro.h" />
     <ClInclude Include="fuku_code_holder.h" />
     <ClInclude Include="fuku_instruction.h" />
     <ClInclude Include="stdafx.h" />

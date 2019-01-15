@@ -107,6 +107,18 @@ fuku_register registers8[] = {  FUKU_REG_AH,  FUKU_REG_CH,  FUKU_REG_DH,   FUKU_
                                 FUKU_REG_AL,  FUKU_REG_CL,  FUKU_REG_DL,   FUKU_REG_BL,   FUKU_REG_SPL,  FUKU_REG_BPL,  FUKU_REG_SIL,  FUKU_REG_DIL,
                                 FUKU_REG_R8B, FUKU_REG_R9B, FUKU_REG_R10B, FUKU_REG_R11B, FUKU_REG_R12B, FUKU_REG_R13B, FUKU_REG_R14B, FUKU_REG_R15B };
 
+x86_insn capstone_jcc[] = {
+    X86_INS_JO , X86_INS_JNO ,
+    X86_INS_JB , X86_INS_JAE ,
+    X86_INS_JE, X86_INS_JNE,
+    X86_INS_JBE , X86_INS_JA ,
+    X86_INS_JS , X86_INS_JNS ,
+    X86_INS_JP , X86_INS_JNP ,
+    X86_INS_JL , X86_INS_JGE ,
+    X86_INS_JLE , X86_INS_JG ,
+};
+
+
 fuku_register_index fuku_get_index_by_register(fuku_register reg) {
 
     if (reg <= FUKU_REG_NONE || reg >= FUKU_REG_MAX) {
@@ -392,4 +404,39 @@ uint8_t fuku_operand::get_low_rex() const {
     }
 
     return result;
+}
+
+x86_insn fuku_to_capstone_jcc(fuku_condition cond) {
+
+    if (cond >= FUKU_CONDITION_MAX || cond < 0) {
+        return X86_INS_INVALID;
+    }
+
+    return capstone_jcc[cond];
+}
+
+fuku_condition capstone_to_fuku_cond(x86_insn cond) {
+
+    switch (cond) {
+    case X86_INS_JO:    return fuku_condition::jo;
+    case  X86_INS_JNO:  return fuku_condition::jno;
+    case  X86_INS_JB:   return fuku_condition::jb;
+    case  X86_INS_JAE:  return fuku_condition::jae;
+    case  X86_INS_JE:   return fuku_condition::je;
+    case  X86_INS_JNE:  return fuku_condition::jne;
+    case  X86_INS_JBE:  return fuku_condition::jbe;
+    case  X86_INS_JA:   return fuku_condition::ja;
+    case  X86_INS_JS:   return fuku_condition::js;
+    case  X86_INS_JNS:  return fuku_condition::jns;
+    case  X86_INS_JP:   return fuku_condition::jp;
+    case  X86_INS_JNP:  return fuku_condition::jnp;
+    case  X86_INS_JL:   return fuku_condition::jl;
+    case  X86_INS_JGE:  return fuku_condition::jge;
+    case  X86_INS_JLE:  return fuku_condition::jle;
+    case  X86_INS_JG:   return fuku_condition::jg;
+
+    default: {
+        return fuku_condition::jmp;
+    }
+    }
 }
