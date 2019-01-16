@@ -135,11 +135,18 @@
     asm_def_2op(name,_qw, fuasm_op, fuasm_reg)
 
 #define asm_def_movsxz(name) \
-    asm_def_2op(name,_b, fuasm_reg, fuasm_reg)\
-    asm_def_2op(name,_b, fuasm_op, fuasm_reg)\
+    asm_def_2op(name,_byte_w, fuasm_reg, fuasm_reg)\
+    asm_def_2op(name,_byte_w, fuasm_op, fuasm_reg)\
+    asm_def_2op(name,_byte_dw, fuasm_reg, fuasm_reg)\
+    asm_def_2op(name,_byte_dw, fuasm_op, fuasm_reg)\
+    asm_def_2op(name,_byte_qw, fuasm_reg, fuasm_reg)\
+    asm_def_2op(name,_byte_qw, fuasm_op, fuasm_reg)\
 \
-    asm_def_2op(name,_w, fuasm_reg, fuasm_reg)\
-    asm_def_2op(name,_w, fuasm_op, fuasm_reg)
+    asm_def_2op(name,_word_dw, fuasm_reg, fuasm_reg)\
+    asm_def_2op(name,_word_dw, fuasm_op, fuasm_reg)\
+\
+    asm_def_2op(name,_word_qw, fuasm_reg, fuasm_reg)\
+    asm_def_2op(name,_word_qw, fuasm_op, fuasm_reg)
 
 class fuku_assambler{
     fuku_assambler_arch arch;
@@ -212,8 +219,12 @@ public:
     asm_def_noop(cwd)
     asm_def_noop(cdq)
     asm_def_noop(cqo)
-    asm_def_movsxz(movsx)
     asm_def_movsxz(movzx)
+    asm_def_movsxz(movsx)
+    asm_def_2op(movsx,_dword_dw, fuasm_reg, fuasm_reg)
+    asm_def_2op(movsx,_dword_dw, fuasm_op, fuasm_reg)
+    asm_def_2op(movsx,_dword_qw, fuasm_reg, fuasm_reg)
+    asm_def_2op(movsx,_dword_qw, fuasm_op, fuasm_reg)
 //Binary Arithmetic Instructions
     //ADCX
     //ADOX
@@ -258,6 +269,22 @@ public:
     gen_func_body_bit(btc)
     asm_def_cond_1op(setcc,, fuasm_reg)
     asm_def_cond_1op(setcc,, fuasm_op)
+    asm_def_2op(test, _b, fuasm_op, fuasm_reg)
+    asm_def_2op(test, _b, fuasm_reg, fuasm_reg)
+    asm_def_2op(test, _b, fuasm_reg, fuasm_imm)
+    asm_def_2op(test, _b, fuasm_op, fuasm_imm)
+    asm_def_2op(test, _w, fuasm_op, fuasm_reg)
+    asm_def_2op(test, _w, fuasm_reg, fuasm_reg)
+    asm_def_2op(test, _w, fuasm_reg, fuasm_imm)
+    asm_def_2op(test, _w, fuasm_op, fuasm_imm)
+    asm_def_2op(test, _dw, fuasm_op, fuasm_reg)
+    asm_def_2op(test, _dw, fuasm_reg, fuasm_reg)
+    asm_def_2op(test, _dw, fuasm_reg, fuasm_imm)
+    asm_def_2op(test, _dw, fuasm_op, fuasm_imm)
+    asm_def_2op(test, _qw, fuasm_op, fuasm_reg)
+    asm_def_2op(test, _qw, fuasm_reg, fuasm_reg)
+    asm_def_2op(test, _qw, fuasm_reg, fuasm_imm)
+    asm_def_2op(test, _qw, fuasm_op, fuasm_imm)
     //TEST
     //CRC32
     //POPCNT
@@ -285,21 +312,29 @@ public:
     asm_def_noop(lahf,)
     asm_def_noop(sahf,)
     asm_def_noop(pusha,)       //pusha  w  regs
-    asm_def_noop(pushad,)      //pushad dw regs
+    asm_def_noop(pushad,)      //pushad dw/qw regs
     asm_def_noop(popa,)        //popa   w  regs
-    asm_def_noop(popad,)       //popad  dw regs
+    asm_def_noop(popad,)       //popad  dw/qw regs
     asm_def_noop(pushf,)       //pushf  w  flags
     asm_def_noop(pushfd,)      //pushfd dw flags
+    asm_def_noop(pushfq,)      //pushfq qw flags
     asm_def_noop(popf,)        //popf   w  flags
     asm_def_noop(popfd,)       //popfd  dw flags
+    asm_def_noop(popfq,)       //popfq  qw flags
 //Miscellaneous Instructions
-    //LEA
+    asm_def_2op(lea,_w,  fuasm_reg, fuasm_op)
+    asm_def_2op(lea,_dw, fuasm_reg, fuasm_op)
+    asm_def_2op(lea,_qw, fuasm_reg, fuasm_op)
     asm_def_1op(nop,,uint8_t)
     asm_def_noop(ud2,)
     asm_def_noop(cpuid,)
 //Random Number Generator Instructions
-    //RDRAND
-    //RDSEED
+    asm_def_1op(rdrand, _w, fuasm_reg)
+    asm_def_1op(rdrand, _dw, fuasm_reg)
+    asm_def_1op(rdrand, _qw, fuasm_reg)
+    asm_def_1op(rdseed, _w, fuasm_reg)
+    asm_def_1op(rdseed, _dw, fuasm_reg)
+    asm_def_1op(rdseed, _qw, fuasm_reg)
 //BMI1, BMI2
     //ANDN
     //BEXTR

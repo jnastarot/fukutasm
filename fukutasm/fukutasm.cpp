@@ -118,6 +118,27 @@ x86_insn capstone_jcc[] = {
     X86_INS_JLE , X86_INS_JG ,
 };
 
+x86_insn capstone_setcc[] = {
+    X86_INS_SETO , X86_INS_SETNO ,
+    X86_INS_SETB , X86_INS_SETAE ,
+    X86_INS_SETE, X86_INS_SETNE,
+    X86_INS_SETBE , X86_INS_SETA ,
+    X86_INS_SETS , X86_INS_SETNS ,
+    X86_INS_SETP , X86_INS_SETNP ,
+    X86_INS_SETL , X86_INS_SETGE ,
+    X86_INS_SETLE , X86_INS_SETG ,
+};
+x86_insn capstone_movcc[] = {
+    X86_INS_CMOVO , X86_INS_CMOVNO ,
+    X86_INS_CMOVB , X86_INS_CMOVAE ,
+    X86_INS_CMOVE, X86_INS_CMOVNE,
+    X86_INS_CMOVBE , X86_INS_CMOVA ,
+    X86_INS_CMOVS , X86_INS_CMOVNS ,
+    X86_INS_CMOVP , X86_INS_CMOVNP ,
+    X86_INS_CMOVL , X86_INS_CMOVGE ,
+    X86_INS_CMOVLE , X86_INS_CMOVG ,
+};
+
 
 fuku_register_index fuku_get_index_by_register(fuku_register reg) {
 
@@ -406,34 +427,43 @@ uint8_t fuku_operand::get_low_rex() const {
     return result;
 }
 
-x86_insn fuku_to_capstone_jcc(fuku_condition cond) {
+x86_insn fuku_to_capstone_cc(fuku_condition cond, fuku_to_cap_convert_type type) {
 
     if (cond >= FUKU_CONDITION_MAX || cond < 0) {
         return X86_INS_INVALID;
     }
-
-    return capstone_jcc[cond];
+    if (type == fuku_to_cap_convert_type::CONVERT_TYPE_CMOVCC) {
+        return capstone_movcc[cond];
+    }
+    else if (type == fuku_to_cap_convert_type::CONVERT_TYPE_SETCC) {
+        return capstone_setcc[cond];
+    }
+    else {
+        return capstone_jcc[cond];
+    }
+    
 }
 
 fuku_condition capstone_to_fuku_cond(x86_insn cond) {
 
+    //fuku_assambler()
     switch (cond) {
-    case X86_INS_JO:    return fuku_condition::jo;
-    case  X86_INS_JNO:  return fuku_condition::jno;
-    case  X86_INS_JB:   return fuku_condition::jb;
-    case  X86_INS_JAE:  return fuku_condition::jae;
-    case  X86_INS_JE:   return fuku_condition::je;
-    case  X86_INS_JNE:  return fuku_condition::jne;
-    case  X86_INS_JBE:  return fuku_condition::jbe;
-    case  X86_INS_JA:   return fuku_condition::ja;
-    case  X86_INS_JS:   return fuku_condition::js;
-    case  X86_INS_JNS:  return fuku_condition::jns;
-    case  X86_INS_JP:   return fuku_condition::jp;
-    case  X86_INS_JNP:  return fuku_condition::jnp;
-    case  X86_INS_JL:   return fuku_condition::jl;
-    case  X86_INS_JGE:  return fuku_condition::jge;
-    case  X86_INS_JLE:  return fuku_condition::jle;
-    case  X86_INS_JG:   return fuku_condition::jg;
+    case  X86_INS_JO:  case X86_INS_SETO:   case X86_INS_CMOVO:  return fuku_condition::jo;
+    case  X86_INS_JNO: case X86_INS_SETNO:  case X86_INS_CMOVNO: return fuku_condition::jno;
+    case  X86_INS_JB:  case X86_INS_SETB:   case X86_INS_CMOVB:  return fuku_condition::jb;
+    case  X86_INS_JAE: case X86_INS_SETAE:  case X86_INS_CMOVAE: return fuku_condition::jae;
+    case  X86_INS_JE:  case X86_INS_SETE:   case X86_INS_CMOVE:  return fuku_condition::je;
+    case  X86_INS_JNE: case X86_INS_SETNE:  case X86_INS_CMOVNE: return fuku_condition::jne;
+    case  X86_INS_JBE: case X86_INS_SETBE:  case X86_INS_CMOVBE: return fuku_condition::jbe;
+    case  X86_INS_JA:  case X86_INS_SETA:   case X86_INS_CMOVA:  return fuku_condition::ja;
+    case  X86_INS_JS:  case X86_INS_SETS:   case X86_INS_CMOVS:  return fuku_condition::js;
+    case  X86_INS_JNS: case X86_INS_SETNS:  case X86_INS_CMOVNS: return fuku_condition::jns;
+    case  X86_INS_JP:  case X86_INS_SETP:   case X86_INS_CMOVP:  return fuku_condition::jp;
+    case  X86_INS_JNP: case X86_INS_SETNP:  case X86_INS_CMOVNP: return fuku_condition::jnp;
+    case  X86_INS_JL:  case X86_INS_SETL:   case X86_INS_CMOVL:  return fuku_condition::jl;
+    case  X86_INS_JGE: case X86_INS_SETGE:  case X86_INS_CMOVGE: return fuku_condition::jge;
+    case  X86_INS_JLE: case X86_INS_SETLE:  case X86_INS_CMOVLE: return fuku_condition::jle;
+    case  X86_INS_JG:  case X86_INS_SETG:   case X86_INS_CMOVG:  return fuku_condition::jg;
 
     default: {
         return fuku_condition::jmp;

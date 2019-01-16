@@ -125,12 +125,12 @@
         gen_pattern64_2em_rm_idx(byte1, byte2, rm_reg_idx, reg)
 
 
-#define gen_pattern32_1em_op_r_word(byte1, rm_reg, idx)\
+#define gen_pattern32_1em_op_r_word(byte1, rm_reg, reg)\
         emit_b(FUKU_PREFIX_OVERRIDE_DATA);\
-        gen_pattern32_1em_op_r(byte1, rm_reg, idx)
-#define gen_pattern64_1em_op_r_word(byte1, rm_reg, idx)\
+        gen_pattern32_1em_op_r(byte1, rm_reg, reg)
+#define gen_pattern64_1em_op_r_word(byte1, rm_reg, reg)\
         emit_b(FUKU_PREFIX_OVERRIDE_DATA);\
-        gen_pattern64_1em_op_r(byte1, rm_reg, idx)
+        gen_pattern64_1em_op_r(byte1, rm_reg, reg)
 #define gen_pattern32_2em_op_r_word(byte1 ,byte2, rm_reg_idx, reg)\
         emit_b(FUKU_PREFIX_OVERRIDE_DATA);\
         gen_pattern32_2em_op_r(byte1, byte2, rm_reg_idx, reg)

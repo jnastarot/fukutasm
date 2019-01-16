@@ -394,18 +394,175 @@ void fuku_assambler::emit_operand(const fuku_operand& rm_reg, int code) {
 //Data Transfer Instructions
 //MOV
 //MOVcc
-//XCHG
-//BSWAP
+fuku_asm_ret_type fuku_assambler::_xchg_b(const fuku_operand& dst, fuku_register src) {
+    gencleanerdata
+    gen_pattern32_1em_op_r(0x86, dst, src)
+    gen_func_return(X86_INS_XCHG, 0)
+}
+fuku_asm_ret_type fuku_assambler::_xchg_b(fuku_register dst, fuku_register src) {
+    gencleanerdata
+    gen_pattern32_1em_rm_r(0x86, dst, src)
+    gen_func_return(X86_INS_XCHG, 0)
+}
+fuku_asm_ret_type fuku_assambler::_xchg_w(const fuku_operand& dst, fuku_register src) {
+    gencleanerdata
+    gen_pattern32_1em_op_r_word(0x87, dst, src)
+    gen_func_return(X86_INS_XCHG, 0)
+}
+fuku_asm_ret_type fuku_assambler::_xchg_w(fuku_register dst, fuku_register src) {
+    gencleanerdata
+    gen_pattern32_1em_rm_r_word(0x87, dst, src)
+    gen_func_return(X86_INS_XCHG, 0)
+}
+fuku_asm_ret_type fuku_assambler::_xchg_dw(const fuku_operand& dst, fuku_register src) {
+    gencleanerdata
+    gen_pattern32_1em_op_r(0x87, dst, src)
+    gen_func_return(X86_INS_XCHG, 0)
+}
+fuku_asm_ret_type fuku_assambler::_xchg_dw(fuku_register dst, fuku_register src) {
+    gencleanerdata
+    gen_pattern32_1em_rm_r(0x87, dst, src)
+    gen_func_return(X86_INS_XCHG, 0)
+}
+fuku_asm_ret_type fuku_assambler::_xchg_qw(const fuku_operand& dst, fuku_register src) {
+    gencleanerdata
+    gen_pattern64_1em_op_r(0x87, dst, src)
+    gen_func_return(X86_INS_XCHG, 0)
+}
+fuku_asm_ret_type fuku_assambler::_xchg_qw(fuku_register dst, fuku_register src) {
+    gencleanerdata
+    gen_pattern64_1em_rm_r(0x87, dst, src)
+    gen_func_return(X86_INS_XCHG, 0)
+}
+fuku_asm_ret_type fuku_assambler::_bswap_dw(fuku_register dst) {
+    gencleanerdata
+    emit_optional_rex_32(dst);
+    emit_b(0x0F);
+    emit_b(0xC8 | fuku_get_index_by_register(dst));
+    gen_func_return(X86_INS_BSWAP, 0)
+}
+fuku_asm_ret_type fuku_assambler::_bswap_qw(fuku_register dst) {
+    gencleanerdata
+    emit_rex_64(dst);
+    emit_b(0x0F);
+    emit_b(0xC8 | fuku_get_index_by_register(dst));
+    gen_func_return(X86_INS_BSWAP, 0)
+}
 //XADD
 //CMPXCHG
 //CMPXCHG8B
-//PUSH
-//POP
-gen_func_body_onebyte_no_arg(cwd,  FUKU_PREFIX_OVERRIDE_DATA,0x99, X86_INS_CDQ, 0)
+fuku_asm_ret_type fuku_assambler::_push_w(const fuku_immediate& imm) {
+    gencleanerdata
+    emit_b(FUKU_PREFIX_OVERRIDE_DATA);
+    if (is_used_short_imm() && imm.is_8()) {
+        emit_b(0x6A);
+        emit_immediate_b(imm);
+    }
+    else {
+        emit_b(0x68);
+        emit_immediate_w(imm);
+    }
+    gen_func_return(X86_INS_PUSH, 0)
+}
+
+fuku_asm_ret_type fuku_assambler::_push_dw(const fuku_immediate& imm) {
+    gencleanerdata
+        if (is_used_short_imm() && imm.is_8()) {
+            emit_b(0x6A);
+            emit_immediate_b(imm);
+        }
+        else {
+            emit_b(0x68);
+            emit_immediate_dw(imm);
+        }
+    gen_func_return(X86_INS_PUSH, 0)
+}
+fuku_asm_ret_type fuku_assambler::_push_qw(const fuku_immediate& imm) {
+    return _push_dw(imm);
+}
+fuku_asm_ret_type fuku_assambler::_push_w(fuku_register src) {
+    gencleanerdata
+    emit_b(FUKU_PREFIX_OVERRIDE_DATA);
+    emit_optional_rex_32(src);
+    emit_b(0x50 | fuku_get_index_by_register(src));
+    gen_func_return(X86_INS_PUSH, 0)
+}
+fuku_asm_ret_type fuku_assambler::_push_dw(fuku_register src) {
+    gencleanerdata
+    emit_optional_rex_32(src);
+    emit_b(0x50 | fuku_get_index_by_register(src));
+    gen_func_return(X86_INS_PUSH, 0)
+}
+fuku_asm_ret_type fuku_assambler::_push_qw(fuku_register src) {
+    return _push_dw(src);
+}
+fuku_asm_ret_type fuku_assambler::_push_w(const fuku_operand& src) {
+    gencleanerdata
+    gen_pattern32_1em_op_idx_word(0xFF, src, 4);
+    gen_func_return(X86_INS_PUSH, 0)
+}
+fuku_asm_ret_type fuku_assambler::_push_dw(const fuku_operand& src) {
+    gencleanerdata
+    gen_pattern32_1em_op_idx(0xFF, src, 4);
+    gen_func_return(X86_INS_PUSH, 0)
+}
+fuku_asm_ret_type fuku_assambler::_push_qw(const fuku_operand& src) {
+    return _push_dw(src);
+}
+fuku_asm_ret_type fuku_assambler::_pop_w(fuku_register dst) {
+    gencleanerdata
+    emit_b(FUKU_PREFIX_OVERRIDE_DATA);
+    emit_optional_rex_32(dst);
+    emit_b(0x58 | fuku_get_index_by_register(dst));
+    gen_func_return(X86_INS_POP, 0)
+}
+fuku_asm_ret_type fuku_assambler::_pop_dw(fuku_register dst) {
+    gencleanerdata
+    emit_optional_rex_32(dst);
+    emit_b(0x58 | fuku_get_index_by_register(dst));
+    gen_func_return(X86_INS_POP, 0)
+}
+fuku_asm_ret_type fuku_assambler::_pop_qw(fuku_register dst) {
+    return _pop_dw(dst);
+}
+fuku_asm_ret_type fuku_assambler::_pop_w(const fuku_operand& dst) {
+    gencleanerdata
+    gen_pattern32_1em_op_idx_word(0xFF, dst, 0);
+    gen_func_return(X86_INS_POP, 0)
+}
+fuku_asm_ret_type fuku_assambler::_pop_dw(const fuku_operand& dst) {
+    gencleanerdata
+    gen_pattern32_1em_op_idx(0xFF, dst, 0);
+    gen_func_return(X86_INS_POP, 0)
+}
+fuku_asm_ret_type fuku_assambler::_pop_qw(const fuku_operand& dst) {
+    return _pop_dw(dst);
+}
+gen_func_body_twobyte_no_arg(cwd,  FUKU_PREFIX_OVERRIDE_DATA,0x99, X86_INS_CDQ, 0)
 gen_func_body_onebyte_no_arg(cdq,  0x99, X86_INS_CDQ, 0)
 gen_func_body_twobyte_no_arg(cqo,  0x48, 0x99, X86_INS_CDQ, 0)
-//MOVSX
-//MOVZX
+gen_func_body_movxx(movzx, 0xB6, X86_INS_MOVZX)
+gen_func_body_movxx(movsx, 0xBE, X86_INS_MOVSX)
+fuku_asm_ret_type fuku_assambler::_movsx_dword_dw(fuku_register dst, fuku_register src) {
+    gencleanerdata
+    gen_pattern32_1em_rm_r(0x63, dst, src);
+    gen_func_return(X86_INS_MOVSXD, 0)
+}
+fuku_asm_ret_type fuku_assambler::_movsx_dword_dw(const fuku_operand& dst, fuku_register src) {
+    gencleanerdata
+    gen_pattern32_1em_op_r(0x63, dst, src);
+    gen_func_return(X86_INS_MOVSXD, 0)
+}
+fuku_asm_ret_type fuku_assambler::_movsx_dword_qw(fuku_register dst, fuku_register src) {
+    gencleanerdata
+    gen_pattern64_1em_rm_r(0x63, dst, src);
+    gen_func_return(X86_INS_MOVSXD, 0)
+}
+fuku_asm_ret_type fuku_assambler::_movsx_dword_qw(const fuku_operand& dst, fuku_register src) {
+    gencleanerdata
+    gen_pattern32_1em_op_r(0x63, dst, src);
+    gen_func_return(X86_INS_MOVSXD, 0)
+}
 //Binary Arithmetic Instructions
 //ADCX
 //ADOX
@@ -426,8 +583,8 @@ gen_func_body_onebyte_no_arg(daa, 0x27, X86_INS_DAA, X86_EFLAGS_UNDEFINED_OF | X
 gen_func_body_onebyte_no_arg(das, 0x2F, X86_INS_DAS, X86_EFLAGS_UNDEFINED_OF | X86_EFLAGS_MODIFY_SF | X86_EFLAGS_MODIFY_ZF | X86_EFLAGS_MODIFY_AF | X86_EFLAGS_MODIFY_PF | X86_EFLAGS_MODIFY_CF)
 gen_func_body_onebyte_no_arg(aaa, 0x37, X86_INS_AAA, X86_EFLAGS_UNDEFINED_OF | X86_EFLAGS_UNDEFINED_SF | X86_EFLAGS_UNDEFINED_ZF | X86_EFLAGS_MODIFY_AF | X86_EFLAGS_UNDEFINED_PF | X86_EFLAGS_MODIFY_CF)
 gen_func_body_onebyte_no_arg(aaa, 0x3F, X86_INS_AAS, X86_EFLAGS_UNDEFINED_OF | X86_EFLAGS_UNDEFINED_SF | X86_EFLAGS_UNDEFINED_ZF | X86_EFLAGS_MODIFY_AF | X86_EFLAGS_UNDEFINED_PF | X86_EFLAGS_MODIFY_CF)
-//asm_def_noop_imm(aam,)
-//asm_def_noop_imm(aad,)
+//AAM
+//AAD
 //Logical Instructions Instructions
 gen_func_body_arith(and, fuku_assambler_arith_and, X86_INS_AND, X86_EFLAGS_RESET_OF  | X86_EFLAGS_MODIFY_SF | X86_EFLAGS_MODIFY_ZF | X86_EFLAGS_UNDEFINED_AF | X86_EFLAGS_MODIFY_PF | X86_EFLAGS_RESET_CF)
 gen_func_body_arith(or , fuku_assambler_arith_or,  X86_INS_OR,  X86_EFLAGS_RESET_OF  | X86_EFLAGS_MODIFY_SF | X86_EFLAGS_MODIFY_ZF | X86_EFLAGS_UNDEFINED_AF | X86_EFLAGS_MODIFY_PF | X86_EFLAGS_RESET_CF)
@@ -437,8 +594,8 @@ gen_func_body_arith_ex_one_op(not,  fuku_assambler_arith_ex_not,  X86_INS_NOT,  
 gen_func_body_shift(sar, fuku_assambler_shift_sar, X86_INS_SAR, X86_EFLAGS_MODIFY_OF | X86_EFLAGS_MODIFY_SF | X86_EFLAGS_MODIFY_ZF | X86_EFLAGS_UNDEFINED_AF | X86_EFLAGS_MODIFY_PF | X86_EFLAGS_MODIFY_CF)
 gen_func_body_shift(shr, fuku_assambler_shift_shr, X86_INS_SHR, X86_EFLAGS_MODIFY_OF | X86_EFLAGS_MODIFY_SF | X86_EFLAGS_MODIFY_ZF | X86_EFLAGS_UNDEFINED_AF | X86_EFLAGS_MODIFY_PF | X86_EFLAGS_MODIFY_CF)
 gen_func_body_shift(shl, fuku_assambler_shift_shl, X86_INS_SHL, X86_EFLAGS_MODIFY_OF    | X86_EFLAGS_MODIFY_SF | X86_EFLAGS_MODIFY_ZF | X86_EFLAGS_UNDEFINED_AF | X86_EFLAGS_MODIFY_PF | X86_EFLAGS_MODIFY_CF)
-//asm_def_shXd_inst(shrd)
-//asm_def_shXd_inst(shld)
+//SHRD
+//SHLD
 gen_func_body_shift(ror, fuku_assambler_shift_ror, X86_INS_ROR, X86_EFLAGS_UNDEFINED_OF | X86_EFLAGS_MODIFY_CF)
 gen_func_body_shift(rol, fuku_assambler_shift_rol, X86_INS_ROL, X86_EFLAGS_UNDEFINED_OF | X86_EFLAGS_MODIFY_CF)
 gen_func_body_shift(rcr, fuku_assambler_shift_rcr, X86_INS_RCR, X86_EFLAGS_UNDEFINED_OF | X86_EFLAGS_MODIFY_CF)
@@ -451,20 +608,141 @@ gen_func_body_bit(btc, fuku_assambler_bittest_btc, X86_INS_BTC, X86_EFLAGS_UNDEF
 fuku_asm_ret_type fuku_assambler::_setcc(fuku_condition cond, fuku_register dst) {
     gencleanerdata
     FUKU_ASSERT(cond < 0 || cond >= fuku_condition::FUKU_CONDITION_MAX);
-    emit_b(0x0F);
-    emit_b(0x80 | cond);
-    emit_modrm(dst, 0);
-    gen_func_return(fuku_to_capstone_jcc(cond), di_fl_jcc[cond])
+    gen_pattern32_2em_rm_idx(0x0F, 0x80 | cond, dst, 0);
+    gen_func_return(fuku_to_capstone_cc(cond, CONVERT_TYPE_SETCC), di_fl_jcc[cond])
 }
 fuku_asm_ret_type fuku_assambler::_setcc(fuku_condition cond, const fuku_operand& dst) {
     gencleanerdata
     FUKU_ASSERT(cond < 0 || cond >= fuku_condition::FUKU_CONDITION_MAX);
-    emit_b(0x0F);
-    emit_b(0x80 | cond);
-    emit_operand(dst, (fuku_register_index)0);
-    gen_func_return(fuku_to_capstone_jcc(cond), di_fl_jcc[cond])
+    gen_pattern32_2em_op_idx(0x0F, 0x80 | cond, dst, 0);
+    gen_func_return(fuku_to_capstone_cc(cond, CONVERT_TYPE_SETCC), di_fl_jcc[cond])
 }
-//TEST
+fuku_asm_ret_type fuku_assambler::_test_b(fuku_register dst, fuku_register src) {
+    gencleanerdata
+    gen_pattern32_1em_rm_r(0x84, dst, src)
+    gen_func_return(X86_INS_TEST, X86_EFLAGS_RESET_OF | X86_EFLAGS_MODIFY_SF | X86_EFLAGS_MODIFY_ZF | X86_EFLAGS_UNDEFINED_AF | X86_EFLAGS_MODIFY_PF | X86_EFLAGS_RESET_CF)
+}
+fuku_asm_ret_type fuku_assambler::_test_b(fuku_register dst, const fuku_immediate& src) {
+    gencleanerdata
+    emit_optional_rex_32(dst);
+    if (is_used_short_eax() && dst == fuku_register::FUKU_REG_AL) {
+        emit_b(0xA8);
+    }
+    else {
+        emit_b(0xF6);
+        emit_modrm(dst, 0);
+    }
+    emit_immediate_b(src);
+    gen_func_return(X86_INS_TEST, X86_EFLAGS_RESET_OF | X86_EFLAGS_MODIFY_SF | X86_EFLAGS_MODIFY_ZF | X86_EFLAGS_UNDEFINED_AF | X86_EFLAGS_MODIFY_PF | X86_EFLAGS_RESET_CF)
+}
+fuku_asm_ret_type fuku_assambler::_test_b(const fuku_operand& dst, fuku_register src) {
+    gencleanerdata
+    gen_pattern32_1em_op_r(0x84, dst, src)
+    gen_func_return(X86_INS_TEST, X86_EFLAGS_RESET_OF | X86_EFLAGS_MODIFY_SF | X86_EFLAGS_MODIFY_ZF | X86_EFLAGS_UNDEFINED_AF | X86_EFLAGS_MODIFY_PF | X86_EFLAGS_RESET_CF)
+}
+fuku_asm_ret_type fuku_assambler::_test_b(const fuku_operand& dst, const fuku_immediate& src) {
+    gencleanerdata
+    emit_optional_rex_32(dst);
+    emit_b(0xF6);
+    emit_operand(dst, 0);
+    emit_immediate_b(src);
+    gen_func_return(X86_INS_TEST, X86_EFLAGS_RESET_OF | X86_EFLAGS_MODIFY_SF | X86_EFLAGS_MODIFY_ZF | X86_EFLAGS_UNDEFINED_AF | X86_EFLAGS_MODIFY_PF | X86_EFLAGS_RESET_CF)
+}
+fuku_asm_ret_type fuku_assambler::_test_w(fuku_register dst, fuku_register src) {
+    gencleanerdata
+    gen_pattern32_1em_rm_r_word(0x85, dst, src)
+    gen_func_return(X86_INS_TEST, X86_EFLAGS_RESET_OF | X86_EFLAGS_MODIFY_SF | X86_EFLAGS_MODIFY_ZF | X86_EFLAGS_UNDEFINED_AF | X86_EFLAGS_MODIFY_PF | X86_EFLAGS_RESET_CF)
+}
+fuku_asm_ret_type fuku_assambler::_test_w(fuku_register dst, const fuku_immediate& src) {
+    gencleanerdata
+    emit_b(FUKU_PREFIX_OVERRIDE_DATA);
+    emit_optional_rex_32(dst);
+    if (is_used_short_eax() && dst == fuku_register::FUKU_REG_AX) {
+        emit_b(0xA9);
+    }
+    else {
+        emit_b(0xF7);
+        emit_modrm(dst, 0);
+    }
+    emit_immediate_w(src);
+    gen_func_return(X86_INS_TEST, X86_EFLAGS_RESET_OF | X86_EFLAGS_MODIFY_SF | X86_EFLAGS_MODIFY_ZF | X86_EFLAGS_UNDEFINED_AF | X86_EFLAGS_MODIFY_PF | X86_EFLAGS_RESET_CF)
+}
+fuku_asm_ret_type fuku_assambler::_test_w(const fuku_operand& dst, fuku_register src) {
+    gencleanerdata
+    gen_pattern32_1em_op_r_word(0x85, dst, src)
+    gen_func_return(X86_INS_TEST, X86_EFLAGS_RESET_OF | X86_EFLAGS_MODIFY_SF | X86_EFLAGS_MODIFY_ZF | X86_EFLAGS_UNDEFINED_AF | X86_EFLAGS_MODIFY_PF | X86_EFLAGS_RESET_CF)
+}
+fuku_asm_ret_type fuku_assambler::_test_w(const fuku_operand& dst, const fuku_immediate& src) {
+    gencleanerdata
+    emit_b(FUKU_PREFIX_OVERRIDE_DATA);
+    emit_optional_rex_32(dst);
+    emit_b(0xF7);
+    emit_operand(dst, 0);
+    emit_immediate_w(src);
+    gen_func_return(X86_INS_TEST, X86_EFLAGS_RESET_OF | X86_EFLAGS_MODIFY_SF | X86_EFLAGS_MODIFY_ZF | X86_EFLAGS_UNDEFINED_AF | X86_EFLAGS_MODIFY_PF | X86_EFLAGS_RESET_CF)
+}
+fuku_asm_ret_type fuku_assambler::_test_dw(fuku_register dst, fuku_register src) {
+    gencleanerdata
+    gen_pattern32_1em_rm_r(0x85, dst, src)
+    gen_func_return(X86_INS_TEST, X86_EFLAGS_RESET_OF | X86_EFLAGS_MODIFY_SF | X86_EFLAGS_MODIFY_ZF | X86_EFLAGS_UNDEFINED_AF | X86_EFLAGS_MODIFY_PF | X86_EFLAGS_RESET_CF)
+}
+fuku_asm_ret_type fuku_assambler::_test_dw(fuku_register dst, const fuku_immediate& src) {
+    gencleanerdata
+    emit_optional_rex_32(src, dst);
+    if (is_used_short_eax() && dst == fuku_register::FUKU_REG_EAX) {
+        emit_b(0xA9);
+    }
+    else {
+        emit_b(0xF7);
+        emit_modrm(dst, 0);
+    }
+    emit_immediate_dw(src);
+    gen_func_return(X86_INS_TEST, X86_EFLAGS_RESET_OF | X86_EFLAGS_MODIFY_SF | X86_EFLAGS_MODIFY_ZF | X86_EFLAGS_UNDEFINED_AF | X86_EFLAGS_MODIFY_PF | X86_EFLAGS_RESET_CF)
+}
+fuku_asm_ret_type fuku_assambler::_test_dw(const fuku_operand& dst, fuku_register src) {
+    gencleanerdata
+    gen_pattern32_1em_op_r(0x85, dst, src)
+    gen_func_return(X86_INS_TEST, X86_EFLAGS_RESET_OF | X86_EFLAGS_MODIFY_SF | X86_EFLAGS_MODIFY_ZF | X86_EFLAGS_UNDEFINED_AF | X86_EFLAGS_MODIFY_PF | X86_EFLAGS_RESET_CF)
+}
+fuku_asm_ret_type fuku_assambler::_test_dw(const fuku_operand& dst, const fuku_immediate& src) {
+    gencleanerdata
+    emit_optional_rex_32(dst);
+    emit_b(0xF7);
+    emit_operand(dst, 0);
+    emit_immediate_dw(src);
+    gen_func_return(X86_INS_TEST, X86_EFLAGS_RESET_OF | X86_EFLAGS_MODIFY_SF | X86_EFLAGS_MODIFY_ZF | X86_EFLAGS_UNDEFINED_AF | X86_EFLAGS_MODIFY_PF | X86_EFLAGS_RESET_CF)
+}
+fuku_asm_ret_type fuku_assambler::_test_qw(fuku_register dst, fuku_register src) {
+    gencleanerdata
+    gen_pattern64_1em_rm_r(0x85, dst, src);
+    gen_func_return(X86_INS_TEST, X86_EFLAGS_RESET_OF | X86_EFLAGS_MODIFY_SF | X86_EFLAGS_MODIFY_ZF | X86_EFLAGS_UNDEFINED_AF | X86_EFLAGS_MODIFY_PF | X86_EFLAGS_RESET_CF)
+}
+fuku_asm_ret_type fuku_assambler::_test_qw(fuku_register dst, const fuku_immediate& src) {
+    gencleanerdata
+    emit_rex_64(dst);
+    if (is_used_short_eax() && dst == fuku_register::FUKU_REG_EAX) {
+        emit_b(0xA9);
+    }
+    else {
+        emit_b(0xF7);
+        emit_modrm(dst, 0);
+    }
+    emit_immediate_dw(src);
+    gen_func_return(X86_INS_TEST, X86_EFLAGS_RESET_OF | X86_EFLAGS_MODIFY_SF | X86_EFLAGS_MODIFY_ZF | X86_EFLAGS_UNDEFINED_AF | X86_EFLAGS_MODIFY_PF | X86_EFLAGS_RESET_CF)
+}
+fuku_asm_ret_type fuku_assambler::_test_qw(const fuku_operand& dst, fuku_register src) {
+    gencleanerdata
+    gen_pattern64_1em_op_r(0x85, dst, src)
+    gen_func_return(X86_INS_TEST, X86_EFLAGS_RESET_OF | X86_EFLAGS_MODIFY_SF | X86_EFLAGS_MODIFY_ZF | X86_EFLAGS_UNDEFINED_AF | X86_EFLAGS_MODIFY_PF | X86_EFLAGS_RESET_CF)
+}
+fuku_asm_ret_type fuku_assambler::_test_qw(const fuku_operand& dst, const fuku_immediate& src) {
+    gencleanerdata
+    emit_rex_64(dst);
+    emit_b(0xF7);
+    emit_operand(dst, 0);
+    emit_immediate_dw(src);
+    gen_func_return(X86_INS_TEST, X86_EFLAGS_RESET_OF | X86_EFLAGS_MODIFY_SF | X86_EFLAGS_MODIFY_ZF | X86_EFLAGS_UNDEFINED_AF | X86_EFLAGS_MODIFY_PF | X86_EFLAGS_RESET_CF)
+}
 //CRC32
 //POPCNT
 //Control Transfer Instructions
@@ -477,7 +755,7 @@ fuku_asm_ret_type fuku_assambler::_jcc(fuku_condition cond, const fuku_immediate
     emit_b(0x0F);
     emit_b(0x80 | cond);
     emit_immediate_dw(imm);
-    gen_func_return(fuku_to_capstone_jcc(cond), di_fl_jcc[cond])
+    gen_func_return(fuku_to_capstone_cc(cond, CONVERT_TYPE_JCC), di_fl_jcc[cond])
 }
 gen_func_body_ff_offset(call, 0xF8, X86_INS_CALL, 0)
 gen_func_body_ff_r(     call, 2   , X86_INS_CALL, 0)
@@ -513,22 +791,85 @@ gen_func_body_onebyte_no_arg(cld,  0xFC, X86_INS_CLD, X86_EFLAGS_RESET_DF)
 gen_func_body_onebyte_no_arg(std,  0xFD, X86_INS_STD, X86_EFLAGS_SET_DF)
 gen_func_body_onebyte_no_arg(lahf, 0x9F, X86_INS_LAHF, 0)
 gen_func_body_onebyte_no_arg(sahf, 0x9E, X86_INS_SAHF, X86_EFLAGS_MODIFY_SF | X86_EFLAGS_MODIFY_ZF | X86_EFLAGS_MODIFY_AF | X86_EFLAGS_MODIFY_PF | X86_EFLAGS_MODIFY_CF)
-//asm_def_noop(pusha,)   //pusha  w  regs
-//asm_def_noop(pushad,)  //pushad dw regs
-//asm_def_noop(popa,)    //popa   w  regs
-//asm_def_noop(popad,)   //popad  dw regs
-//asm_def_noop(pushf,)   //pushf  w  flags
-//asm_def_noop(pushfd,)  //pushfd dw flags
-//asm_def_noop(popf,)    //popf   w  flags
-//asm_def_noop(popfd,)   //popfd  dw flags
+gen_func_body_twobyte_no_arg(pusha,  FUKU_PREFIX_OVERRIDE_DATA, 0x60, X86_INS_PUSHAW, 0)
+gen_func_body_onebyte_no_arg(pushad, 0x60, X86_INS_PUSHAL, 0)
+gen_func_body_twobyte_no_arg(popa,   FUKU_PREFIX_OVERRIDE_DATA, 0x61, X86_INS_POPAW, 0)
+gen_func_body_onebyte_no_arg(popad,  0x61, X86_INS_POPAL, 0)
+gen_func_body_twobyte_no_arg(pushf,  FUKU_PREFIX_OVERRIDE_DATA, 0x9C, X86_INS_PUSHF, 0)
+gen_func_body_onebyte_no_arg(pushfd, 0x9C, X86_INS_PUSHFD, 0)
+gen_func_body_onebyte_no_arg(pushfq, 0x9C, X86_INS_PUSHFQ, 0)
+gen_func_body_twobyte_no_arg(popf,   FUKU_PREFIX_OVERRIDE_DATA, 0x9D, X86_INS_POPF, X86_EFLAGS_MODIFY_AF | X86_EFLAGS_MODIFY_CF | X86_EFLAGS_MODIFY_SF | X86_EFLAGS_MODIFY_ZF | X86_EFLAGS_MODIFY_PF | X86_EFLAGS_MODIFY_OF | X86_EFLAGS_MODIFY_TF | X86_EFLAGS_MODIFY_IF | X86_EFLAGS_MODIFY_DF | X86_EFLAGS_MODIFY_NT)
+gen_func_body_onebyte_no_arg(popfd,  0x9D, X86_INS_POPFD, X86_EFLAGS_MODIFY_AF | X86_EFLAGS_MODIFY_CF | X86_EFLAGS_MODIFY_SF | X86_EFLAGS_MODIFY_ZF | X86_EFLAGS_MODIFY_PF | X86_EFLAGS_MODIFY_OF | X86_EFLAGS_MODIFY_TF | X86_EFLAGS_MODIFY_IF | X86_EFLAGS_MODIFY_DF | X86_EFLAGS_MODIFY_NT | X86_EFLAGS_MODIFY_RF)
+gen_func_body_onebyte_no_arg(popfq,  0x9D, X86_INS_POPFQ, X86_EFLAGS_MODIFY_AF | X86_EFLAGS_MODIFY_CF | X86_EFLAGS_MODIFY_SF | X86_EFLAGS_MODIFY_ZF | X86_EFLAGS_MODIFY_PF | X86_EFLAGS_MODIFY_OF | X86_EFLAGS_MODIFY_TF | X86_EFLAGS_MODIFY_IF | X86_EFLAGS_MODIFY_DF | X86_EFLAGS_MODIFY_NT | X86_EFLAGS_MODIFY_RF)
 //Miscellaneous Instructions
-//LEA
-//asm_def_1op(nop,,uint8_t)
+fuku_asm_ret_type fuku_assambler::_lea_w(fuku_register dst, const fuku_operand& src) {
+    gencleanerdata
+    gen_pattern32_1em_op_r_word(0x8D, src, dst)
+    gen_func_return(X86_INS_LEA, 0)
+}
+fuku_asm_ret_type fuku_assambler::_lea_dw(fuku_register dst, const fuku_operand& src) {
+    gencleanerdata
+    gen_pattern32_1em_op_r(0x8D, src, dst)
+    gen_func_return(X86_INS_LEA, 0)
+}
+fuku_asm_ret_type fuku_assambler::_lea_qw(fuku_register dst, const fuku_operand& src) {
+    gencleanerdata
+    gen_pattern64_1em_op_r(0x8D, src, dst)
+    gen_func_return(X86_INS_LEA, 0)
+}
 gen_func_body_twobyte_no_arg(ud2, 0x0F, 0x0B, X86_INS_UD2, 0)
 gen_func_body_twobyte_no_arg(cpuid, 0x0F, 0xA2, X86_INS_CPUID, 0)
 //Random Number Generator Instructions
-//RDRAND
-//RDSEED
+fuku_asm_ret_type fuku_assambler::_rdrand_w(fuku_register dst) {
+    gencleanerdata
+    emit_b(FUKU_PREFIX_OVERRIDE_DATA);
+    emit_optional_rex_32(dst);
+    emit_b(0x0F);
+    emit_b(0xC7);
+    emit_b(0xF0 | fuku_get_index_by_register(dst));
+    gen_func_return(X86_INS_RDRAND, X86_EFLAGS_MODIFY_CF | X86_EFLAGS_RESET_OF | X86_EFLAGS_RESET_SF | X86_EFLAGS_RESET_ZF | X86_EFLAGS_RESET_AF | X86_EFLAGS_RESET_PF)
+}
+fuku_asm_ret_type fuku_assambler::_rdrand_dw(fuku_register dst) {
+    gencleanerdata
+    emit_optional_rex_32(dst);
+    emit_b(0x0F);
+    emit_b(0xC7);
+    emit_b(0xF0 | fuku_get_index_by_register(dst));
+    gen_func_return(X86_INS_RDRAND, X86_EFLAGS_MODIFY_CF | X86_EFLAGS_RESET_OF | X86_EFLAGS_RESET_SF | X86_EFLAGS_RESET_ZF | X86_EFLAGS_RESET_AF | X86_EFLAGS_RESET_PF)
+}
+fuku_asm_ret_type fuku_assambler::_rdrand_qw(fuku_register dst) {
+    gencleanerdata
+    emit_rex_64(dst);
+    emit_b(0x0F);
+    emit_b(0xC7);
+    emit_b(0xF0 | fuku_get_index_by_register(dst));
+    gen_func_return(X86_INS_RDRAND, X86_EFLAGS_MODIFY_CF | X86_EFLAGS_RESET_OF | X86_EFLAGS_RESET_SF | X86_EFLAGS_RESET_ZF | X86_EFLAGS_RESET_AF | X86_EFLAGS_RESET_PF)
+}
+fuku_asm_ret_type fuku_assambler::_rdseed_w(fuku_register dst) {
+    gencleanerdata
+    emit_b(FUKU_PREFIX_OVERRIDE_DATA);
+    emit_optional_rex_32(dst);
+    emit_b(0x0F);
+    emit_b(0xC7);
+    emit_b(0xF8 | fuku_get_index_by_register(dst));
+    gen_func_return(X86_INS_RDRAND, X86_EFLAGS_MODIFY_CF | X86_EFLAGS_RESET_OF | X86_EFLAGS_RESET_SF | X86_EFLAGS_RESET_ZF | X86_EFLAGS_RESET_AF | X86_EFLAGS_RESET_PF)
+}
+fuku_asm_ret_type fuku_assambler::_rdseed_dw(fuku_register dst) {
+    gencleanerdata
+    emit_optional_rex_32(dst);
+    emit_b(0x0F);
+    emit_b(0xC7);
+    emit_b(0xF8 | fuku_get_index_by_register(dst));
+    gen_func_return(X86_INS_RDRAND, X86_EFLAGS_MODIFY_CF | X86_EFLAGS_RESET_OF | X86_EFLAGS_RESET_SF | X86_EFLAGS_RESET_ZF | X86_EFLAGS_RESET_AF | X86_EFLAGS_RESET_PF)
+}
+fuku_asm_ret_type fuku_assambler::_rdseed_qw(fuku_register dst) {
+    gencleanerdata
+    emit_rex_64(dst);
+    emit_b(0x0F);
+    emit_b(0xC7);
+    emit_b(0xF8 | fuku_get_index_by_register(dst));
+    gen_func_return(X86_INS_RDRAND, X86_EFLAGS_MODIFY_CF | X86_EFLAGS_RESET_OF | X86_EFLAGS_RESET_SF | X86_EFLAGS_RESET_ZF | X86_EFLAGS_RESET_AF | X86_EFLAGS_RESET_PF)
+}
 //BMI1, BMI2 Instructions
 //ANDN
 //BEXTR

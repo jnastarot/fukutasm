@@ -266,11 +266,15 @@ bool fuku_is_16bit_reg(fuku_register reg);
 //  returns true for AH,AL - Dl and R8B - R15B 
 bool fuku_is_8bit_reg(fuku_register reg);
 
-
+enum fuku_to_cap_convert_type {
+    CONVERT_TYPE_JCC,
+    CONVERT_TYPE_SETCC,
+    CONVERT_TYPE_CMOVCC,
+};
 uint8_t fuku_to_capstone_reg(fuku_register reg);
 uint8_t capstone_to_fuku_reg(fuku_register reg);
 
-x86_insn fuku_to_capstone_jcc(fuku_condition cond);
+x86_insn fuku_to_capstone_cc(fuku_condition cond, fuku_to_cap_convert_type type);
 fuku_condition capstone_to_fuku_cond(x86_insn cond);
 
 #include "fuku_instruction.h"

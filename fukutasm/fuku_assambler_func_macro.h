@@ -89,9 +89,7 @@ static uint64_t di_fl_jcc[] = {
 #define gen_func_body_ff_r(name ,type, cap_id, cap_eflags) \
     fuku_asm_ret_type fuku_assambler:: fuku_asm_gen_name(_,name,) (fuku_register src) { \
         gencleanerdata\
-        emit_optional_rex_32(src);\
-        emit_b(0xFF);\
-        emit_modrm(src, type);\
+        gen_pattern32_1em_rm_idx(0xFF, src, type)\
         gen_func_return(cap_id, cap_eflags)\
     } 
 
@@ -106,19 +104,9 @@ static uint64_t di_fl_jcc[] = {
 #define gen_func_body_ff_op(name ,type, cap_id, cap_eflags) \
     fuku_asm_ret_type fuku_assambler:: fuku_asm_gen_name(_,name,) (const fuku_operand& src) { \
         gencleanerdata\
-        emit_optional_rex_32(src);\
-        emit_b(0xFF);\
-        emit_operand(src, (fuku_register_index)type);\
+        gen_pattern32_1em_op_idx(0xFF, src, type)\
         gen_func_return(cap_id, cap_eflags)\
     } 
-
-
-
-
-
-
-
-
 
 
 #define gen_func_body_arith(name ,type, cap_id, cap_eflags) \
@@ -148,7 +136,7 @@ static uint64_t di_fl_jcc[] = {
         gencleanerdata\
         emit_optional_rex_32(dst);\
         emit_b(0x80);\
-        emit_operand(dst, (fuku_register_index)type);\
+        emit_operand(dst, type);\
         emit_immediate_b(src);\
         gen_func_return(cap_id, cap_eflags)\
     } \
@@ -199,11 +187,11 @@ static uint64_t di_fl_jcc[] = {
         emit_optional_rex_32(dst);\
         if (is_used_short_imm() && src.is_8()) {\
             emit_b(0x83);\
-            emit_operand(dst, (fuku_register_index)type);\
+            emit_operand(dst, type);\
             emit_immediate_b(src);\
         }else{\
             emit_b(0x81);\
-            emit_operand(dst, (fuku_register_index)type);\
+            emit_operand(dst, type);\
             emit_immediate_w(src);\
         }\
         gen_func_return(cap_id, cap_eflags)\
@@ -248,11 +236,11 @@ static uint64_t di_fl_jcc[] = {
         emit_optional_rex_32(dst);\
          if (is_used_short_imm() && src.is_8()) {\
             emit_b(0x83);\
-            emit_operand(dst, (fuku_register_index)type);\
+            emit_operand(dst, type);\
             emit_immediate_b(src);\
         }else{\
             emit_b(0x81);\
-            emit_operand(dst, (fuku_register_index)type);\
+            emit_operand(dst, type);\
             emit_immediate_dw(src);\
         }\
         gen_func_return(cap_id, cap_eflags)\
@@ -297,11 +285,11 @@ static uint64_t di_fl_jcc[] = {
          emit_rex_64(dst); \
          if (is_used_short_imm() && src.is_8()) {\
             emit_b(0x83);\
-            emit_operand(dst, (fuku_register_index)type);\
+            emit_operand(dst, type);\
             emit_immediate_b(src);\
         }else{\
             emit_b(0x81);\
-            emit_operand(dst, (fuku_register_index)type);\
+            emit_operand(dst, type);\
             emit_immediate_dw(src);\
         }\
         gen_func_return(cap_id, cap_eflags)\
@@ -426,10 +414,10 @@ static uint64_t di_fl_jcc[] = {
        emit_optional_rex_32(dst);\
        if(is_used_short_imm() && src.get_immediate8() == 1) {\
           emit_b(0xD0); \
-          emit_operand(dst, (fuku_register_index)type);\
+          emit_operand(dst, type);\
        }else {\
           emit_b(0xC0); \
-          emit_operand(dst, (fuku_register_index)type);\
+          emit_operand(dst, type);\
           emit_immediate_b(src);\
        }\
        gen_func_return(cap_id, cap_eflags)\
@@ -465,10 +453,10 @@ static uint64_t di_fl_jcc[] = {
        emit_optional_rex_32(dst);\
        if(is_used_short_imm() && src.get_immediate8() == 1) {\
           emit_b(0xD1); \
-          emit_operand(dst, (fuku_register_index)type);\
+          emit_operand(dst, type);\
        }else {\
           emit_b(0xC1); \
-          emit_operand(dst, (fuku_register_index)type);\
+          emit_operand(dst, type);\
           emit_immediate_b(src);\
        }\
        gen_func_return(cap_id, cap_eflags)\
@@ -502,10 +490,10 @@ static uint64_t di_fl_jcc[] = {
        emit_optional_rex_32(dst);\
        if(is_used_short_imm() && src.get_immediate8() == 1) {\
           emit_b(0xD1); \
-          emit_operand(dst, (fuku_register_index)type);\
+          emit_operand(dst, type);\
        }else {\
           emit_b(0xC1); \
-          emit_operand(dst, (fuku_register_index)type);\
+          emit_operand(dst, type);\
           emit_immediate_b(src);\
        }\
        gen_func_return(cap_id, cap_eflags)\
@@ -539,10 +527,10 @@ static uint64_t di_fl_jcc[] = {
        emit_rex_64(dst);\
        if(is_used_short_imm() && src.get_immediate8() == 1) {\
           emit_b(0xD1); \
-          emit_operand(dst, (fuku_register_index)type);\
+          emit_operand(dst, type);\
        }else {\
           emit_b(0xC1); \
-          emit_operand(dst, (fuku_register_index)type);\
+          emit_operand(dst, type);\
           emit_immediate_b(src);\
        }\
        gen_func_return(cap_id, cap_eflags)\
@@ -580,7 +568,7 @@ static uint64_t di_fl_jcc[] = {
         emit_optional_rex_32(dst);\
         emit_b(0x0F);\
         emit_b(0xBA);\
-        emit_operand(dst, (fuku_register_index)type);\
+        emit_operand(dst, type);\
         emit_immediate_b(src);\
         gen_func_return(cap_id, cap_eflags)\
     } \
@@ -609,7 +597,7 @@ static uint64_t di_fl_jcc[] = {
         emit_optional_rex_32(dst);\
         emit_b(0x0F);\
         emit_b(0xBA);\
-        emit_operand(dst, (fuku_register_index)type);\
+        emit_operand(dst, type);\
         emit_immediate_b(src);\
         gen_func_return(cap_id, cap_eflags)\
     } \
@@ -638,7 +626,7 @@ static uint64_t di_fl_jcc[] = {
         emit_rex_64(dst);\
         emit_b(0x0F);\
         emit_b(0xBA);\
-        emit_operand(dst, (fuku_register_index)type);\
+        emit_operand(dst, type);\
         emit_immediate_b(src);\
         gen_func_return(cap_id, cap_eflags)\
     } 
@@ -684,5 +672,58 @@ static uint64_t di_fl_jcc[] = {
         gencleanerdata\
         emit_b(type*2 + 1);\
         gen_func_return(fuku_asm_gen_name(,cap_idMASK,D), cap_eflags)\
+    }
+    
+#define gen_func_body_movxx(name ,type, cap_id)\
+    fuku_asm_ret_type fuku_assambler:: fuku_asm_gen_name(_,name,_byte_w) (fuku_register dst, fuku_register src) {\
+        gencleanerdata\
+        gen_pattern32_2em_rm_r_word(0x0F,type, dst, src);\
+        gen_func_return(cap_id, 0)\
+    }\
+    fuku_asm_ret_type fuku_assambler::fuku_asm_gen_name(_,name,_byte_w)(const fuku_operand& dst, fuku_register src) {\
+        gencleanerdata\
+        gen_pattern32_2em_op_r_word(0x0F,type, dst, src);\
+        gen_func_return(cap_id, 0)\
+    }\
+    fuku_asm_ret_type fuku_assambler::fuku_asm_gen_name(_,name,_byte_dw)(fuku_register dst, fuku_register src) {\
+        gencleanerdata\
+        gen_pattern32_2em_rm_r(0x0F,type, dst, src);\
+        gen_func_return(cap_id, 0)\
+    }\
+    fuku_asm_ret_type fuku_assambler::fuku_asm_gen_name(_,name,_byte_dw)(const fuku_operand& dst, fuku_register src) {\
+        gencleanerdata\
+        gen_pattern32_2em_op_r(0x0F,type, dst, src);\
+        gen_func_return(cap_id, 0)\
+    }\
+    fuku_asm_ret_type fuku_assambler::fuku_asm_gen_name(_,name,_byte_qw)(fuku_register dst, fuku_register src) {\
+        gencleanerdata\
+        gen_pattern64_2em_rm_r(0x0F,type, dst, src);\
+        gen_func_return(cap_id, 0)\
+    }\
+    fuku_asm_ret_type fuku_assambler::fuku_asm_gen_name(_,name,_byte_qw)(const fuku_operand& dst, fuku_register src) {\
+        gencleanerdata\
+        gen_pattern64_2em_op_r(0x0F,type, dst, src);\
+        gen_func_return(cap_id, 0)\
+    }\
+\
+    fuku_asm_ret_type fuku_assambler::fuku_asm_gen_name(_,name,_word_dw)(fuku_register dst, fuku_register src) {\
+        gencleanerdata\
+        gen_pattern32_2em_rm_r(0x0F,type + 1, dst, src);\
+        gen_func_return(cap_id, 0)\
+    }\
+    fuku_asm_ret_type fuku_assambler::fuku_asm_gen_name(_,name,_word_dw)(const fuku_operand& dst, fuku_register src) {\
+        gencleanerdata\
+        gen_pattern32_2em_op_r(0x0F,type + 1, dst, src);\
+        gen_func_return(cap_id, 0)\
+    }\
+    fuku_asm_ret_type fuku_assambler::fuku_asm_gen_name(_,name,_word_qw)(fuku_register dst, fuku_register src) {\
+        gencleanerdata\
+        gen_pattern64_2em_rm_r(0x0F,type + 1, dst, src);\
+        gen_func_return(cap_id, 0)\
+    }\
+    fuku_asm_ret_type fuku_assambler::fuku_asm_gen_name(_,name,_word_qw)(const fuku_operand& dst, fuku_register src) {\
+        gencleanerdata\
+        gen_pattern64_2em_op_r(0x0F,type + 1, dst, src);\
+        gen_func_return(cap_id, 0)\
     }
     
