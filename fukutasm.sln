@@ -10,6 +10,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "fukutasm", "fukutasm\fukuta
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "capstone_static", "capstone\msvc\capstone_static\capstone_static.vcxproj", "{5B01D900-2359-44CA-9914-6B0C6AFB7BE7}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "fukutasm_test", "fukutasm_test\fukutasm_test.vcxproj", "{38F4FE4E-C45E-416A-AEE9-A9FD63202538}"
+	ProjectSection(ProjectDependencies) = postProject
+		{0A569853-B3F6-4BE5-A7DA-F88EFCE68EC7} = {0A569853-B3F6-4BE5-A7DA-F88EFCE68EC7}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -34,6 +39,14 @@ Global
 		{5B01D900-2359-44CA-9914-6B0C6AFB7BE7}.Release|x64.Build.0 = Release|x64
 		{5B01D900-2359-44CA-9914-6B0C6AFB7BE7}.Release|x86.ActiveCfg = Release|Win32
 		{5B01D900-2359-44CA-9914-6B0C6AFB7BE7}.Release|x86.Build.0 = Release|Win32
+		{38F4FE4E-C45E-416A-AEE9-A9FD63202538}.Debug|x64.ActiveCfg = Debug|x64
+		{38F4FE4E-C45E-416A-AEE9-A9FD63202538}.Debug|x64.Build.0 = Debug|x64
+		{38F4FE4E-C45E-416A-AEE9-A9FD63202538}.Debug|x86.ActiveCfg = Debug|Win32
+		{38F4FE4E-C45E-416A-AEE9-A9FD63202538}.Debug|x86.Build.0 = Debug|Win32
+		{38F4FE4E-C45E-416A-AEE9-A9FD63202538}.Release|x64.ActiveCfg = Release|x64
+		{38F4FE4E-C45E-416A-AEE9-A9FD63202538}.Release|x64.Build.0 = Release|x64
+		{38F4FE4E-C45E-416A-AEE9-A9FD63202538}.Release|x86.ActiveCfg = Release|Win32
+		{38F4FE4E-C45E-416A-AEE9-A9FD63202538}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

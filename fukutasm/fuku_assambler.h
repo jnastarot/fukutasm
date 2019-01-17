@@ -193,7 +193,7 @@ class fuku_assambler{
     void emit_operand(const fuku_operand& rm_reg, fuku_register reg);
     void emit_operand(const fuku_operand& rm_reg, int code);
 public:
-    fuku_assambler();
+    fuku_assambler(fuku_assambler_arch arch);
     ~fuku_assambler();
 
     uint8_t get_displacment_offset();
@@ -216,9 +216,9 @@ public:
     //CMPXCHG8B
     asm_def_wdq_one_op(push)
     asm_def_wdq_one_op(pop)
-    asm_def_noop(cwd)
-    asm_def_noop(cdq)
-    asm_def_noop(cqo)
+    asm_def_noop(cwd,)
+    asm_def_noop(cdq,)
+    asm_def_noop(cqo,)
     asm_def_movsxz(movzx)
     asm_def_movsxz(movsx)
     asm_def_2op(movsx,_dword_dw, fuasm_reg, fuasm_reg)
@@ -245,8 +245,8 @@ public:
     asm_def_noop(das,)
     asm_def_noop(aaa,)
     asm_def_noop(aas,)
-    asm_def_noop_imm(aam,)
-    asm_def_noop_imm(aad,)
+    asm_def_noop_imm(aam)
+    asm_def_noop_imm(aad)
 //Logical Instructions Instructions
     asm_def_full(and)
     asm_def_full(or)

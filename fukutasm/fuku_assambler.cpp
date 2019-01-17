@@ -3,17 +3,17 @@
 #include "fuku_assambler_func_macro.h"
 
 #define set_modrm(mod, reg_idx) \
-    FUKU_ASSERT_EQ(mod & -4, 0)\
+    FUKU_ASSERT_GT(mod , 3);\
     raw_operand[0] = (uint8_t(mod) << 6) | reg_idx;\
-    operand_size = 1;
+    if(operand_size < 1){operand_size = 1;}
 
 
 #define set_sib(scale,is_index_ext,reg_idx_index,reg_idx_base)\
-    FUKU_ASSERT_EQ(operand_size, 1);\
-    FUKU_ASSERT_EQ(scale & -4, 0);\
-    FUKU_ASSERT( (!is_index_ext && reg_idx_index == FUKU_REG_INDEX_SP) || reg_idx_base == FUKU_REG_INDEX_SP);\
+    FUKU_ASSERT_GT(operand_size, 1);\
+    FUKU_ASSERT_GT(scale , 3);\
+    FUKU_ASSERT_NEQ( ((!is_index_ext && reg_idx_index == FUKU_REG_INDEX_SP) || reg_idx_base == FUKU_REG_INDEX_SP), 0);\
     raw_operand[1] = (scale << 6) | (reg_idx_index << 3) | reg_idx_base;\
-    operand_size = 2;
+    if(operand_size < 2){operand_size = 2;}
 
 #define set_disp8(disp)\
     raw_operand[operand_size] = (uint8_t)disp;\
@@ -26,8 +26,8 @@
     operand_size += sizeof(uint32_t);
 
 
-fuku_assambler::fuku_assambler()
-    : short_cfg(FUKU_ASM_SHORT_CFG_USE_EAX_SHORT | FUKU_ASM_SHORT_CFG_USE_DISP_SHORT | FUKU_ASM_SHORT_CFG_USE_IMM_SHORT) {}
+fuku_assambler::fuku_assambler(fuku_assambler_arch arch)
+    : short_cfg(FUKU_ASM_SHORT_CFG_USE_EAX_SHORT | FUKU_ASM_SHORT_CFG_USE_DISP_SHORT | FUKU_ASM_SHORT_CFG_USE_IMM_SHORT), arch(arch){}
 
 fuku_assambler::~fuku_assambler() {}
 
@@ -274,7 +274,7 @@ void fuku_assambler::emit_operand_x64(const fuku_operand& rm_reg, fuku_register_
 }
 
 void fuku_assambler::emit_operand_x86(const fuku_operand& rm_reg, fuku_register_index reg) {
-    FUKU_ASSERT_GT(length, 0);
+    FUKU_ASSERT_EQ(length, 0);
 
     uint8_t raw_operand[6] = { 0 };
     uint8_t operand_size = 0;
@@ -571,7 +571,7 @@ gen_func_body_arith(adc, fuku_assambler_arith_adc, X86_INS_ADC, X86_EFLAGS_MODIF
 gen_func_body_arith(sub, fuku_assambler_arith_sub, X86_INS_SUB, X86_EFLAGS_MODIFY_OF | X86_EFLAGS_MODIFY_SF | X86_EFLAGS_MODIFY_ZF | X86_EFLAGS_MODIFY_AF    | X86_EFLAGS_MODIFY_PF | X86_EFLAGS_MODIFY_CF)
 gen_func_body_arith(sbb, fuku_assambler_arith_sbb, X86_INS_SBB, X86_EFLAGS_MODIFY_OF | X86_EFLAGS_MODIFY_SF | X86_EFLAGS_MODIFY_ZF | X86_EFLAGS_MODIFY_AF    | X86_EFLAGS_MODIFY_PF | X86_EFLAGS_MODIFY_CF)
 gen_func_body_arith_ex_one_op(imul, fuku_assambler_arith_ex_imul, X86_INS_IMUL, X86_EFLAGS_MODIFY_SF    | X86_EFLAGS_MODIFY_CF    | X86_EFLAGS_MODIFY_OF    | X86_EFLAGS_UNDEFINED_ZF | X86_EFLAGS_UNDEFINED_AF | X86_EFLAGS_UNDEFINED_PF)
-gen_func_body_arith_ex_one_op(mul,  fuku_assambler_arith_ex_mul,  X86_INS_MUL,  X86_EFLAGS_MODIFY_SF    | X86_EFLAGS_MODIFY_CF    | X86_EFLAGS_MODIFY_OF    | X86_EFLAGS_UNDEFINED_ZF | X86_EFLAGS_UNDEFINED_AF | X86_EFLAGS_UNDEFINED_PF)
+gen_func_body_arith_ex_one_op(mul,  fuku_assambler_arith_ex_mul,  X86_INS_MUL,  X86_EFLAGS_MODIFY_OF    | X86_EFLAGS_UNDEFINED_SF | X86_EFLAGS_UNDEFINED_ZF | X86_EFLAGS_UNDEFINED_AF | X86_EFLAGS_UNDEFINED_PF | X86_EFLAGS_MODIFY_CF)
 gen_func_body_arith_ex_one_op(idiv, fuku_assambler_arith_ex_idiv, X86_INS_IDIV, X86_EFLAGS_UNDEFINED_OF | X86_EFLAGS_UNDEFINED_SF | X86_EFLAGS_UNDEFINED_ZF | X86_EFLAGS_UNDEFINED_AF | X86_EFLAGS_UNDEFINED_PF | X86_EFLAGS_UNDEFINED_CF)
 gen_func_body_arith_ex_one_op(div,  fuku_assambler_arith_ex_div,  X86_INS_DIV,  X86_EFLAGS_UNDEFINED_OF | X86_EFLAGS_UNDEFINED_SF | X86_EFLAGS_UNDEFINED_ZF | X86_EFLAGS_UNDEFINED_AF | X86_EFLAGS_UNDEFINED_PF | X86_EFLAGS_UNDEFINED_CF)
 gen_func_body_arith_incdec(inc, fuku_assambler_arith_inc, X86_INS_INC, X86_EFLAGS_MODIFY_OF | X86_EFLAGS_MODIFY_SF | X86_EFLAGS_MODIFY_ZF | X86_EFLAGS_MODIFY_AF | X86_EFLAGS_MODIFY_PF)
@@ -582,7 +582,7 @@ gen_func_body_arith(cmp, fuku_assambler_arith_cmp, X86_INS_CMP, X86_EFLAGS_MODIF
 gen_func_body_onebyte_no_arg(daa, 0x27, X86_INS_DAA, X86_EFLAGS_UNDEFINED_OF | X86_EFLAGS_MODIFY_SF | X86_EFLAGS_MODIFY_ZF | X86_EFLAGS_MODIFY_AF | X86_EFLAGS_MODIFY_PF | X86_EFLAGS_MODIFY_CF)
 gen_func_body_onebyte_no_arg(das, 0x2F, X86_INS_DAS, X86_EFLAGS_UNDEFINED_OF | X86_EFLAGS_MODIFY_SF | X86_EFLAGS_MODIFY_ZF | X86_EFLAGS_MODIFY_AF | X86_EFLAGS_MODIFY_PF | X86_EFLAGS_MODIFY_CF)
 gen_func_body_onebyte_no_arg(aaa, 0x37, X86_INS_AAA, X86_EFLAGS_UNDEFINED_OF | X86_EFLAGS_UNDEFINED_SF | X86_EFLAGS_UNDEFINED_ZF | X86_EFLAGS_MODIFY_AF | X86_EFLAGS_UNDEFINED_PF | X86_EFLAGS_MODIFY_CF)
-gen_func_body_onebyte_no_arg(aaa, 0x3F, X86_INS_AAS, X86_EFLAGS_UNDEFINED_OF | X86_EFLAGS_UNDEFINED_SF | X86_EFLAGS_UNDEFINED_ZF | X86_EFLAGS_MODIFY_AF | X86_EFLAGS_UNDEFINED_PF | X86_EFLAGS_MODIFY_CF)
+gen_func_body_onebyte_no_arg(aas, 0x3F, X86_INS_AAS, X86_EFLAGS_UNDEFINED_OF | X86_EFLAGS_UNDEFINED_SF | X86_EFLAGS_UNDEFINED_ZF | X86_EFLAGS_MODIFY_AF | X86_EFLAGS_UNDEFINED_PF | X86_EFLAGS_MODIFY_CF)
 //AAM
 //AAD
 //Logical Instructions Instructions
