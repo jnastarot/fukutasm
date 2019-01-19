@@ -5,46 +5,49 @@
                 do not edit (please)
 ************************************************************/
 
-#define fuku_assambler_arith_add 0
-#define fuku_assambler_arith_or  1
-#define fuku_assambler_arith_adc 2
-#define fuku_assambler_arith_sbb 3
-#define fuku_assambler_arith_and 4
-#define fuku_assambler_arith_sub 5
-#define fuku_assambler_arith_xor 6
-#define fuku_assambler_arith_cmp 7
+#define fuku_internal_assambler_arith_add 0
+#define fuku_internal_assambler_arith_or  1
+#define fuku_internal_assambler_arith_adc 2
+#define fuku_internal_assambler_arith_sbb 3
+#define fuku_internal_assambler_arith_and 4
+#define fuku_internal_assambler_arith_sub 5
+#define fuku_internal_assambler_arith_xor 6
+#define fuku_internal_assambler_arith_cmp 7
 
-#define fuku_assambler_arith_ex_not  2
-#define fuku_assambler_arith_ex_neg  3
-#define fuku_assambler_arith_ex_mul  4
-#define fuku_assambler_arith_ex_imul 5
-#define fuku_assambler_arith_ex_div  6
-#define fuku_assambler_arith_ex_idiv 7
+#define fuku_internal_assambler_arith_ex_not  2
+#define fuku_internal_assambler_arith_ex_neg  3
+#define fuku_internal_assambler_arith_ex_mul  4
+#define fuku_internal_assambler_arith_ex_imul 5
+#define fuku_internal_assambler_arith_ex_div  6
+#define fuku_internal_assambler_arith_ex_idiv 7
 
-#define fuku_assambler_arith_inc 0
-#define fuku_assambler_arith_dec 1
+#define fuku_internal_assambler_arith_inc 0
+#define fuku_internal_assambler_arith_dec 1
 
-#define fuku_assambler_shift_rol 0
-#define fuku_assambler_shift_ror 1
-#define fuku_assambler_shift_rcl 2
-#define fuku_assambler_shift_rcr 3
-#define fuku_assambler_shift_shl 4
-#define fuku_assambler_shift_shr 5
-#define fuku_assambler_shift_sar 7
+#define fuku_internal_assambler_shift_rol 0
+#define fuku_internal_assambler_shift_ror 1
+#define fuku_internal_assambler_shift_rcl 2
+#define fuku_internal_assambler_shift_rcr 3
+#define fuku_internal_assambler_shift_shl 4
+#define fuku_internal_assambler_shift_shr 5
+#define fuku_internal_assambler_shift_sar 7
 
-#define fuku_assambler_bittest_bt  4
-#define fuku_assambler_bittest_bts 5
-#define fuku_assambler_bittest_btr 6
-#define fuku_assambler_bittest_btc 7
+#define fuku_internal_assambler_bittest_bt  4
+#define fuku_internal_assambler_bittest_bts 5
+#define fuku_internal_assambler_bittest_btr 6
+#define fuku_internal_assambler_bittest_btc 7
 
-#define fuku_assambler_string_out 55
-#define fuku_assambler_string_mov 82
-#define fuku_assambler_string_cmp 83
-#define fuku_assambler_string_sto 85
-#define fuku_assambler_string_lod 86
-#define fuku_assambler_string_sca 87
+#define fuku_internal_assambler_string_out 55
+#define fuku_internal_assambler_string_mov 82
+#define fuku_internal_assambler_string_cmp 83
+#define fuku_internal_assambler_string_sto 85
+#define fuku_internal_assambler_string_lod 86
+#define fuku_internal_assambler_string_sca 87
 
-#include "fuku_assambler_pattern_macro.h"
+#define fuku_internal_assambler_pop 0
+#define fuku_internal_assambler_push 6
+
+#include "fuku_internal_assambler_pattern_macro.h"
 
 static uint64_t di_fl_jcc[] = {
         X86_EFLAGS_TEST_OF , X86_EFLAGS_TEST_OF,
@@ -62,14 +65,14 @@ static uint64_t di_fl_jcc[] = {
 
 
 #define gen_func_body_onebyte_no_arg(name ,byte, cap_id, cap_eflags) \
-    fuku_asm_ret_type fuku_assambler:: _##name## () { \
+    fuku_asm_ret_type fuku_internal_assambler:: _##name## () { \
         gencleanerdata\
         emit_b(byte);\
         gen_func_return(cap_id, cap_eflags)\
     } 
 
 #define gen_func_body_twobyte_no_arg(name ,byte1,byte2, cap_id, cap_eflags) \
-    fuku_asm_ret_type fuku_assambler:: _##name## () { \
+    fuku_asm_ret_type fuku_internal_assambler:: _##name## () { \
         gencleanerdata\
         emit_b(byte1);\
         emit_b(byte2);\
@@ -77,7 +80,7 @@ static uint64_t di_fl_jcc[] = {
     } 
 
 #define gen_func_body_threebyte_no_arg(name ,byte1,byte2,byte3, cap_id, cap_eflags) \
-    fuku_asm_ret_type fuku_assambler:: _##name## () { \
+    fuku_asm_ret_type fuku_internal_assambler:: _##name## () { \
         gencleanerdata\
         emit_b(byte1);\
         emit_b(byte2);\
@@ -87,14 +90,14 @@ static uint64_t di_fl_jcc[] = {
 
 
 #define gen_func_body_ff_r(name ,type, cap_id, cap_eflags) \
-    fuku_asm_ret_type fuku_assambler:: fuku_asm_gen_name(_,name,) (fuku_register src) { \
+    fuku_asm_ret_type fuku_internal_assambler:: fuku_asm_gen_name(_,name,) (fuku_register src) { \
         gencleanerdata\
         gen_pattern32_1em_rm_idx(0xFF, src, type)\
         gen_func_return(cap_id, cap_eflags)\
     } 
 
 #define gen_func_body_ff_offset(name ,type, cap_id, cap_eflags) \
-    fuku_asm_ret_type fuku_assambler:: fuku_asm_gen_name(_,name,) (const fuku_immediate& src) { \
+    fuku_asm_ret_type fuku_internal_assambler:: fuku_asm_gen_name(_,name,) (const fuku_immediate& src) { \
         gencleanerdata\
         emit_b(type);\
         emit_immediate_dw(src);\
@@ -102,7 +105,7 @@ static uint64_t di_fl_jcc[] = {
     } 
 
 #define gen_func_body_ff_op(name ,type, cap_id, cap_eflags) \
-    fuku_asm_ret_type fuku_assambler:: fuku_asm_gen_name(_,name,) (const fuku_operand& src) { \
+    fuku_asm_ret_type fuku_internal_assambler:: fuku_asm_gen_name(_,name,) (const fuku_operand& src) { \
         gencleanerdata\
         gen_pattern32_1em_op_idx(0xFF, src, type)\
         gen_func_return(cap_id, cap_eflags)\
@@ -110,12 +113,12 @@ static uint64_t di_fl_jcc[] = {
 
 
 #define gen_func_body_arith(name ,type, cap_id, cap_eflags) \
-    fuku_asm_ret_type fuku_assambler:: fuku_asm_gen_name(_,name,_b) (fuku_register dst, fuku_register src) { \
+    fuku_asm_ret_type fuku_internal_assambler:: fuku_asm_gen_name(_,name,_b) (fuku_register dst, fuku_register src) { \
         gencleanerdata\
         gen_pattern32_1em_rm_r(8*type, dst, src)\
         gen_func_return(cap_id, cap_eflags)\
     } \
-    fuku_asm_ret_type fuku_assambler:: fuku_asm_gen_name(_,name,_b) (fuku_register dst,const fuku_immediate& src) { \
+    fuku_asm_ret_type fuku_internal_assambler:: fuku_asm_gen_name(_,name,_b) (fuku_register dst,const fuku_immediate& src) { \
         gencleanerdata\
         emit_optional_rex_32(dst);\
         if(is_used_short_eax() && dst == fuku_register::FUKU_REG_AL) {\
@@ -127,12 +130,12 @@ static uint64_t di_fl_jcc[] = {
         emit_immediate_b(src);\
         gen_func_return(cap_id, cap_eflags)\
     } \
-    fuku_asm_ret_type fuku_assambler:: fuku_asm_gen_name(_,name,_b) (fuku_register dst,const fuku_operand& src) { \
+    fuku_asm_ret_type fuku_internal_assambler:: fuku_asm_gen_name(_,name,_b) (fuku_register dst,const fuku_operand& src) { \
         gencleanerdata\
         gen_pattern32_1em_op_idx(0x02 + 8*type, src, dst)\
         gen_func_return(cap_id, cap_eflags)\
     } \
-    fuku_asm_ret_type fuku_assambler:: fuku_asm_gen_name(_,name,_b) (const fuku_operand& dst,const fuku_immediate& src) { \
+    fuku_asm_ret_type fuku_internal_assambler:: fuku_asm_gen_name(_,name,_b) (const fuku_operand& dst,const fuku_immediate& src) { \
         gencleanerdata\
         emit_optional_rex_32(dst);\
         emit_b(0x80);\
@@ -140,18 +143,18 @@ static uint64_t di_fl_jcc[] = {
         emit_immediate_b(src);\
         gen_func_return(cap_id, cap_eflags)\
     } \
-    fuku_asm_ret_type fuku_assambler:: fuku_asm_gen_name(_,name,_b) (const fuku_operand& dst, fuku_register src) { \
+    fuku_asm_ret_type fuku_internal_assambler:: fuku_asm_gen_name(_,name,_b) (const fuku_operand& dst, fuku_register src) { \
         gencleanerdata\
         gen_pattern32_1em_op_r(0x00 + 8 * type, dst, src)\
         gen_func_return(cap_id, cap_eflags)\
     } \
 \
-    fuku_asm_ret_type fuku_assambler:: fuku_asm_gen_name(_,name,_w) (fuku_register dst, fuku_register src) { \
+    fuku_asm_ret_type fuku_internal_assambler:: fuku_asm_gen_name(_,name,_w) (fuku_register dst, fuku_register src) { \
         gencleanerdata\
         gen_pattern32_1em_rm_r_word(0x01 + 8 * type, dst, src)\
         gen_func_return(cap_id, cap_eflags)\
     } \
-    fuku_asm_ret_type fuku_assambler:: fuku_asm_gen_name(_,name,_w) (fuku_register dst,const fuku_immediate& src) { \
+    fuku_asm_ret_type fuku_internal_assambler:: fuku_asm_gen_name(_,name,_w) (fuku_register dst,const fuku_immediate& src) { \
         gencleanerdata\
         emit_b(FUKU_PREFIX_OVERRIDE_DATA);\
         emit_optional_rex_32(dst);\
@@ -171,17 +174,17 @@ static uint64_t di_fl_jcc[] = {
         }\
         gen_func_return(cap_id, cap_eflags)\
     } \
-    fuku_asm_ret_type fuku_assambler:: fuku_asm_gen_name(_,name,_w) (fuku_register dst,const fuku_operand& src) { \
+    fuku_asm_ret_type fuku_internal_assambler:: fuku_asm_gen_name(_,name,_w) (fuku_register dst,const fuku_operand& src) { \
         gencleanerdata\
         gen_pattern32_1em_op_r_word(0x03 + 8*type, src, dst)\
         gen_func_return(cap_id, cap_eflags)\
     } \
-    fuku_asm_ret_type fuku_assambler:: fuku_asm_gen_name(_,name,_w) (const fuku_operand& dst, fuku_register src) { \
+    fuku_asm_ret_type fuku_internal_assambler:: fuku_asm_gen_name(_,name,_w) (const fuku_operand& dst, fuku_register src) { \
         gencleanerdata\
         gen_pattern32_1em_op_r_word(0x01 + 8*type, dst, src)\
         gen_func_return(cap_id, cap_eflags)\
     } \
-    fuku_asm_ret_type fuku_assambler:: fuku_asm_gen_name(_,name,_w) (const fuku_operand& dst,const fuku_immediate& src) { \
+    fuku_asm_ret_type fuku_internal_assambler:: fuku_asm_gen_name(_,name,_w) (const fuku_operand& dst,const fuku_immediate& src) { \
         gencleanerdata\
         emit_b(FUKU_PREFIX_OVERRIDE_DATA);\
         emit_optional_rex_32(dst);\
@@ -197,12 +200,12 @@ static uint64_t di_fl_jcc[] = {
         gen_func_return(cap_id, cap_eflags)\
     } \
 \
-    fuku_asm_ret_type fuku_assambler:: fuku_asm_gen_name(_,name,_dw) (fuku_register dst, fuku_register src) { \
+    fuku_asm_ret_type fuku_internal_assambler:: fuku_asm_gen_name(_,name,_dw) (fuku_register dst, fuku_register src) { \
         gencleanerdata\
         gen_pattern32_1em_rm_r(0x01 + 8*type, dst, src)\
         gen_func_return(cap_id, cap_eflags)\
     } \
-    fuku_asm_ret_type fuku_assambler:: fuku_asm_gen_name(_,name,_dw) (fuku_register dst,const fuku_immediate& src) { \
+    fuku_asm_ret_type fuku_internal_assambler:: fuku_asm_gen_name(_,name,_dw) (fuku_register dst,const fuku_immediate& src) { \
         gencleanerdata\
          emit_optional_rex_32(dst);\
          if(is_used_short_eax() && dst == fuku_register::FUKU_REG_EAX) {\
@@ -221,17 +224,17 @@ static uint64_t di_fl_jcc[] = {
         }\
         gen_func_return(cap_id, cap_eflags)\
     } \
-    fuku_asm_ret_type fuku_assambler:: fuku_asm_gen_name(_,name,_dw) (fuku_register dst,const fuku_operand& src) { \
+    fuku_asm_ret_type fuku_internal_assambler:: fuku_asm_gen_name(_,name,_dw) (fuku_register dst,const fuku_operand& src) { \
         gencleanerdata\
         gen_pattern32_1em_op_r(0x03 + 8*type, src, dst)\
         gen_func_return(cap_id, cap_eflags)\
     } \
-    fuku_asm_ret_type fuku_assambler:: fuku_asm_gen_name(_,name,_dw) (const fuku_operand& dst, fuku_register src) { \
+    fuku_asm_ret_type fuku_internal_assambler:: fuku_asm_gen_name(_,name,_dw) (const fuku_operand& dst, fuku_register src) { \
         gencleanerdata\
         gen_pattern32_1em_op_r(0x01 + 8*type, dst, src)\
         gen_func_return(cap_id, cap_eflags)\
     } \
-    fuku_asm_ret_type fuku_assambler:: fuku_asm_gen_name(_,name,_dw) (const fuku_operand& dst,const fuku_immediate& src) { \
+    fuku_asm_ret_type fuku_internal_assambler:: fuku_asm_gen_name(_,name,_dw) (const fuku_operand& dst,const fuku_immediate& src) { \
         gencleanerdata\
         emit_optional_rex_32(dst);\
          if (is_used_short_imm() && src.is_8()) {\
@@ -246,12 +249,12 @@ static uint64_t di_fl_jcc[] = {
         gen_func_return(cap_id, cap_eflags)\
     } \
 \
-    fuku_asm_ret_type fuku_assambler:: fuku_asm_gen_name(_,name,_qw) (fuku_register dst, fuku_register src) { \
+    fuku_asm_ret_type fuku_internal_assambler:: fuku_asm_gen_name(_,name,_qw) (fuku_register dst, fuku_register src) { \
         gencleanerdata\
         gen_pattern64_1em_rm_r(0x01 + 8*type, dst, src)\
         gen_func_return(cap_id, cap_eflags)\
     } \
-    fuku_asm_ret_type fuku_assambler:: fuku_asm_gen_name(_,name,_qw) (fuku_register dst,const fuku_immediate& src) { \
+    fuku_asm_ret_type fuku_internal_assambler:: fuku_asm_gen_name(_,name,_qw) (fuku_register dst,const fuku_immediate& src) { \
         gencleanerdata\
          emit_rex_64(dst); \
          if(is_used_short_eax() && dst == fuku_register::FUKU_REG_RAX) {\
@@ -270,17 +273,17 @@ static uint64_t di_fl_jcc[] = {
         }\
         gen_func_return(cap_id, cap_eflags)\
     } \
-    fuku_asm_ret_type fuku_assambler:: fuku_asm_gen_name(_,name,_qw) (fuku_register dst,const fuku_operand& src) { \
+    fuku_asm_ret_type fuku_internal_assambler:: fuku_asm_gen_name(_,name,_qw) (fuku_register dst,const fuku_operand& src) { \
         gencleanerdata\
         gen_pattern64_1em_op_r(0x03 + 8*type, src, dst)\
         gen_func_return(cap_id, cap_eflags)\
     } \
-    fuku_asm_ret_type fuku_assambler:: fuku_asm_gen_name(_,name,_qw) (const fuku_operand& dst, fuku_register src) { \
+    fuku_asm_ret_type fuku_internal_assambler:: fuku_asm_gen_name(_,name,_qw) (const fuku_operand& dst, fuku_register src) { \
         gencleanerdata\
         gen_pattern64_1em_op_r(0x01 + 8*type, dst, src)\
         gen_func_return(cap_id, cap_eflags)\
     } \
-    fuku_asm_ret_type fuku_assambler:: fuku_asm_gen_name(_,name,_qw) (const fuku_operand& dst,const fuku_immediate& src) { \
+    fuku_asm_ret_type fuku_internal_assambler:: fuku_asm_gen_name(_,name,_qw) (const fuku_operand& dst,const fuku_immediate& src) { \
         gencleanerdata\
          emit_rex_64(dst); \
          if (is_used_short_imm() && src.is_8()) {\
@@ -296,107 +299,107 @@ static uint64_t di_fl_jcc[] = {
     } 
 
 #define gen_func_body_arith_ex_one_op(name ,type, cap_id, cap_eflags) \
-    fuku_asm_ret_type fuku_assambler:: fuku_asm_gen_name(_,name,_b) (fuku_register src) { \
+    fuku_asm_ret_type fuku_internal_assambler:: fuku_asm_gen_name(_,name,_b) (fuku_register src) { \
         gencleanerdata\
         gen_pattern32_1em_rm_idx(0xF6, src, type)\
         gen_func_return(cap_id, cap_eflags)\
     } \
-    fuku_asm_ret_type fuku_assambler:: fuku_asm_gen_name(_,name,_b) (const fuku_operand& src) { \
+    fuku_asm_ret_type fuku_internal_assambler:: fuku_asm_gen_name(_,name,_b) (const fuku_operand& src) { \
         gencleanerdata\
         gen_pattern32_1em_op_idx(0xF6, src, type)\
         gen_func_return(cap_id, cap_eflags)\
     } \
 \
-    fuku_asm_ret_type fuku_assambler:: fuku_asm_gen_name(_,name,_w) (fuku_register src) { \
+    fuku_asm_ret_type fuku_internal_assambler:: fuku_asm_gen_name(_,name,_w) (fuku_register src) { \
         gencleanerdata\
         gen_pattern32_1em_rm_idx_word(0xF7, src, type)\
         gen_func_return(cap_id, cap_eflags)\
     } \
-    fuku_asm_ret_type fuku_assambler:: fuku_asm_gen_name(_,name,_w) (const fuku_operand& src) { \
+    fuku_asm_ret_type fuku_internal_assambler:: fuku_asm_gen_name(_,name,_w) (const fuku_operand& src) { \
         gencleanerdata\
         gen_pattern32_1em_op_idx_word(0xF7, src, type)\
         gen_func_return(cap_id, cap_eflags)\
     } \
 \
-    fuku_asm_ret_type fuku_assambler:: fuku_asm_gen_name(_,name,_dw) (fuku_register src) { \
+    fuku_asm_ret_type fuku_internal_assambler:: fuku_asm_gen_name(_,name,_dw) (fuku_register src) { \
         gencleanerdata\
         gen_pattern32_1em_rm_idx(0xF7, src, type)\
         gen_func_return(cap_id, cap_eflags)\
     } \
-    fuku_asm_ret_type fuku_assambler:: fuku_asm_gen_name(_,name,_dw) (const fuku_operand& src) { \
+    fuku_asm_ret_type fuku_internal_assambler:: fuku_asm_gen_name(_,name,_dw) (const fuku_operand& src) { \
         gencleanerdata\
         gen_pattern32_1em_op_idx(0xF7, src, type)\
         gen_func_return(cap_id, cap_eflags)\
     } \
 \
-    fuku_asm_ret_type fuku_assambler:: fuku_asm_gen_name(_,name,_qw) (fuku_register src) { \
+    fuku_asm_ret_type fuku_internal_assambler:: fuku_asm_gen_name(_,name,_qw) (fuku_register src) { \
         gencleanerdata\
         gen_pattern64_1em_rm_idx(0xF7, src, type)\
         gen_func_return(cap_id, cap_eflags)\
     } \
-    fuku_asm_ret_type fuku_assambler:: fuku_asm_gen_name(_,name,_qw) (const fuku_operand& src) { \
+    fuku_asm_ret_type fuku_internal_assambler:: fuku_asm_gen_name(_,name,_qw) (const fuku_operand& src) { \
         gencleanerdata\
         gen_pattern64_1em_op_idx(0xF7, src, type)\
         gen_func_return(cap_id, cap_eflags)\
     } 
 
 #define gen_func_body_arith_incdec(name ,type, cap_id, cap_eflags) \
-    fuku_asm_ret_type fuku_assambler:: fuku_asm_gen_name(_,name,_b) (fuku_register src) { \
+    fuku_asm_ret_type fuku_internal_assambler:: fuku_asm_gen_name(_,name,_b) (fuku_register src) { \
         gencleanerdata\
         gen_pattern32_1em_rm_idx(0xFE, src, type)\
         gen_func_return(cap_id, cap_eflags)\
     } \
-    fuku_asm_ret_type fuku_assambler:: fuku_asm_gen_name(_,name,_b) (const fuku_operand& src) { \
+    fuku_asm_ret_type fuku_internal_assambler:: fuku_asm_gen_name(_,name,_b) (const fuku_operand& src) { \
         gencleanerdata\
         gen_pattern32_1em_op_idx(0xFE, src, type)\
         gen_func_return(cap_id, cap_eflags)\
     } \
 \
-    fuku_asm_ret_type fuku_assambler:: fuku_asm_gen_name(_,name,_w) (fuku_register src) { \
+    fuku_asm_ret_type fuku_internal_assambler:: fuku_asm_gen_name(_,name,_w) (fuku_register src) { \
         gencleanerdata\
         gen_pattern32_1em_rm_idx_word(0xFF, src, type)\
         gen_func_return(cap_id, cap_eflags)\
     } \
-    fuku_asm_ret_type fuku_assambler:: fuku_asm_gen_name(_,name,_w) (const fuku_operand& src) { \
+    fuku_asm_ret_type fuku_internal_assambler:: fuku_asm_gen_name(_,name,_w) (const fuku_operand& src) { \
         gencleanerdata\
         gen_pattern32_1em_op_idx_word(0xFF, src, type)\
         gen_func_return(cap_id, cap_eflags)\
     } \
 \
-    fuku_asm_ret_type fuku_assambler:: fuku_asm_gen_name(_,name,_dw) (fuku_register src) { \
+    fuku_asm_ret_type fuku_internal_assambler:: fuku_asm_gen_name(_,name,_dw) (fuku_register src) { \
         gencleanerdata\
         gen_pattern32_1em_rm_idx(0xFF, src, type)\
         gen_func_return(cap_id, cap_eflags)\
     } \
-    fuku_asm_ret_type fuku_assambler:: fuku_asm_gen_name(_,name,_dw) (const fuku_operand& src) { \
+    fuku_asm_ret_type fuku_internal_assambler:: fuku_asm_gen_name(_,name,_dw) (const fuku_operand& src) { \
         gencleanerdata\
         gen_pattern32_1em_op_idx(0xFF, src, type)\
         gen_func_return(cap_id, cap_eflags)\
     } \
 \
-    fuku_asm_ret_type fuku_assambler:: fuku_asm_gen_name(_,name,_qw) (fuku_register src) {\
+    fuku_asm_ret_type fuku_internal_assambler:: fuku_asm_gen_name(_,name,_qw) (fuku_register src) {\
         gencleanerdata\
         gen_pattern64_1em_rm_idx(0xFF, src, type)\
         gen_func_return(cap_id, cap_eflags)\
     } \
-    fuku_asm_ret_type fuku_assambler:: fuku_asm_gen_name(_,name,_qw) (const fuku_operand& src) {  \
+    fuku_asm_ret_type fuku_internal_assambler:: fuku_asm_gen_name(_,name,_qw) (const fuku_operand& src) {  \
         gencleanerdata\
         gen_pattern64_1em_op_idx(0xFF, src, type)\
         gen_func_return(cap_id, cap_eflags)\
     }
 
 #define gen_func_body_shift(name ,type, cap_id, cap_eflags) \
-     fuku_asm_ret_type fuku_assambler:: fuku_asm_gen_name(_,name,_cl_b)(fuku_register dst) {\
+     fuku_asm_ret_type fuku_internal_assambler:: fuku_asm_gen_name(_,name,_cl_b)(fuku_register dst) {\
        gencleanerdata\
        gen_pattern32_1em_rm_idx(0xD2, dst, type)\
        gen_func_return(cap_id, cap_eflags)\
      } \
-     fuku_asm_ret_type fuku_assambler:: fuku_asm_gen_name(_,name,_cl_b)(const fuku_operand& dst) {\
+     fuku_asm_ret_type fuku_internal_assambler:: fuku_asm_gen_name(_,name,_cl_b)(const fuku_operand& dst) {\
        gencleanerdata\
        gen_pattern32_1em_op_idx(0xD2, dst, type)\
        gen_func_return(cap_id, cap_eflags)\
      } \
-      fuku_asm_ret_type fuku_assambler:: fuku_asm_gen_name(_,name,_b)(fuku_register dst, const fuku_immediate& src) {\
+      fuku_asm_ret_type fuku_internal_assambler:: fuku_asm_gen_name(_,name,_b)(fuku_register dst, const fuku_immediate& src) {\
        gencleanerdata\
        emit_optional_rex_32(dst);\
        if(is_used_short_imm() && src.get_immediate8() == 1) {\
@@ -409,7 +412,7 @@ static uint64_t di_fl_jcc[] = {
        }\
        gen_func_return(cap_id, cap_eflags)\
      } \
-      fuku_asm_ret_type fuku_assambler:: fuku_asm_gen_name(_,name,_b)(const fuku_operand& dst, const fuku_immediate& src) {\
+      fuku_asm_ret_type fuku_internal_assambler:: fuku_asm_gen_name(_,name,_b)(const fuku_operand& dst, const fuku_immediate& src) {\
        gencleanerdata\
        emit_optional_rex_32(dst);\
        if(is_used_short_imm() && src.get_immediate8() == 1) {\
@@ -423,17 +426,17 @@ static uint64_t di_fl_jcc[] = {
        gen_func_return(cap_id, cap_eflags)\
      } \
 \
-      fuku_asm_ret_type fuku_assambler:: fuku_asm_gen_name(_,name,_cl_w)(fuku_register dst) {\
+      fuku_asm_ret_type fuku_internal_assambler:: fuku_asm_gen_name(_,name,_cl_w)(fuku_register dst) {\
        gencleanerdata\
        gen_pattern32_1em_rm_idx_word(0xD3, dst, type)\
        gen_func_return(cap_id, cap_eflags)\
      } \
-     fuku_asm_ret_type fuku_assambler:: fuku_asm_gen_name(_,name,_cl_w)(const fuku_operand& dst) {\
+     fuku_asm_ret_type fuku_internal_assambler:: fuku_asm_gen_name(_,name,_cl_w)(const fuku_operand& dst) {\
        gencleanerdata\
        gen_pattern32_1em_op_idx_word(0xD3, dst, type)\
        gen_func_return(cap_id, cap_eflags)\
      } \
-      fuku_asm_ret_type fuku_assambler:: fuku_asm_gen_name(_,name,_w)(fuku_register dst, const fuku_immediate& src) {\
+      fuku_asm_ret_type fuku_internal_assambler:: fuku_asm_gen_name(_,name,_w)(fuku_register dst, const fuku_immediate& src) {\
        gencleanerdata\
        emit_b(FUKU_PREFIX_OVERRIDE_DATA);\
        emit_optional_rex_32(dst);\
@@ -447,7 +450,7 @@ static uint64_t di_fl_jcc[] = {
        }\
        gen_func_return(cap_id, cap_eflags)\
      } \
-      fuku_asm_ret_type fuku_assambler:: fuku_asm_gen_name(_,name,_w)(const fuku_operand& dst, const fuku_immediate& src) {\
+      fuku_asm_ret_type fuku_internal_assambler:: fuku_asm_gen_name(_,name,_w)(const fuku_operand& dst, const fuku_immediate& src) {\
        gencleanerdata\
        emit_b(FUKU_PREFIX_OVERRIDE_DATA);\
        emit_optional_rex_32(dst);\
@@ -462,17 +465,17 @@ static uint64_t di_fl_jcc[] = {
        gen_func_return(cap_id, cap_eflags)\
      } \
 \
-    fuku_asm_ret_type fuku_assambler:: fuku_asm_gen_name(_,name,_cl_dw)(fuku_register dst) {\
+    fuku_asm_ret_type fuku_internal_assambler:: fuku_asm_gen_name(_,name,_cl_dw)(fuku_register dst) {\
        gencleanerdata\
        gen_pattern32_1em_rm_idx(0xD3, dst, type)\
        gen_func_return(cap_id, cap_eflags)\
      } \
-     fuku_asm_ret_type fuku_assambler:: fuku_asm_gen_name(_,name,_cl_dw)(const fuku_operand& dst) {\
+     fuku_asm_ret_type fuku_internal_assambler:: fuku_asm_gen_name(_,name,_cl_dw)(const fuku_operand& dst) {\
        gencleanerdata\
        gen_pattern32_1em_op_idx(0xD3, dst, type)\
        gen_func_return(cap_id, cap_eflags)\
      } \
-      fuku_asm_ret_type fuku_assambler:: fuku_asm_gen_name(_,name,_dw)(fuku_register dst, const fuku_immediate& src) {\
+      fuku_asm_ret_type fuku_internal_assambler:: fuku_asm_gen_name(_,name,_dw)(fuku_register dst, const fuku_immediate& src) {\
        gencleanerdata\
        emit_optional_rex_32(dst);\
        if(is_used_short_imm() && src.get_immediate8() == 1) {\
@@ -485,7 +488,7 @@ static uint64_t di_fl_jcc[] = {
        }\
        gen_func_return(cap_id, cap_eflags)\
      } \
-      fuku_asm_ret_type fuku_assambler:: fuku_asm_gen_name(_,name,_dw)(const fuku_operand& dst, const fuku_immediate& src) {\
+      fuku_asm_ret_type fuku_internal_assambler:: fuku_asm_gen_name(_,name,_dw)(const fuku_operand& dst, const fuku_immediate& src) {\
        gencleanerdata\
        emit_optional_rex_32(dst);\
        if(is_used_short_imm() && src.get_immediate8() == 1) {\
@@ -499,17 +502,17 @@ static uint64_t di_fl_jcc[] = {
        gen_func_return(cap_id, cap_eflags)\
      } \
 \
-    fuku_asm_ret_type fuku_assambler:: fuku_asm_gen_name(_,name,_cl_qw)(fuku_register dst) {\
+    fuku_asm_ret_type fuku_internal_assambler:: fuku_asm_gen_name(_,name,_cl_qw)(fuku_register dst) {\
        gencleanerdata\
        gen_pattern64_1em_rm_idx(0xD3, dst, type)\
        gen_func_return(cap_id, cap_eflags)\
      } \
-     fuku_asm_ret_type fuku_assambler:: fuku_asm_gen_name(_,name,_cl_qw)(const fuku_operand& dst) {\
+     fuku_asm_ret_type fuku_internal_assambler:: fuku_asm_gen_name(_,name,_cl_qw)(const fuku_operand& dst) {\
        gencleanerdata\
        gen_pattern64_1em_op_idx(0xD3, dst, type)\
        gen_func_return(cap_id, cap_eflags)\
      } \
-      fuku_asm_ret_type fuku_assambler:: fuku_asm_gen_name(_,name,_qw)(fuku_register dst, const fuku_immediate& src) {\
+      fuku_asm_ret_type fuku_internal_assambler:: fuku_asm_gen_name(_,name,_qw)(fuku_register dst, const fuku_immediate& src) {\
        gencleanerdata\
        emit_rex_64(dst);\
        if(is_used_short_imm() && src.get_immediate8() == 1) {\
@@ -522,7 +525,7 @@ static uint64_t di_fl_jcc[] = {
        }\
        gen_func_return(cap_id, cap_eflags)\
      } \
-      fuku_asm_ret_type fuku_assambler:: fuku_asm_gen_name(_,name,_qw)(const fuku_operand& dst, const fuku_immediate& src) {\
+      fuku_asm_ret_type fuku_internal_assambler:: fuku_asm_gen_name(_,name,_qw)(const fuku_operand& dst, const fuku_immediate& src) {\
        gencleanerdata\
        emit_rex_64(dst);\
        if(is_used_short_imm() && src.get_immediate8() == 1) {\
@@ -537,7 +540,7 @@ static uint64_t di_fl_jcc[] = {
      } 
 
 #define gen_func_body_bit(name ,type, cap_id, cap_eflags) \
-    fuku_asm_ret_type fuku_assambler:: fuku_asm_gen_name(_,name,_w) (fuku_register dst, fuku_register src) { \
+    fuku_asm_ret_type fuku_internal_assambler:: fuku_asm_gen_name(_,name,_w) (fuku_register dst, fuku_register src) { \
         gencleanerdata\
         emit_b(FUKU_PREFIX_OVERRIDE_DATA);\
         emit_optional_rex_32(dst, src);\
@@ -547,7 +550,7 @@ static uint64_t di_fl_jcc[] = {
         gen_pattern32_2em_rm_r_word(0x0F, 0x83 + 8*type, dst, src)\
         gen_func_return(cap_id, cap_eflags)\
     } \
-    fuku_asm_ret_type fuku_assambler:: fuku_asm_gen_name(_,name,_w) (fuku_register dst,const fuku_immediate& src) { \
+    fuku_asm_ret_type fuku_internal_assambler:: fuku_asm_gen_name(_,name,_w) (fuku_register dst,const fuku_immediate& src) { \
         gencleanerdata\
         emit_b(FUKU_PREFIX_OVERRIDE_DATA);\
         emit_optional_rex_32(dst);\
@@ -557,12 +560,12 @@ static uint64_t di_fl_jcc[] = {
         emit_immediate_b(src);\
         gen_func_return(cap_id, cap_eflags)\
     } \
-    fuku_asm_ret_type fuku_assambler:: fuku_asm_gen_name(_,name,_w) (const fuku_operand& dst, fuku_register src) { \
+    fuku_asm_ret_type fuku_internal_assambler:: fuku_asm_gen_name(_,name,_w) (const fuku_operand& dst, fuku_register src) { \
         gencleanerdata\
         gen_pattern32_2em_op_r_word(0x0F, 0x83 + 8*type, dst, src)\
         gen_func_return(cap_id, cap_eflags)\
     } \
-    fuku_asm_ret_type fuku_assambler:: fuku_asm_gen_name(_,name,_w) (const fuku_operand& dst,const fuku_immediate& src) { \
+    fuku_asm_ret_type fuku_internal_assambler:: fuku_asm_gen_name(_,name,_w) (const fuku_operand& dst,const fuku_immediate& src) { \
         gencleanerdata\
         emit_b(FUKU_PREFIX_OVERRIDE_DATA);\
         emit_optional_rex_32(dst);\
@@ -573,12 +576,12 @@ static uint64_t di_fl_jcc[] = {
         gen_func_return(cap_id, cap_eflags)\
     } \
 \
-    fuku_asm_ret_type fuku_assambler:: fuku_asm_gen_name(_,name,_dw) (fuku_register dst, fuku_register src) { \
+    fuku_asm_ret_type fuku_internal_assambler:: fuku_asm_gen_name(_,name,_dw) (fuku_register dst, fuku_register src) { \
         gencleanerdata\
         gen_pattern32_2em_rm_r(0x0F, 0x83 + 8*type, dst, src)\
         gen_func_return(cap_id, cap_eflags)\
     } \
-    fuku_asm_ret_type fuku_assambler:: fuku_asm_gen_name(_,name,_dw) (fuku_register dst,const fuku_immediate& src) { \
+    fuku_asm_ret_type fuku_internal_assambler:: fuku_asm_gen_name(_,name,_dw) (fuku_register dst,const fuku_immediate& src) { \
         gencleanerdata\
         emit_optional_rex_32(dst);\
         emit_b(0x0F);\
@@ -587,12 +590,12 @@ static uint64_t di_fl_jcc[] = {
         emit_immediate_b(src);\
         gen_func_return(cap_id, cap_eflags)\
     } \
-    fuku_asm_ret_type fuku_assambler:: fuku_asm_gen_name(_,name,_dw) (const fuku_operand& dst, fuku_register src) { \
+    fuku_asm_ret_type fuku_internal_assambler:: fuku_asm_gen_name(_,name,_dw) (const fuku_operand& dst, fuku_register src) { \
         gencleanerdata\
         gen_pattern32_2em_op_r(0x0F, 0x83 + 8*type, dst, src)\
         gen_func_return(cap_id, cap_eflags)\
     } \
-    fuku_asm_ret_type fuku_assambler:: fuku_asm_gen_name(_,name,_dw) (const fuku_operand& dst,const fuku_immediate& src) { \
+    fuku_asm_ret_type fuku_internal_assambler:: fuku_asm_gen_name(_,name,_dw) (const fuku_operand& dst,const fuku_immediate& src) { \
         gencleanerdata\
         emit_optional_rex_32(dst);\
         emit_b(0x0F);\
@@ -602,12 +605,12 @@ static uint64_t di_fl_jcc[] = {
         gen_func_return(cap_id, cap_eflags)\
     } \
 \
-    fuku_asm_ret_type fuku_assambler:: fuku_asm_gen_name(_,name,_qw) (fuku_register dst, fuku_register src) { \
+    fuku_asm_ret_type fuku_internal_assambler:: fuku_asm_gen_name(_,name,_qw) (fuku_register dst, fuku_register src) { \
         gencleanerdata\
         gen_pattern64_2em_rm_r(0x0F, 0x83 + 8*type, dst, src)\
         gen_func_return(cap_id, cap_eflags)\
     } \
-    fuku_asm_ret_type fuku_assambler:: fuku_asm_gen_name(_,name,_qw) (fuku_register dst,const fuku_immediate& src) { \
+    fuku_asm_ret_type fuku_internal_assambler:: fuku_asm_gen_name(_,name,_qw) (fuku_register dst,const fuku_immediate& src) { \
         gencleanerdata\
         emit_rex_64(dst);\
         emit_b(0x0F);\
@@ -616,12 +619,12 @@ static uint64_t di_fl_jcc[] = {
         emit_immediate_b(src);\
         gen_func_return(cap_id, cap_eflags)\
     } \
-    fuku_asm_ret_type fuku_assambler:: fuku_asm_gen_name(_,name,_qw) (const fuku_operand& dst, fuku_register src) { \
+    fuku_asm_ret_type fuku_internal_assambler:: fuku_asm_gen_name(_,name,_qw) (const fuku_operand& dst, fuku_register src) { \
         gencleanerdata\
         gen_pattern64_2em_op_r(0x0F, 0x83 + 8*type, dst, src)\
         gen_func_return(cap_id, cap_eflags)\
     } \
-    fuku_asm_ret_type fuku_assambler:: fuku_asm_gen_name(_,name,_qw) (const fuku_operand& dst,const fuku_immediate& src) { \
+    fuku_asm_ret_type fuku_internal_assambler:: fuku_asm_gen_name(_,name,_qw) (const fuku_operand& dst,const fuku_immediate& src) { \
         gencleanerdata\
         emit_rex_64(dst);\
         emit_b(0x0F);\
@@ -633,23 +636,23 @@ static uint64_t di_fl_jcc[] = {
 
 
 #define gen_func_body_string_inst(name ,type, cap_idMASK, cap_eflags)\
-    fuku_asm_ret_type fuku_assambler:: fuku_asm_gen_name(_,name,b) () { \
+    fuku_asm_ret_type fuku_internal_assambler:: fuku_asm_gen_name(_,name,b) () { \
         gencleanerdata\
         emit_b(type*2);\
         gen_func_return(fuku_asm_gen_name(,cap_idMASK,B), cap_eflags)\
     }\
-    fuku_asm_ret_type fuku_assambler:: fuku_asm_gen_name(_,name,w) () { \
+    fuku_asm_ret_type fuku_internal_assambler:: fuku_asm_gen_name(_,name,w) () { \
         gencleanerdata\
         emit_b(FUKU_PREFIX_OVERRIDE_DATA);\
         emit_b(type*2 + 1);\
         gen_func_return(fuku_asm_gen_name(,cap_idMASK,W), cap_eflags)\
     }\
-    fuku_asm_ret_type fuku_assambler:: fuku_asm_gen_name(_,name,d) () { \
+    fuku_asm_ret_type fuku_internal_assambler:: fuku_asm_gen_name(_,name,d) () { \
         gencleanerdata\
         emit_b(type*2 + 1);\
         gen_func_return(fuku_asm_gen_name(,cap_idMASK,D), cap_eflags)\
     }\
-    fuku_asm_ret_type fuku_assambler:: fuku_asm_gen_name(_,name,q) () { \
+    fuku_asm_ret_type fuku_internal_assambler:: fuku_asm_gen_name(_,name,q) () { \
         gencleanerdata\
         emit_rex_64();\
         emit_b(type*2 + 1);\
@@ -657,71 +660,71 @@ static uint64_t di_fl_jcc[] = {
     }
 
 #define gen_func_body_string_inst_withoutq(name ,type, cap_idMASK, cap_eflags)\
-    fuku_asm_ret_type fuku_assambler:: fuku_asm_gen_name(_,name,b) () { \
+    fuku_asm_ret_type fuku_internal_assambler:: fuku_asm_gen_name(_,name,b) () { \
         gencleanerdata\
         emit_b(type*2);\
         gen_func_return(fuku_asm_gen_name(,cap_idMASK,B), cap_eflags)\
     }\
-    fuku_asm_ret_type fuku_assambler:: fuku_asm_gen_name(_,name,w) () { \
+    fuku_asm_ret_type fuku_internal_assambler:: fuku_asm_gen_name(_,name,w) () { \
         gencleanerdata\
         emit_b(FUKU_PREFIX_OVERRIDE_DATA);\
         emit_b(type*2 + 1);\
         gen_func_return(fuku_asm_gen_name(,cap_idMASK,W), cap_eflags)\
     }\
-    fuku_asm_ret_type fuku_assambler:: fuku_asm_gen_name(_,name,d) () { \
+    fuku_asm_ret_type fuku_internal_assambler:: fuku_asm_gen_name(_,name,d) () { \
         gencleanerdata\
         emit_b(type*2 + 1);\
         gen_func_return(fuku_asm_gen_name(,cap_idMASK,D), cap_eflags)\
     }
     
 #define gen_func_body_movxx(name ,type, cap_id)\
-    fuku_asm_ret_type fuku_assambler:: fuku_asm_gen_name(_,name,_byte_w) (fuku_register dst, fuku_register src) {\
+    fuku_asm_ret_type fuku_internal_assambler:: fuku_asm_gen_name(_,name,_byte_w) (fuku_register src, fuku_register dst) {\
         gencleanerdata\
         gen_pattern32_2em_rm_r_word(0x0F,type, dst, src);\
         gen_func_return(cap_id, 0)\
     }\
-    fuku_asm_ret_type fuku_assambler::fuku_asm_gen_name(_,name,_byte_w)(const fuku_operand& dst, fuku_register src) {\
+    fuku_asm_ret_type fuku_internal_assambler::fuku_asm_gen_name(_,name,_byte_w)(fuku_register src, const fuku_operand& dst) {\
         gencleanerdata\
         gen_pattern32_2em_op_r_word(0x0F,type, dst, src);\
         gen_func_return(cap_id, 0)\
     }\
-    fuku_asm_ret_type fuku_assambler::fuku_asm_gen_name(_,name,_byte_dw)(fuku_register dst, fuku_register src) {\
+    fuku_asm_ret_type fuku_internal_assambler::fuku_asm_gen_name(_,name,_byte_dw)(fuku_register src, fuku_register dst) {\
         gencleanerdata\
         gen_pattern32_2em_rm_r(0x0F,type, dst, src);\
         gen_func_return(cap_id, 0)\
     }\
-    fuku_asm_ret_type fuku_assambler::fuku_asm_gen_name(_,name,_byte_dw)(const fuku_operand& dst, fuku_register src) {\
+    fuku_asm_ret_type fuku_internal_assambler::fuku_asm_gen_name(_,name,_byte_dw)(fuku_register src, const fuku_operand& dst) {\
         gencleanerdata\
         gen_pattern32_2em_op_r(0x0F,type, dst, src);\
         gen_func_return(cap_id, 0)\
     }\
-    fuku_asm_ret_type fuku_assambler::fuku_asm_gen_name(_,name,_byte_qw)(fuku_register dst, fuku_register src) {\
+    fuku_asm_ret_type fuku_internal_assambler::fuku_asm_gen_name(_,name,_byte_qw)(fuku_register src, fuku_register dst) {\
         gencleanerdata\
         gen_pattern64_2em_rm_r(0x0F,type, dst, src);\
         gen_func_return(cap_id, 0)\
     }\
-    fuku_asm_ret_type fuku_assambler::fuku_asm_gen_name(_,name,_byte_qw)(const fuku_operand& dst, fuku_register src) {\
+    fuku_asm_ret_type fuku_internal_assambler::fuku_asm_gen_name(_,name,_byte_qw)(fuku_register src, const fuku_operand& dst) {\
         gencleanerdata\
         gen_pattern64_2em_op_r(0x0F,type, dst, src);\
         gen_func_return(cap_id, 0)\
     }\
 \
-    fuku_asm_ret_type fuku_assambler::fuku_asm_gen_name(_,name,_word_dw)(fuku_register dst, fuku_register src) {\
+    fuku_asm_ret_type fuku_internal_assambler::fuku_asm_gen_name(_,name,_word_dw)(fuku_register src, fuku_register dst) {\
         gencleanerdata\
         gen_pattern32_2em_rm_r(0x0F,type + 1, dst, src);\
         gen_func_return(cap_id, 0)\
     }\
-    fuku_asm_ret_type fuku_assambler::fuku_asm_gen_name(_,name,_word_dw)(const fuku_operand& dst, fuku_register src) {\
+    fuku_asm_ret_type fuku_internal_assambler::fuku_asm_gen_name(_,name,_word_dw)(fuku_register src, const fuku_operand& dst) {\
         gencleanerdata\
         gen_pattern32_2em_op_r(0x0F,type + 1, dst, src);\
         gen_func_return(cap_id, 0)\
     }\
-    fuku_asm_ret_type fuku_assambler::fuku_asm_gen_name(_,name,_word_qw)(fuku_register dst, fuku_register src) {\
+    fuku_asm_ret_type fuku_internal_assambler::fuku_asm_gen_name(_,name,_word_qw)(fuku_register src, fuku_register dst) {\
         gencleanerdata\
         gen_pattern64_2em_rm_r(0x0F,type + 1, dst, src);\
         gen_func_return(cap_id, 0)\
     }\
-    fuku_asm_ret_type fuku_assambler::fuku_asm_gen_name(_,name,_word_qw)(const fuku_operand& dst, fuku_register src) {\
+    fuku_asm_ret_type fuku_internal_assambler::fuku_asm_gen_name(_,name,_word_qw)(fuku_register src, const fuku_operand& dst) {\
         gencleanerdata\
         gen_pattern64_2em_op_r(0x0F,type + 1, dst, src);\
         gen_func_return(cap_id, 0)\

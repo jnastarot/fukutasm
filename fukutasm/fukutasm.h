@@ -241,6 +241,7 @@ enum fuku_asm_short_cfg {
 };
 
 
+
 /*
 	EAX = 0 ECX = 1 r_EDX = 2
 	R8 = 0 R9 = 1 R10 = 2
@@ -301,11 +302,12 @@ fuku_condition capstone_to_fuku_cond(x86_insn cond);
 #define asm_def_3op(name, postfix, type1, type2, type3) \
         fuku_asm_ret_type fuku_asm_gen_name(_,name,postfix)(type1 dst, type2 src1, type2 src2);
 
-#define asm_def_cond_1op(name, postfix, type1, type2) \
+#define asm_def_cond_1op(name, postfix, type1) \
         fuku_asm_ret_type fuku_asm_gen_name(_,name,postfix)(fuku_condition cond,type1 dst);
 
 #define asm_def_cond_2op(name, postfix, type1, type2) \
         fuku_asm_ret_type fuku_asm_gen_name(_,name,postfix)(fuku_condition cond, type1 dst, type2 src);
 
 
+#include "fuku_internal_assambler.h"
 #include "fuku_assambler.h"

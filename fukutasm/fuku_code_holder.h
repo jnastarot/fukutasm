@@ -1,5 +1,7 @@
 #pragma once
 
+#pragma pack(push, 1)
+
 struct fuku_code_association {
     uint64_t original_virtual_address;
     uint64_t virtual_address;
@@ -30,6 +32,7 @@ struct fuku_code_rip_relocation {
     size_t label_idx;
 };
 
+#pragma pack(pop)
 
 class fuku_code_holder {
     fuku_assambler_arch arch;

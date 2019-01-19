@@ -114,5 +114,7 @@ void check_immediate(fuku_immediate& imm, cs_x86_op * csop, uint32_t imm_size, f
         return;
     };
 
-    if (!check_imm(csop->imm, imm, imm_size)) { printf("imm error  "); }
+    if (!check_imm(csop->imm, imm, imm_size)) { 
+        printf("imm error  "); 
+    }
 }

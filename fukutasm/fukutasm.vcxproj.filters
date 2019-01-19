@@ -13,14 +13,17 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Исходные файлы\assambler">
-      <UniqueIdentifier>{ca725dc5-771a-4682-9174-b40f17549d55}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Исходные файлы\instruction">
       <UniqueIdentifier>{e041b62c-8ef7-44e7-ac73-1a9d0e1d5db0}</UniqueIdentifier>
     </Filter>
     <Filter Include="Исходные файлы\code_holder">
       <UniqueIdentifier>{1c758d8d-3ded-4207-9e29-ee4dc315b1e2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\assambler_internal">
+      <UniqueIdentifier>{ca725dc5-771a-4682-9174-b40f17549d55}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\assambler">
+      <UniqueIdentifier>{309bee1b-0cfd-47ca-a77f-df650cb243e0}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -36,13 +39,19 @@
     <ClInclude Include="fuku_code_holder.h">
       <Filter>Исходные файлы\code_holder</Filter>
     </ClInclude>
+    <ClInclude Include="fuku_internal_assambler.h">
+      <Filter>Исходные файлы\assambler_internal</Filter>
+    </ClInclude>
+    <ClInclude Include="fuku_internal_assambler_func_macro.h">
+      <Filter>Исходные файлы\assambler_internal</Filter>
+    </ClInclude>
+    <ClInclude Include="fuku_internal_assambler_pattern_macro.h">
+      <Filter>Исходные файлы\assambler_internal</Filter>
+    </ClInclude>
     <ClInclude Include="fuku_assambler.h">
       <Filter>Исходные файлы\assambler</Filter>
     </ClInclude>
-    <ClInclude Include="fuku_assambler_pattern_macro.h">
-      <Filter>Исходные файлы\assambler</Filter>
-    </ClInclude>
-    <ClInclude Include="fuku_assambler_func_macro.h">
+    <ClInclude Include="fuku_assambler_misc.h">
       <Filter>Исходные файлы\assambler</Filter>
     </ClInclude>
   </ItemGroup>
@@ -58,6 +67,9 @@
     </ClCompile>
     <ClCompile Include="fuku_code_holder.cpp">
       <Filter>Исходные файлы\code_holder</Filter>
+    </ClCompile>
+    <ClCompile Include="fuku_internal_assambler.cpp">
+      <Filter>Исходные файлы\assambler_internal</Filter>
     </ClCompile>
     <ClCompile Include="fuku_assambler.cpp">
       <Filter>Исходные файлы\assambler</Filter>

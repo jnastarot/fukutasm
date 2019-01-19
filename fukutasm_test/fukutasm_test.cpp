@@ -2,7 +2,7 @@
 #include <iostream>
 
 
-#define FUKU_TESTMOD_86 0
+#define FUKU_TESTMOD_86 1
 
 csh cap_handle;
 cs_insn *instruction;
@@ -11,14 +11,8 @@ cs_insn *instruction;
 #include "fuku_macro_test.h"
 
 
-void test_no_arg(fuku_instruction& inst, fuku_operand_size size) {
-    if (FUKU_TESTMOD_86 && size == fuku_operand_size::FUKU_OPERAND_SIZE_64) { return; }
-
-}
-
-
-void test_1_arg(fuku_instruction inst, fuku_operand op, fuku_operand_size size) {
-    if (FUKU_TESTMOD_86 && size == fuku_operand_size::FUKU_OPERAND_SIZE_64) { return; }
+void test_no_arg(fuku_instruction inst, fuku_operand_size size) {
+    if (FUKU_TESTMOD_86 && size == FUKU_OPERAND_SIZE_64) { return; }
 
     size_t count = cs_disasm(cap_handle, inst.get_op_code(), inst.get_op_length(), 0, 1, &instruction);
 
@@ -26,8 +20,39 @@ void test_1_arg(fuku_instruction inst, fuku_operand op, fuku_operand_size size) 
         __debugbreak();
     }
 
-    if (inst.get_id() != instruction[0].id) { printf("type error  "); }
-    if (inst.get_eflags() != instruction[0].detail->x86.eflags) { printf("eflags error  "); }
+    if (inst.get_id() != instruction[0].id) {
+        printf("type error  "); 
+    }
+    if (inst.get_eflags() != instruction[0].detail->x86.eflags) { 
+        printf("eflags error  "); 
+    }
+
+    if (instruction[0].detail->x86.op_count) {
+    //    printf("op count error  ");
+    }
+
+    printf("%s %s\n", instruction[0].mnemonic, instruction[0].op_str);
+
+
+    cs_free(instruction, count);
+}
+
+
+void test_1_arg(fuku_instruction inst, fuku_operand op, fuku_operand_size size) {
+    if (FUKU_TESTMOD_86 && size == FUKU_OPERAND_SIZE_64) { return; }
+
+    size_t count = cs_disasm(cap_handle, inst.get_op_code(), inst.get_op_length(), 0, 1, &instruction);
+
+    if (!count) {
+        __debugbreak();
+    }
+
+    if (inst.get_id() != instruction[0].id) { 
+        printf("type error  ");
+    }
+    if (inst.get_eflags() != instruction[0].detail->x86.eflags) { 
+        printf("eflags error  ");
+    }
 
     if (instruction[0].detail->x86.op_count == 1) {
         check_operand(op, &instruction[0].detail->x86.operands[0], instruction[0].detail->x86.encoding.disp_size, size);
@@ -43,7 +68,7 @@ void test_1_arg(fuku_instruction inst, fuku_operand op, fuku_operand_size size) 
 }
 
 void test_1_arg(fuku_instruction inst, fuku_register reg, fuku_operand_size size) {
-    if (FUKU_TESTMOD_86 && size == fuku_operand_size::FUKU_OPERAND_SIZE_64) { return; }
+    if (FUKU_TESTMOD_86 && size == FUKU_OPERAND_SIZE_64) { return; }
 
     size_t count = cs_disasm(cap_handle, inst.get_op_code(), inst.get_op_length(), 0, 1, &instruction);
 
@@ -51,8 +76,12 @@ void test_1_arg(fuku_instruction inst, fuku_register reg, fuku_operand_size size
         __debugbreak();
     }
 
-    if (inst.get_id() != instruction[0].id) { printf("type error  "); }
-    if (inst.get_eflags() != instruction[0].detail->x86.eflags) { printf("eflags error  "); }
+    if (inst.get_id() != instruction[0].id) { 
+        printf("type error  ");
+    }
+    if (inst.get_eflags() != instruction[0].detail->x86.eflags) { 
+        printf("eflags error  ");
+    }
 
     if (instruction[0].detail->x86.op_count == 1) {
         check_register(reg, &instruction[0].detail->x86.operands[0], size);
@@ -67,7 +96,7 @@ void test_1_arg(fuku_instruction inst, fuku_register reg, fuku_operand_size size
     cs_free(instruction, count);
 }
 void test_1_arg(fuku_instruction inst, fuku_immediate imm, fuku_operand_size size) {
-    if (FUKU_TESTMOD_86 && size == fuku_operand_size::FUKU_OPERAND_SIZE_64) { return; }
+    if (FUKU_TESTMOD_86 && size == FUKU_OPERAND_SIZE_64) { return; }
 
     size_t count = cs_disasm(cap_handle, inst.get_op_code(), inst.get_op_length(), 0, 1, &instruction);
 
@@ -75,8 +104,12 @@ void test_1_arg(fuku_instruction inst, fuku_immediate imm, fuku_operand_size siz
         __debugbreak();
     }
 
-    if (inst.get_id() != instruction[0].id) { printf("type error  "); }
-    if (inst.get_eflags() != instruction[0].detail->x86.eflags) { printf("eflags error  "); }
+    if (inst.get_id() != instruction[0].id) {
+        printf("type error  "); 
+    }
+    if (inst.get_eflags() != instruction[0].detail->x86.eflags) {
+        printf("eflags error  "); 
+    }
 
     if (instruction[0].detail->x86.op_count == 1) {
         check_immediate(imm, &instruction[0].detail->x86.operands[0], instruction[0].detail->x86.encoding.imm_size, size);
@@ -92,7 +125,7 @@ void test_1_arg(fuku_instruction inst, fuku_immediate imm, fuku_operand_size siz
 }
 
 void test_2_arg(fuku_instruction inst, fuku_operand op, fuku_register reg, fuku_operand_size size) {
-    if (FUKU_TESTMOD_86 && size == fuku_operand_size::FUKU_OPERAND_SIZE_64) { return; }
+    if (FUKU_TESTMOD_86 && size == FUKU_OPERAND_SIZE_64) { return; }
 
     size_t count = cs_disasm(cap_handle, inst.get_op_code(), inst.get_op_length(), 0, 1, &instruction);
 
@@ -100,8 +133,12 @@ void test_2_arg(fuku_instruction inst, fuku_operand op, fuku_register reg, fuku_
         __debugbreak();
     }
 
-    if (inst.get_id() != instruction[0].id) { printf("type error  "); }
-    if (inst.get_eflags() != instruction[0].detail->x86.eflags) { printf("eflags error  "); }
+    if (inst.get_id() != instruction[0].id) { 
+        printf("type error  "); 
+    }
+    if (inst.get_eflags() != instruction[0].detail->x86.eflags) { 
+        printf("eflags error  "); 
+    }
 
     if (instruction[0].detail->x86.op_count == 2) {
         check_operand(op, &instruction[0].detail->x86.operands[0], instruction[0].detail->x86.encoding.disp_size, size);
@@ -117,7 +154,7 @@ void test_2_arg(fuku_instruction inst, fuku_operand op, fuku_register reg, fuku_
     cs_free(instruction, count);
 }
 void test_2_arg(fuku_instruction inst, fuku_register reg1, fuku_register reg2, fuku_operand_size size) {
-    if (FUKU_TESTMOD_86 && size == fuku_operand_size::FUKU_OPERAND_SIZE_64) { return; }
+    if (FUKU_TESTMOD_86 && size == FUKU_OPERAND_SIZE_64) { return; }
 
     size_t count = cs_disasm(cap_handle, inst.get_op_code(), inst.get_op_length(), 0, 1, &instruction);
 
@@ -125,8 +162,12 @@ void test_2_arg(fuku_instruction inst, fuku_register reg1, fuku_register reg2, f
         __debugbreak();
     }
 
-    if (inst.get_id() != instruction[0].id) { printf("type error  "); }
-    if (inst.get_eflags() != instruction[0].detail->x86.eflags) { printf("eflags error  "); }
+    if (inst.get_id() != instruction[0].id) { 
+        printf("type error  ");
+    }
+    if (inst.get_eflags() != instruction[0].detail->x86.eflags) { 
+        printf("eflags error  "); 
+    }
 
     if (instruction[0].detail->x86.op_count == 2) {
         check_register(reg1, &instruction[0].detail->x86.operands[0], size);
@@ -142,7 +183,7 @@ void test_2_arg(fuku_instruction inst, fuku_register reg1, fuku_register reg2, f
     cs_free(instruction, count);
 }
 void test_2_arg(fuku_instruction inst, fuku_register reg, fuku_operand op, fuku_operand_size size) {
-    if (FUKU_TESTMOD_86 && size == fuku_operand_size::FUKU_OPERAND_SIZE_64) { return; }
+    if (FUKU_TESTMOD_86 && size == FUKU_OPERAND_SIZE_64) { return; }
 
     size_t count = cs_disasm(cap_handle, inst.get_op_code(), inst.get_op_length(), 0, 1, &instruction);
 
@@ -150,8 +191,12 @@ void test_2_arg(fuku_instruction inst, fuku_register reg, fuku_operand op, fuku_
         __debugbreak();
     }
 
-    if (inst.get_id() != instruction[0].id) { printf("type error  "); }
-    if (inst.get_eflags() != instruction[0].detail->x86.eflags) { printf("eflags error  "); }
+    if (inst.get_id() != instruction[0].id) { 
+        printf("type error  "); 
+    }
+    if (inst.get_eflags() != instruction[0].detail->x86.eflags) {
+        printf("eflags error  "); 
+    }
 
     if (instruction[0].detail->x86.op_count == 2) {
         check_register(reg, &instruction[0].detail->x86.operands[0], size);
@@ -167,7 +212,7 @@ void test_2_arg(fuku_instruction inst, fuku_register reg, fuku_operand op, fuku_
     cs_free(instruction, count);
 }
 void test_2_arg(fuku_instruction inst, fuku_register reg, fuku_immediate imm, fuku_operand_size size) {
-    if (FUKU_TESTMOD_86 && size == fuku_operand_size::FUKU_OPERAND_SIZE_64) { return; }
+    if (FUKU_TESTMOD_86 && size == FUKU_OPERAND_SIZE_64) { return; }
 
     size_t count = cs_disasm(cap_handle, inst.get_op_code(), inst.get_op_length(), 0, 1, &instruction);
 
@@ -175,8 +220,12 @@ void test_2_arg(fuku_instruction inst, fuku_register reg, fuku_immediate imm, fu
         __debugbreak();
     }
 
-    if (inst.get_id() != instruction[0].id) { printf("type error  "); }
-    if (inst.get_eflags() != instruction[0].detail->x86.eflags) { printf("eflags error  "); }
+    if (inst.get_id() != instruction[0].id) { 
+        printf("type error  "); 
+    }
+    if (inst.get_eflags() != instruction[0].detail->x86.eflags) { 
+        printf("eflags error  ");
+    }
 
     if (instruction[0].detail->x86.op_count == 2) {
         check_register(reg, &instruction[0].detail->x86.operands[0], size);
@@ -192,7 +241,7 @@ void test_2_arg(fuku_instruction inst, fuku_register reg, fuku_immediate imm, fu
     cs_free(instruction, count);
 }
 void test_2_arg(fuku_instruction inst,fuku_operand op, fuku_immediate imm, fuku_operand_size size) {
-    if (FUKU_TESTMOD_86 && size == fuku_operand_size::FUKU_OPERAND_SIZE_64) { return; }
+    if (FUKU_TESTMOD_86 && size == FUKU_OPERAND_SIZE_64) { return; }
 
     size_t count = cs_disasm(cap_handle, inst.get_op_code(), inst.get_op_length(), 0, 1, &instruction);
 
@@ -200,8 +249,12 @@ void test_2_arg(fuku_instruction inst,fuku_operand op, fuku_immediate imm, fuku_
         __debugbreak();
     }
 
-    if (inst.get_id() != instruction[0].id) { printf("type error  "); }
-    if (inst.get_eflags() != instruction[0].detail->x86.eflags) { printf("eflags error  "); }
+    if (inst.get_id() != instruction[0].id) { 
+        printf("type error  ");
+    }
+    if (inst.get_eflags() != instruction[0].detail->x86.eflags) {
+        printf("eflags error  ");
+    }
 
     if (instruction[0].detail->x86.op_count == 2) {
         check_operand(op, &instruction[0].detail->x86.operands[0], instruction[0].detail->x86.encoding.disp_size, size);
@@ -226,41 +279,209 @@ int main() {
     cs_open(CS_ARCH_X86, FUKU_TESTMOD_86 == 1 ? CS_MODE_32 : CS_MODE_64, &cap_handle);
     cs_option(cap_handle, CS_OPT_DETAIL, CS_OPT_ON);
 
-    fuku_assambler fuku_asm(FUKU_TESTMOD_86 == 1 ? FUKU_ASSAMBLER_ARCH_X86 : FUKU_ASSAMBLER_ARCH_X64);
+    fuku_internal_assambler fuku_asm(FUKU_TESTMOD_86 == 1 ? FUKU_ASSAMBLER_ARCH_X86 : FUKU_ASSAMBLER_ARCH_X64);
+  
+    fuku_operand  op = fuku_operand(FUKU_REG_EAX, FUKU_REG_ECX, FUKU_OPERAND_SCALE_2, fuku_immediate(0x12345678));
+    fuku_register reg1 = FUKU_REG_ECX;
+    fuku_register reg2 = FUKU_REG_EDX;
+    fuku_immediate imm(0x12345678);
 
-    
+    fuku_assambler().mov(
 
-    fuku_operand test_op = fuku_operand(FUKU_REG_EAX, FUKU_REG_ECX, FUKU_OPERAND_SCALE_2, fuku_immediate(0xDEADBEAF));
-    test_asm_def_full(add, test_op, FUKU_REG_ECX, FUKU_REG_EDX, fuku_immediate(0xDEADBEAF))
-    test_asm_def_full(adc, test_op, FUKU_REG_ECX, FUKU_REG_EDX, fuku_immediate(0xDEADBEAF))
-    test_asm_def_full(sub, test_op, FUKU_REG_ECX, FUKU_REG_EDX, fuku_immediate(0xDEADBEAF))
-    test_asm_def_full(sbb, test_op, FUKU_REG_ECX, FUKU_REG_EDX, fuku_immediate(0xDEADBEAF))
-    test_asm_def_full(cmp, test_op, FUKU_REG_ECX, FUKU_REG_EDX, fuku_immediate(0xDEADBEAF))
-    test_asm_def_full(and, test_op, FUKU_REG_ECX, FUKU_REG_EDX, fuku_immediate(0xDEADBEAF))
-    test_asm_def_full(or , test_op, FUKU_REG_ECX, FUKU_REG_EDX, fuku_immediate(0xDEADBEAF))
-    test_asm_def_full(xor, test_op, FUKU_REG_ECX, FUKU_REG_EDX, fuku_immediate(0xDEADBEAF))
+//Data Transfer Instructions
+    test_asm_def_full(mov, op, reg1, reg2, imm)
+    asm_def_cond_2op_test(cmovcc,_w, reg1, reg2, FUKU_OPERAND_SIZE_16)
+    asm_def_cond_2op_test(cmovcc,_w, reg1, op, FUKU_OPERAND_SIZE_16)
+    asm_def_cond_2op_test(cmovcc,_dw, reg1, reg2, FUKU_OPERAND_SIZE_32)
+    asm_def_cond_2op_test(cmovcc,_dw, reg1, op, FUKU_OPERAND_SIZE_32)
+    asm_def_cond_2op_test(cmovcc,_qw, reg1, reg2, FUKU_OPERAND_SIZE_64)
+    asm_def_cond_2op_test(cmovcc,_qw, reg1, op, FUKU_OPERAND_SIZE_64)
+    test_asm_def_direct_mov(xchg, op, reg1, reg2)
+    asm_def_1op_test(bswap_dw,, reg1, FUKU_OPERAND_SIZE_32)
+    asm_def_1op_test(bswap_qw,, reg1, FUKU_OPERAND_SIZE_64)
+    test_asm_def_direct_mov(xadd, op, reg1, reg2)
+    test_asm_def_direct_mov(cmpxchg, op, reg1, reg2)
+    asm_def_1op_test(cmpxchg8b,, op, FUKU_OPERAND_SIZE_32)
+#if ( FUKU_TESTMOD_86 == 0 )
+    asm_def_1op_test(cmpxchg16b,, op, FUKU_OPERAND_SIZE_64)
+#endif
+    test_asm_def_wdq_one_op(push, op, reg1, imm)
+    asm_def_1op_test(pop,_w, reg1, FUKU_OPERAND_SIZE_16)
+    asm_def_1op_test(pop,_dw, reg1, FUKU_OPERAND_SIZE_32)
+    asm_def_1op_test(pop,_qw, reg1, FUKU_OPERAND_SIZE_64)
+    asm_def_1op_test(pop, _w, op, FUKU_OPERAND_SIZE_16)
+    asm_def_1op_test(pop, _dw, op, FUKU_OPERAND_SIZE_32)
+    asm_def_1op_test(pop, _qw, op, FUKU_OPERAND_SIZE_64)
+    asm_def_noop_test(cwd,, FUKU_OPERAND_SIZE_16)
+    asm_def_noop_test(cdq,, FUKU_OPERAND_SIZE_32)
+    asm_def_noop_test(cqo,, FUKU_OPERAND_SIZE_64)
+    test_asm_def_movsxz(movzx, op, reg1, reg2)
+    test_asm_def_movsxz(movsx, op, reg1, reg2)
+#if ( FUKU_TESTMOD_86 == 0 )
+    asm_def_2op_test(movsx,_dword_dw, reg1, reg2, FUKU_OPERAND_SIZE_32)
+    asm_def_2op_test(movsx,_dword_dw, reg1, op, FUKU_OPERAND_SIZE_32)
+    asm_def_2op_test(movsx,_dword_qw, reg1, reg2, FUKU_OPERAND_SIZE_64)
+    asm_def_2op_test(movsx,_dword_qw, reg1, op, FUKU_OPERAND_SIZE_64)
+#endif
+//Binary Arithmetic Instructions
+    asm_def_2op_test(adcx,_dw, reg1, reg2, FUKU_OPERAND_SIZE_32)
+    asm_def_2op_test(adcx,_dw, reg1, op, FUKU_OPERAND_SIZE_32)
+    asm_def_2op_test(adcx,_qw, reg1, reg2, FUKU_OPERAND_SIZE_64)
+    asm_def_2op_test(adcx,_qw, reg1, op, FUKU_OPERAND_SIZE_64)
+    asm_def_2op_test(adox,_dw, reg1, reg2, FUKU_OPERAND_SIZE_32)
+    asm_def_2op_test(adox,_dw, reg1, op, FUKU_OPERAND_SIZE_32)
+    asm_def_2op_test(adox,_qw, reg1, reg2, FUKU_OPERAND_SIZE_64)
+    asm_def_2op_test(adox,_qw, reg1, op, FUKU_OPERAND_SIZE_64)
+    test_asm_def_full(add, op, reg1, reg2, imm)
+    test_asm_def_full(adc, op, reg1, reg2, imm)
+    test_asm_def_full(sub, op, reg1, reg2, imm)
+    test_asm_def_full(sbb, op, reg1, reg2, imm)
+    test_asm_def_r_op_one_op(imul, op, reg1)
+    test_asm_def_r_op_one_op(mul, op, reg1)
+    test_asm_def_r_op_one_op(idiv, op, reg1)
+    test_asm_def_r_op_one_op(div, op, reg1)
+    test_asm_def_r_op_one_op(inc, op, reg1)
+    test_asm_def_r_op_one_op(dec, op, reg1)
+    test_asm_def_r_op_one_op(neg, op, reg1)
+    test_asm_def_full(cmp, op, reg1, reg2, imm)
+//Decimal Arithmetic Instructions
+#if ( FUKU_TESTMOD_86 == 1 )
+    asm_def_noop_test(daa, , FUKU_OPERAND_SIZE_32)
+    asm_def_noop_test(das, , FUKU_OPERAND_SIZE_32)
+    asm_def_noop_test(aaa, , FUKU_OPERAND_SIZE_32)
+    asm_def_noop_test(aas, , FUKU_OPERAND_SIZE_32)
+    test_asm_def_noop_imm(aam, imm)
+    test_asm_def_noop_imm(aad, imm)
+#endif
+//Logical Instructions Instructions
+    test_asm_def_full(and, op, reg1, reg2, imm)
+    test_asm_def_full(or , op, reg1, reg2, imm)
+    test_asm_def_full(xor, op, reg1, reg2, imm)
+    test_asm_def_r_op_one_op(not, op, reg1)
+//Shift and Rotate Instructions
+    test_asm_def_full_shift(sar, op, reg2, imm)
+    test_asm_def_full_shift(shr, op, reg2, imm)
+    test_asm_def_full_shift(shl, op, reg2, imm)
+    //asm_def_shXd_inst(shrd)
+    //asm_def_shXd_inst(shld)
+    test_asm_def_full_shift(ror, op, reg2, imm)
+    test_asm_def_full_shift(rol, op, reg2, imm)
+    test_asm_def_full_shift(rcr, op, reg2, imm)
+    test_asm_def_full_shift(rcl, op, reg2, imm)
+//Bit and Byte Instructions
+    test_gen_func_body_bit(bt, op, reg1, reg2, imm)
+    test_gen_func_body_bit(bts, op, reg1, reg2, imm)
+    test_gen_func_body_bit(btr, op, reg1, reg2, imm)
+    test_gen_func_body_bit(btc, op, reg1, reg2, imm)
+    asm_def_2op_test(test, _b, op, reg2, FUKU_OPERAND_SIZE_8)
+    asm_def_2op_test(test, _b, reg1, reg2, FUKU_OPERAND_SIZE_8)
+    asm_def_2op_test(test, _b, reg1, imm, FUKU_OPERAND_SIZE_8)
+    asm_def_2op_test(test, _b, op, imm, FUKU_OPERAND_SIZE_8)
+    asm_def_2op_test(test, _w, op, reg2, FUKU_OPERAND_SIZE_8)
+    asm_def_2op_test(test, _w, reg1, reg2, FUKU_OPERAND_SIZE_16)
+    asm_def_2op_test(test, _w, reg1, imm, FUKU_OPERAND_SIZE_16)
+    asm_def_2op_test(test, _w, op, imm, FUKU_OPERAND_SIZE_16)
+    asm_def_2op_test(test, _dw, op, reg2, FUKU_OPERAND_SIZE_32)
+    asm_def_2op_test(test, _dw, reg1, reg2, FUKU_OPERAND_SIZE_32)
+    asm_def_2op_test(test, _dw, reg1, imm, FUKU_OPERAND_SIZE_32)
+    asm_def_2op_test(test, _dw, op, imm, FUKU_OPERAND_SIZE_32)
+    asm_def_2op_test(test, _qw, op, reg2, FUKU_OPERAND_SIZE_64)
+    asm_def_2op_test(test, _qw, reg1, reg2, FUKU_OPERAND_SIZE_64)
+    asm_def_2op_test(test, _qw, reg1, imm, FUKU_OPERAND_SIZE_64)
+    asm_def_2op_test(test, _qw, op, imm, FUKU_OPERAND_SIZE_64)
+    asm_def_2op_test(popcnt,_dw, reg1, reg2, FUKU_OPERAND_SIZE_16)
+    asm_def_2op_test(popcnt,_dw, reg1, op, FUKU_OPERAND_SIZE_16)
+    asm_def_2op_test(popcnt,_dw, reg1, reg2, FUKU_OPERAND_SIZE_32)
+    asm_def_2op_test(popcnt,_dw, reg1, op, FUKU_OPERAND_SIZE_32)
+    asm_def_2op_test(popcnt,_qw, reg1, reg2, FUKU_OPERAND_SIZE_64)
+    asm_def_2op_test(popcnt,_qw, reg1, op, FUKU_OPERAND_SIZE_64)
+//Control Transfer Instructions
+#if ( FUKU_TESTMOD_86 == 1 )
+    test_asm_def_eip_one_op(jmp, op, reg1, imm, FUKU_OPERAND_SIZE_32)
+#else
+    test_asm_def_eip_one_op(jmp, op, reg1, imm, FUKU_OPERAND_SIZE_64)
+#endif
+    asm_def_cond_1op_test(jcc,, imm, FUKU_OPERAND_SIZE_32)
+#if ( FUKU_TESTMOD_86 == 1 )
+    test_asm_def_eip_one_op(call, op, reg1, imm, FUKU_OPERAND_SIZE_32)
+#else
+    test_asm_def_eip_one_op(call, op, reg1, imm, FUKU_OPERAND_SIZE_64)
+#endif
+    test_asm_def_noop_imm(ret, imm)
+    asm_def_noop_test(int3, , FUKU_OPERAND_SIZE_32)
+   // asm_def_2op_test(enter,,fuasm_imm, uint8_t)//enter size, nestinglevel
+    asm_def_noop_test(,leave_, FUKU_OPERAND_SIZE_32)
+//String Instructions
+    asm_def_noop_test(outsb, , FUKU_OPERAND_SIZE_8)
+    asm_def_noop_test(outsw, , FUKU_OPERAND_SIZE_16)
+    asm_def_noop_test(outsd, , FUKU_OPERAND_SIZE_32)
+    test_asm_def_string_inst(movs)
+    test_asm_def_string_inst(cmps)
+    test_asm_def_string_inst(scas)
+    test_asm_def_string_inst(lods)
+    test_asm_def_string_inst(stos)
+//Flag Control (EFLAG) Instructions
+    asm_def_noop_test(stc, , FUKU_OPERAND_SIZE_32)
+    asm_def_noop_test(clc, , FUKU_OPERAND_SIZE_32)
+    asm_def_noop_test(cmc, , FUKU_OPERAND_SIZE_32)
+    asm_def_noop_test(cld, , FUKU_OPERAND_SIZE_32)
+    asm_def_noop_test(std, , FUKU_OPERAND_SIZE_32)
+#if ( FUKU_TESTMOD_86 == 1 )
+    asm_def_noop_test(lahf, , FUKU_OPERAND_SIZE_32)
+    asm_def_noop_test(sahf, , FUKU_OPERAND_SIZE_32)
+#endif
+#if ( FUKU_TESTMOD_86 == 1 )
+    asm_def_noop_test(pusha, , FUKU_OPERAND_SIZE_16)       //pusha  w  regs
+    asm_def_noop_test(pushad, , FUKU_OPERAND_SIZE_32)      //pushad dw regs
+    asm_def_noop_test(popa, , FUKU_OPERAND_SIZE_16)        //popa   w  regs
+    asm_def_noop_test(popad, , FUKU_OPERAND_SIZE_32)       //popad  dw regs
+#endif
+    asm_def_noop_test(pushf, , FUKU_OPERAND_SIZE_16)       //pushf  w  flags
+#if ( FUKU_TESTMOD_86 == 1 )
+    asm_def_noop_test(pushfd, , FUKU_OPERAND_SIZE_32)      //pushfd dw flags
+#else
+    asm_def_noop_test(pushfq, , FUKU_OPERAND_SIZE_64)      //pushfq qw flags
+#endif
+    asm_def_noop_test(popf, , FUKU_OPERAND_SIZE_16)        //popf   w  flags
+#if ( FUKU_TESTMOD_86 == 1 )
+    asm_def_noop_test(popfd, , FUKU_OPERAND_SIZE_32)       //popfd  dw flags
+#else
+    asm_def_noop_test(popfq, , FUKU_OPERAND_SIZE_64)       //popfq  qw flags
+#endif
+//Miscellaneous Instructions
+    asm_def_2op_test(lea,_w, reg1, op, FUKU_OPERAND_SIZE_16)
+    asm_def_2op_test(lea,_dw, reg1, op, FUKU_OPERAND_SIZE_32)
+    asm_def_2op_test(lea,_qw, reg1, op, FUKU_OPERAND_SIZE_64)
+    test_no_arg(fuku_asm.fuku_asm_gen_name(_,nop,)(1), FUKU_OPERAND_SIZE_32);
+    asm_def_noop_test(ud2, , FUKU_OPERAND_SIZE_32)
+    asm_def_noop_test(cpuid, , FUKU_OPERAND_SIZE_32)
+//Random Number Generator Instructions
+    asm_def_1op_test(rdrand, _w, reg1, FUKU_OPERAND_SIZE_16)
+    asm_def_1op_test(rdrand, _dw, reg1, FUKU_OPERAND_SIZE_32)
+    asm_def_1op_test(rdrand, _qw, reg1, FUKU_OPERAND_SIZE_64)
+    asm_def_1op_test(rdseed, _w, reg1, FUKU_OPERAND_SIZE_16)
+    asm_def_1op_test(rdseed, _dw, reg1, FUKU_OPERAND_SIZE_32)
+    asm_def_1op_test(rdseed, _qw, reg1, FUKU_OPERAND_SIZE_64)
+//BMI1, BMI2
+    //ANDN
+    //BEXTR
+    //BLSI
+    //BLSMSK
+    //BLSR
+    //BZHI
+    //LZCNT
+    //MULX
+    //PDEP
+    //PEXT
+    //RORX
+    //SARX
+    //SHLX
+    //SHRX
+//SYSTEM INSTRUCTIONS
+    asm_def_noop_test(hlt, , FUKU_OPERAND_SIZE_32)
+    asm_def_noop_test(rdtsc, , FUKU_OPERAND_SIZE_32)
+    asm_def_noop_test(lfence, , FUKU_OPERAND_SIZE_32)
 
-    test_asm_def_full_shift(sar, test_op, FUKU_REG_EDX, fuku_immediate(0xAF))
-    test_asm_def_full_shift(shr, test_op, FUKU_REG_EDX, fuku_immediate(0xAF))
-    test_asm_def_full_shift(shl, test_op, FUKU_REG_EDX, fuku_immediate(0xAF))
-    test_asm_def_full_shift(ror, test_op, FUKU_REG_EDX, fuku_immediate(0xAF))
-    test_asm_def_full_shift(rol, test_op, FUKU_REG_EDX, fuku_immediate(0xAF))
-    test_asm_def_full_shift(rcr, test_op, FUKU_REG_EDX, fuku_immediate(0xAF))
-    test_asm_def_full_shift(rcl, test_op, FUKU_REG_EDX, fuku_immediate(0xAF))
-
-    test_gen_func_body_bit(bt, test_op, FUKU_REG_ECX, FUKU_REG_EDX, fuku_immediate(0xDEADBEAF))
-    test_gen_func_body_bit(bts, test_op, FUKU_REG_ECX, FUKU_REG_EDX, fuku_immediate(0xDEADBEAF))
-    test_gen_func_body_bit(btr, test_op, FUKU_REG_ECX, FUKU_REG_EDX, fuku_immediate(0xDEADBEAF))
-    test_gen_func_body_bit(btc, test_op, FUKU_REG_ECX, FUKU_REG_EDX, fuku_immediate(0xDEADBEAF))
-
-    test_asm_def_r_op_one_op(imul, test_op, FUKU_REG_ECX)
-    test_asm_def_r_op_one_op(mul, test_op, FUKU_REG_ECX)
-    test_asm_def_r_op_one_op(idiv, test_op, FUKU_REG_ECX)
-    test_asm_def_r_op_one_op(div, test_op, FUKU_REG_ECX)
-    test_asm_def_r_op_one_op(inc, test_op, FUKU_REG_ECX)
-    test_asm_def_r_op_one_op(dec, test_op, FUKU_REG_ECX)
-    test_asm_def_r_op_one_op(neg, test_op, FUKU_REG_ECX)
-    test_asm_def_r_op_one_op(not, test_op, FUKU_REG_ECX)
     return 0;
 }
 
