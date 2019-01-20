@@ -51,6 +51,37 @@ bool fuku_internal_assambler::is_used_short_imm() {
     return this->short_cfg & FUKU_ASM_SHORT_CFG_USE_IMM_SHORT;
 }
 
+void fuku_internal_assambler::set_optimization_flags(uint8_t flags) {
+    
+    if (flags & FUKU_ASM_SHORT_CFG_USE_EAX_SHORT) {
+        this->short_cfg |= FUKU_ASM_SHORT_CFG_USE_EAX_SHORT;
+    }
+    else {
+        this->short_cfg = (this->short_cfg & (~FUKU_ASM_SHORT_CFG_USE_EAX_SHORT));
+    }
+
+    if (flags & FUKU_ASM_SHORT_CFG_USE_DISP_SHORT) {
+        this->short_cfg |= FUKU_ASM_SHORT_CFG_USE_DISP_SHORT;
+    }
+    else {
+        this->short_cfg = (this->short_cfg & (~FUKU_ASM_SHORT_CFG_USE_DISP_SHORT));
+    }
+
+    if (flags & FUKU_ASM_SHORT_CFG_USE_IMM_SHORT) {
+        this->short_cfg |= FUKU_ASM_SHORT_CFG_USE_IMM_SHORT;
+    }
+    else {
+        this->short_cfg = (this->short_cfg & (~FUKU_ASM_SHORT_CFG_USE_IMM_SHORT));
+    }
+}
+
+void fuku_internal_assambler::set_arch(fuku_assambler_arch arch) {
+    this->arch = arch;
+}
+
+fuku_assambler_arch fuku_internal_assambler::get_arch() {
+    return this->arch;
+}
 
 void fuku_internal_assambler::clear_space() {
     memset(bytecode, 0, sizeof(bytecode));
@@ -271,34 +302,25 @@ void fuku_internal_assambler::emit_operand_x86(const fuku_operand& rm_reg, fuku_
     case fuku_mem_opernad_type::FUKU_MEM_OPERAND_BASE_ONLY:
     case fuku_mem_opernad_type::FUKU_MEM_OPERAND_BASE_DISP: {
 
+        if (base_idx == FUKU_REG_INDEX_SP) {
+            set_sib(FUKU_OPERAND_SCALE_1, 0, FUKU_REG_INDEX_SP, base_idx);
+        }
+
         // [base + disp/r]
         if (rm_reg.get_disp().get_immediate32() == 0 && base_idx != FUKU_REG_INDEX_BP) {
-
             // [base]
             set_modrm(0, base_idx);
-            if (base_idx == FUKU_REG_INDEX_SP) {
-                set_sib(FUKU_OPERAND_SCALE_1,0, FUKU_REG_INDEX_SP, base_idx);
-            }
         }
         else if (is_used_short_disp() && rm_reg.get_disp().is_8()) {
-
             // [base + disp8]
             set_modrm(1, base_idx);
-            if (fuku_get_index_by_register(rm_reg.get_base()) == FUKU_REG_INDEX_SP) {
-                set_sib(FUKU_OPERAND_SCALE_1,0, FUKU_REG_INDEX_SP, base_idx);
-            }
             set_disp8(rm_reg.get_disp().get_immediate8());
         }
         else {
-
             // [base + disp/r]
             set_modrm(2, base_idx);
-            if (base_idx == FUKU_REG_INDEX_SP) {
-                set_sib(FUKU_OPERAND_SCALE_1,0, FUKU_REG_INDEX_SP, base_idx);
-            }
             set_dispr(rm_reg.get_disp().get_immediate32());
         }
-
         break;
     }
 
@@ -307,22 +329,21 @@ void fuku_internal_assambler::emit_operand_x86(const fuku_operand& rm_reg, fuku_
 
         FUKU_ASSERT(index_idx != FUKU_REG_INDEX_SP);
 
+        set_sib(rm_reg.get_scale(), 0, index_idx, base_idx);
+
         // [base + index*scale + disp/r]
         if (rm_reg.get_disp().get_immediate32() == 0 && base_idx != FUKU_REG_INDEX_BP) {
             // [base + index*scale]
             set_modrm(0, FUKU_REG_INDEX_SP);
-            set_sib(rm_reg.get_scale(),0, index_idx, base_idx);
         }
         else if (is_used_short_disp() && rm_reg.get_disp().is_8()) {
             // [base + index*scale + disp8]
             set_modrm(1, FUKU_REG_INDEX_SP);
-            set_sib(rm_reg.get_scale(),0, index_idx, base_idx);
             set_disp8(rm_reg.get_disp().get_immediate8());
         }
         else {
             // [base + index*scale + disp/r]
             set_modrm(2, FUKU_REG_INDEX_SP);
-            set_sib(rm_reg.get_scale(),0, index_idx, base_idx);
             set_dispr(rm_reg.get_disp().get_immediate32());
         }
 
@@ -966,17 +987,11 @@ fuku_asm_ret_type fuku_internal_assambler::_aam(const fuku_immediate& imm) {
     emit_immediate_b(imm);
     gen_func_return(X86_INS_AAM, X86_EFLAGS_UNDEFINED_OF | X86_EFLAGS_MODIFY_SF | X86_EFLAGS_MODIFY_ZF | X86_EFLAGS_UNDEFINED_AF | X86_EFLAGS_MODIFY_PF | X86_EFLAGS_UNDEFINED_CF)
 }
-fuku_asm_ret_type fuku_internal_assambler::_aam() {
-    return _aam(0x0A);
-}
 fuku_asm_ret_type fuku_internal_assambler::_aad(const fuku_immediate& imm) {
     gencleanerdata
     emit_b(0xD5);
     emit_immediate_b(imm);
     gen_func_return(X86_INS_AAD, X86_EFLAGS_UNDEFINED_OF | X86_EFLAGS_MODIFY_SF | X86_EFLAGS_MODIFY_ZF | X86_EFLAGS_UNDEFINED_AF | X86_EFLAGS_MODIFY_PF | X86_EFLAGS_UNDEFINED_CF)
-}
-fuku_asm_ret_type fuku_internal_assambler::_aad() {
-    return _aad(0x0A);
 }
 //Logical Instructions Instructions
 gen_func_body_arith(and, fuku_internal_assambler_arith_and, X86_INS_AND, X86_EFLAGS_RESET_OF  | X86_EFLAGS_MODIFY_SF | X86_EFLAGS_MODIFY_ZF | X86_EFLAGS_UNDEFINED_AF | X86_EFLAGS_MODIFY_PF | X86_EFLAGS_RESET_CF)
@@ -998,6 +1013,9 @@ gen_func_body_bit(bt , fuku_internal_assambler_bittest_bt,  X86_INS_BT,  X86_EFL
 gen_func_body_bit(bts, fuku_internal_assambler_bittest_bts, X86_INS_BTS, X86_EFLAGS_UNDEFINED_OF | X86_EFLAGS_UNDEFINED_SF | X86_EFLAGS_UNDEFINED_AF | X86_EFLAGS_UNDEFINED_PF | X86_EFLAGS_MODIFY_CF)
 gen_func_body_bit(btr, fuku_internal_assambler_bittest_btr, X86_INS_BTR, X86_EFLAGS_UNDEFINED_OF | X86_EFLAGS_UNDEFINED_SF | X86_EFLAGS_UNDEFINED_AF | X86_EFLAGS_UNDEFINED_PF | X86_EFLAGS_MODIFY_CF)
 gen_func_body_bit(btc, fuku_internal_assambler_bittest_btc, X86_INS_BTC, X86_EFLAGS_UNDEFINED_OF | X86_EFLAGS_UNDEFINED_SF | X86_EFLAGS_UNDEFINED_AF | X86_EFLAGS_UNDEFINED_PF | X86_EFLAGS_MODIFY_CF)
+gen_func_body_bit_ex(bsf, fuku_internal_assambler_bittest_bsf, X86_INS_BSF, X86_EFLAGS_UNDEFINED_OF | X86_EFLAGS_UNDEFINED_SF | X86_EFLAGS_MODIFY_ZF | X86_EFLAGS_UNDEFINED_AF | X86_EFLAGS_UNDEFINED_PF | X86_EFLAGS_UNDEFINED_CF)
+gen_func_body_bit_ex(bsr, fuku_internal_assambler_bittest_bsr, X86_INS_BSR, X86_EFLAGS_UNDEFINED_OF | X86_EFLAGS_UNDEFINED_SF | X86_EFLAGS_MODIFY_ZF | X86_EFLAGS_UNDEFINED_AF | X86_EFLAGS_UNDEFINED_PF | X86_EFLAGS_UNDEFINED_CF)
+
 fuku_asm_ret_type fuku_internal_assambler::_setcc(fuku_condition cond, fuku_register dst) {
     gencleanerdata
     FUKU_ASSERT(cond >= 0 && cond < fuku_condition::FUKU_CONDITION_MAX);
@@ -1081,7 +1099,7 @@ fuku_asm_ret_type fuku_internal_assambler::_test_dw(fuku_register dst, fuku_regi
 }
 fuku_asm_ret_type fuku_internal_assambler::_test_dw(fuku_register dst, const fuku_immediate& src) {
     gencleanerdata
-    emit_optional_rex_32(src, dst);
+    emit_optional_rex_32(dst);
     if (is_used_short_eax() && dst == fuku_register::FUKU_REG_EAX) {
         emit_b(0xA9);
     }

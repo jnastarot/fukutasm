@@ -1,9 +1,9 @@
 #pragma once
 
 enum fuku_t0_types {
-    FUKU_T0_REGISTER,
-    FUKU_T0_OPERAND,
-    FUKU_T0_IMMEDIATE,
+    FUKU_T0_REGISTER = 1,
+    FUKU_T0_OPERAND  = 2,
+    FUKU_T0_IMMEDIATE = 4,
 };
 
 
@@ -18,191 +18,155 @@ public:
     fuku_type(const fuku_immediate& imm);
     ~fuku_type();
 public:
-    fuku_t0_types get_type();
-    fuku_register get_register();
-    const fuku_operand  &get_operand();
-    const fuku_immediate &get_immediate();
+    const fuku_t0_types get_type() const;
+    const fuku_register get_register() const;
+    const fuku_operand  &get_operand() const;
+    const fuku_immediate &get_immediate() const;
 };
 
 class fuku_assambler {
+    fuku_internal_assambler *lntrnl_asm;
 public:
-    fuku_assambler();
+    fuku_assambler(fuku_assambler_arch arch);
     ~fuku_assambler();
 
+    void set_optimization_flags(uint8_t flags); //fuku_asm_short_cfg
+    void set_arch(fuku_assambler_arch arch);
+    fuku_assambler_arch get_arch();
 public:
+//Data Transfer Instructions
     fuku_instruction mov(fuku_type dst, fuku_type src);
     fuku_instruction cmovcc(fuku_condition cond, fuku_type dst, fuku_type src);
+    fuku_instruction xchg(fuku_type dst, fuku_type src);
+    fuku_instruction bswap(fuku_type dst);
+    fuku_instruction xadd(fuku_type dst, fuku_type src);
+    fuku_instruction cmpxchg(fuku_type dst, fuku_type src);
+    fuku_instruction cmpxchg8b(fuku_type dst);
+    fuku_instruction cmpxchg16b(fuku_type dst);
+    fuku_instruction push(fuku_type src);
+    fuku_instruction pop(fuku_type dst);
+    fuku_instruction cwd();
+    fuku_instruction cdq();
+    fuku_instruction cqo();
+    fuku_instruction movzx(fuku_type dst, fuku_type src);
+    fuku_instruction movsx(fuku_type dst, fuku_type src);
 
-    /*
-        asm_def_cond_2op(cmovcc, _w, fuasm_reg, fuasm_reg)
-        asm_def_cond_2op(cmovcc, _w, fuasm_reg, fuasm_op)
-        asm_def_cond_2op(cmovcc, _dw, fuasm_reg, fuasm_reg)
-        asm_def_cond_2op(cmovcc, _dw, fuasm_reg, fuasm_op)
-        asm_def_cond_2op(cmovcc, _qw, fuasm_reg, fuasm_reg)
-        asm_def_cond_2op(cmovcc, _qw, fuasm_reg, fuasm_op)
-        asm_def_direct_mov(xchg)
-        asm_def_1op(bswap_dw, , fuasm_reg)
-        asm_def_1op(bswap_qw, , fuasm_reg)
-        asm_def_direct_mov(xadd)
-        asm_def_direct_mov(cmpxchg)
-        asm_def_1op(cmpxchg8b, , fuasm_op)
-        asm_def_1op(cmpxchg16b, , fuasm_op)
-        asm_def_wdq_one_op(push)
-        asm_def_1op(pop, _w, fuasm_reg)
-        asm_def_1op(pop, _dw, fuasm_reg)
-        asm_def_1op(pop, _qw, fuasm_reg)
-        asm_def_1op(pop, _w, fuasm_op)
-        asm_def_1op(pop, _dw, fuasm_op)
-        asm_def_1op(pop, _qw, fuasm_op)
-        asm_def_noop(cwd, )
-        asm_def_noop(cdq, )
-        asm_def_noop(cqo, )
-        asm_def_movsxz(movzx)
-        asm_def_movsxz(movsx)
-        asm_def_2op(movsx, _dword_dw, fuasm_reg, fuasm_reg)
-        asm_def_2op(movsx, _dword_dw, fuasm_reg, fuasm_op)
-        asm_def_2op(movsx, _dword_qw, fuasm_reg, fuasm_reg)
-        asm_def_2op(movsx, _dword_qw, fuasm_reg, fuasm_op)
-        //Binary Arithmetic Instructions
-        asm_def_2op(adcx, _dw, fuasm_reg, fuasm_reg)
-        asm_def_2op(adcx, _dw, fuasm_reg, fuasm_op)
-        asm_def_2op(adcx, _qw, fuasm_reg, fuasm_reg)
-        asm_def_2op(adcx, _qw, fuasm_reg, fuasm_op)
-        asm_def_2op(adox, _dw, fuasm_reg, fuasm_reg)
-        asm_def_2op(adox, _dw, fuasm_reg, fuasm_op)
-        asm_def_2op(adox, _qw, fuasm_reg, fuasm_reg)
-        asm_def_2op(adox, _qw, fuasm_reg, fuasm_op)
-        asm_def_full(add)
-        asm_def_full(adc)
-        asm_def_full(sub)
-        asm_def_full(sbb)
-        asm_def_r_op_one_op(imul)
-        asm_def_r_op_one_op(mul)
-        asm_def_r_op_one_op(idiv)
-        asm_def_r_op_one_op(div)
-        asm_def_r_op_one_op(inc)
-        asm_def_r_op_one_op(dec)
-        asm_def_r_op_one_op(neg)
-        asm_def_full(cmp)
-        //Decimal Arithmetic Instructions
-        asm_def_noop(daa, )
-        asm_def_noop(das, )
-        asm_def_noop(aaa, )
-        asm_def_noop(aas, )
-        asm_def_noop_imm(aam)
-        asm_def_noop_imm(aad)
-        //Logical Instructions Instructions
-        asm_def_full(and)
-        asm_def_full(or )
-        asm_def_full(xor)
-        asm_def_r_op_one_op(not)
-        //Shift and Rotate Instructions
-        asm_def_full_shift(sar)
-        asm_def_full_shift(shr)
-        asm_def_full_shift(shl)
-        asm_def_shXd_inst(shrd)
-        asm_def_shXd_inst(shld)
-        asm_def_full_shift(ror)
-        asm_def_full_shift(rol)
-        asm_def_full_shift(rcr)
-        asm_def_full_shift(rcl)
-        //Bit and Byte Instructions
-        gen_func_body_bit(bt)
-        gen_func_body_bit(bts)
-        gen_func_body_bit(btr)
-        gen_func_body_bit(btc)
-        asm_def_cond_1op(setcc, , fuasm_reg)
-        asm_def_cond_1op(setcc, , fuasm_op)
-        asm_def_2op(test, _b, fuasm_op, fuasm_reg)
-        asm_def_2op(test, _b, fuasm_reg, fuasm_reg)
-        asm_def_2op(test, _b, fuasm_reg, fuasm_imm)
-        asm_def_2op(test, _b, fuasm_op, fuasm_imm)
-        asm_def_2op(test, _w, fuasm_op, fuasm_reg)
-        asm_def_2op(test, _w, fuasm_reg, fuasm_reg)
-        asm_def_2op(test, _w, fuasm_reg, fuasm_imm)
-        asm_def_2op(test, _w, fuasm_op, fuasm_imm)
-        asm_def_2op(test, _dw, fuasm_op, fuasm_reg)
-        asm_def_2op(test, _dw, fuasm_reg, fuasm_reg)
-        asm_def_2op(test, _dw, fuasm_reg, fuasm_imm)
-        asm_def_2op(test, _dw, fuasm_op, fuasm_imm)
-        asm_def_2op(test, _qw, fuasm_op, fuasm_reg)
-        asm_def_2op(test, _qw, fuasm_reg, fuasm_reg)
-        asm_def_2op(test, _qw, fuasm_reg, fuasm_imm)
-        asm_def_2op(test, _qw, fuasm_op, fuasm_imm)
-        asm_def_2op(popcnt, _w, fuasm_reg, fuasm_reg)
-        asm_def_2op(popcnt, _w, fuasm_reg, fuasm_op)
-        asm_def_2op(popcnt, _dw, fuasm_reg, fuasm_reg)
-        asm_def_2op(popcnt, _dw, fuasm_reg, fuasm_op)
-        asm_def_2op(popcnt, _qw, fuasm_reg, fuasm_reg)
-        asm_def_2op(popcnt, _qw, fuasm_reg, fuasm_op)
-        //Control Transfer Instructions
-        asm_def_eip_one_op(jmp)
-        asm_def_cond_1op(jcc, , fuasm_imm)
-        asm_def_eip_one_op(call)
-        asm_def_noop_imm(ret)
-        asm_def_noop(int3, )
-        asm_def_2op(enter, , fuasm_imm, uint8_t)//enter size, nestinglevel
-        asm_def_noop(, leave_)
-        //String Instructions
-        asm_def_noop(outsb, )
-        asm_def_noop(outsw, )
-        asm_def_noop(outsd, )
-        asm_def_string_inst(movs)
-        asm_def_string_inst(cmps)
-        asm_def_string_inst(scas)
-        asm_def_string_inst(lods)
-        asm_def_string_inst(stos)
-        //Flag Control (EFLAG) Instructions
-        asm_def_noop(stc, )
-        asm_def_noop(clc, )
-        asm_def_noop(cmc, )
-        asm_def_noop(cld, )
-        asm_def_noop(std, )
-        asm_def_noop(lahf, )
-        asm_def_noop(sahf, )
-        asm_def_noop(pusha, )       //pusha  w  regs
-        asm_def_noop(pushad, )      //pushad dw/qw regs
-        asm_def_noop(popa, )        //popa   w  regs
-        asm_def_noop(popad, )       //popad  dw/qw regs
-        asm_def_noop(pushf, )       //pushf  w  flags
-        asm_def_noop(pushfd, )      //pushfd dw flags
-        asm_def_noop(pushfq, )      //pushfq qw flags
-        asm_def_noop(popf, )        //popf   w  flags
-        asm_def_noop(popfd, )       //popfd  dw flags
-        asm_def_noop(popfq, )       //popfq  qw flags
-    //Miscellaneous Instructions
-        asm_def_2op(lea, _w, fuasm_reg, fuasm_op)
-        asm_def_2op(lea, _dw, fuasm_reg, fuasm_op)
-        asm_def_2op(lea, _qw, fuasm_reg, fuasm_op)
-        asm_def_1op(nop, , uint8_t)
-        asm_def_noop(ud2, )
-        asm_def_noop(cpuid, )
-        //Random Number Generator Instructions
-        asm_def_1op(rdrand, _w, fuasm_reg)
-        asm_def_1op(rdrand, _dw, fuasm_reg)
-        asm_def_1op(rdrand, _qw, fuasm_reg)
-        asm_def_1op(rdseed, _w, fuasm_reg)
-        asm_def_1op(rdseed, _dw, fuasm_reg)
-        asm_def_1op(rdseed, _qw, fuasm_reg)
-        //BMI1, BMI2
-            //ANDN
-            //BEXTR
-            //BLSI
-            //BLSMSK
-            //BLSR
-            //BZHI
-            //LZCNT
-            //MULX
-            //PDEP
-            //PEXT
-            //RORX
-            //SARX
-            //SHLX
-            //SHRX
-        //SYSTEM INSTRUCTIONS
-        asm_def_noop(hlt, )
-        asm_def_noop(rdtsc, )
-        asm_def_noop(lfence, )
-        */
+//Binary Arithmetic Instructions
+    fuku_instruction adcx(fuku_type dst, fuku_type src);
+    fuku_instruction adox(fuku_type dst, fuku_type src);
+    fuku_instruction add(fuku_type dst, fuku_type src);
+    fuku_instruction adc(fuku_type dst, fuku_type src);
+    fuku_instruction sub(fuku_type dst, fuku_type src);
+    fuku_instruction sbb(fuku_type dst, fuku_type src);
+    fuku_instruction imul(fuku_type src);
+    fuku_instruction mul(fuku_type dst);
+    fuku_instruction idiv(fuku_type src);
+    fuku_instruction div(fuku_type dst);
+    fuku_instruction inc(fuku_type src);
+    fuku_instruction dec(fuku_type dst);
+    fuku_instruction neg(fuku_type src);
+    fuku_instruction cmp(fuku_type dst, fuku_type src);
+
+//Decimal Arithmetic Instructions
+    fuku_instruction daa();
+    fuku_instruction das();
+    fuku_instruction aaa();
+    fuku_instruction aas();
+    fuku_instruction aam(fuku_type src);
+    fuku_instruction aad(fuku_type src);
+
+//Logical Instructions Instructions
+    fuku_instruction and_(fuku_type dst, fuku_type src);
+    fuku_instruction or_(fuku_type dst, fuku_type src);
+    fuku_instruction xor_(fuku_type dst, fuku_type src);
+    fuku_instruction not_(fuku_type dst);
+
+//Shift and Rotate Instructions
+    fuku_instruction sar(fuku_type dst, fuku_type src);
+    fuku_instruction shr(fuku_type dst, fuku_type src);
+    fuku_instruction shl(fuku_type dst, fuku_type src);
+    fuku_instruction shrd(fuku_type dst, fuku_type src, fuku_type shift);
+    fuku_instruction shld(fuku_type dst, fuku_type src, fuku_type shift);
+    fuku_instruction ror(fuku_type dst, fuku_type src);
+    fuku_instruction rol(fuku_type dst, fuku_type src);
+    fuku_instruction rcr(fuku_type dst, fuku_type src);
+    fuku_instruction rcl(fuku_type dst, fuku_type src);
+
+//Bit and Byte Instructions
+    fuku_instruction bt(fuku_type dst, fuku_type src);
+    fuku_instruction bts(fuku_type dst, fuku_type src);
+    fuku_instruction btr(fuku_type dst, fuku_type src);
+    fuku_instruction btc(fuku_type dst, fuku_type src);
+    fuku_instruction setcc(fuku_condition cond, fuku_type dst);
+    fuku_instruction test(fuku_type dst, fuku_type src);
+    fuku_instruction popcnt(fuku_type dst, fuku_type src);
+
+//Control Transfer Instructions
+    fuku_instruction jmp(fuku_type src);
+    fuku_instruction jcc(fuku_condition cond, fuku_type src);
+    fuku_instruction call(fuku_type src);
+    fuku_instruction ret(fuku_type src);
+    fuku_instruction int3();
+    fuku_instruction enter(fuku_type size, fuku_type nestinglevel);
+    fuku_instruction leave_();
+
+//String Instructions
+    fuku_instruction outsb();
+    fuku_instruction outsw();
+    fuku_instruction outsd();
+    fuku_instruction movsb();
+    fuku_instruction movsw();
+    fuku_instruction movsd();
+    fuku_instruction movsq();
+    fuku_instruction cmpsb();
+    fuku_instruction cmpsw();
+    fuku_instruction cmpsd();
+    fuku_instruction cmpsq();
+    fuku_instruction scasb();
+    fuku_instruction scasw();
+    fuku_instruction scasd();
+    fuku_instruction scasq();
+    fuku_instruction lodsb();
+    fuku_instruction lodsw();
+    fuku_instruction lodsd();
+    fuku_instruction lodsq();
+    fuku_instruction stosb();
+    fuku_instruction stosw();
+    fuku_instruction stosd();
+    fuku_instruction stosq();
+
+//Flag Control (EFLAG) Instructions
+    fuku_instruction stc();
+    fuku_instruction clc();
+    fuku_instruction cmc();
+    fuku_instruction cld();
+    fuku_instruction std();
+    fuku_instruction lahf();
+    fuku_instruction sahf();
+    fuku_instruction pusha();
+    fuku_instruction pushad();
+    fuku_instruction popa();
+    fuku_instruction popad();
+    fuku_instruction pushf();
+    fuku_instruction pushfd();
+    fuku_instruction pushfq();
+    fuku_instruction popf();
+    fuku_instruction popfd();
+    fuku_instruction popfq();
+
+//Miscellaneous Instructions
+    fuku_instruction lea(fuku_type dst, fuku_type src);
+    fuku_instruction nop(uint8_t size = 1);
+    fuku_instruction ud2();
+    fuku_instruction cpuid();
+
+//Random Number Generator Instructions
+    fuku_instruction rdrand(fuku_type dst);
+    fuku_instruction rdseed(fuku_type dst);
+
+//SYSTEM INSTRUCTIONS
+    fuku_instruction hlt();
+    fuku_instruction rdtsc();
+    fuku_instruction lfence();
 };
 

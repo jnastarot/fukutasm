@@ -298,6 +298,23 @@ bool fuku_immediate::is_64() const {
     return (immediate_value & 0xFFFFFFFF00000000) != 0;
 }
   
+fuku_operand_size fuku_immediate::get_size() const {
+    if (is_8()) {
+        return fuku_operand_size::FUKU_OPERAND_SIZE_8;
+    }
+    if (is_16()) {
+        return fuku_operand_size::FUKU_OPERAND_SIZE_16;
+    }
+    if (is_32()) {
+        return fuku_operand_size::FUKU_OPERAND_SIZE_32;
+    }
+    if (is_64()) {
+        return fuku_operand_size::FUKU_OPERAND_SIZE_64;
+    }
+
+    return fuku_operand_size::FUKU_OPERAND_SIZE_0;
+}
+
 bool fuku_immediate::is_relocate() const {
     return this->relocate;
 }
@@ -335,6 +352,12 @@ int64_t fuku_immediate::get_signed_value64() const {
 }
 
 
+
+fuku_operand::fuku_operand(fuku_register base)
+    : base(base), index(FUKU_REG_NONE), scale(FUKU_OPERAND_SCALE_1), disp(0) {}
+
+fuku_operand::fuku_operand(uint32_t disp) 
+    : base(FUKU_REG_NONE), index(FUKU_REG_NONE), scale(FUKU_OPERAND_SCALE_1), disp(disp) {}
 
 fuku_operand::fuku_operand(const fuku_immediate& disp)
     : base(FUKU_REG_NONE), index(FUKU_REG_NONE), scale(FUKU_OPERAND_SCALE_1), disp(disp){}

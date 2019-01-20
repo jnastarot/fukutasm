@@ -9,7 +9,8 @@ class fuku_instruction {
     uint8_t	op_code[16];  //instruction
     
     //association
-    
+    uint64_t source_virtual_address;    //original va of instruction , == -1 if wasnt in original code
+    uint64_t virtual_address;		    //resulted va of instruction 
 
     //relative idxs    if has index then value => 0 else -1
     size_t label_idx;

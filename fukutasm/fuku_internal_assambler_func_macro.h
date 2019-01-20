@@ -37,6 +37,9 @@
 #define fuku_internal_assambler_bittest_btr 6
 #define fuku_internal_assambler_bittest_btc 7
 
+#define fuku_internal_assambler_bittest_bsf 0
+#define fuku_internal_assambler_bittest_bsr 1
+
 #define fuku_internal_assambler_string_out 55
 #define fuku_internal_assambler_string_mov 82
 #define fuku_internal_assambler_string_cmp 83
@@ -542,11 +545,6 @@ static uint64_t di_fl_jcc[] = {
 #define gen_func_body_bit(name ,type, cap_id, cap_eflags) \
     fuku_asm_ret_type fuku_internal_assambler:: fuku_asm_gen_name(_,name,_w) (fuku_register dst, fuku_register src) { \
         gencleanerdata\
-        emit_b(FUKU_PREFIX_OVERRIDE_DATA);\
-        emit_optional_rex_32(dst, src);\
-        emit_b(0x0F);\
-        emit_b(0x83 + 8*type);\
-        emit_modrm(dst, src);\
         gen_pattern32_2em_rm_r_word(0x0F, 0x83 + 8*type, dst, src)\
         gen_func_return(cap_id, cap_eflags)\
     } \
@@ -634,6 +632,39 @@ static uint64_t di_fl_jcc[] = {
         gen_func_return(cap_id, cap_eflags)\
     } 
 
+#define gen_func_body_bit_ex(name ,type, cap_id, cap_eflags) \
+    fuku_asm_ret_type fuku_internal_assambler:: fuku_asm_gen_name(_,name,_w) (fuku_register dst, fuku_register src) { \
+        gencleanerdata\
+        gen_pattern32_2em_rm_r_word(0x0F, 0xBC + type, dst, src)\
+        gen_func_return(cap_id, cap_eflags)\
+    } \
+    fuku_asm_ret_type fuku_internal_assambler:: fuku_asm_gen_name(_,name,_w) (const fuku_operand& dst, fuku_register src) { \
+        gencleanerdata\
+        gen_pattern32_2em_op_r_word(0x0F, 0xBC + type, dst, src)\
+        gen_func_return(cap_id, cap_eflags)\
+    } \
+\
+    fuku_asm_ret_type fuku_internal_assambler:: fuku_asm_gen_name(_,name,_dw) (fuku_register dst, fuku_register src) { \
+        gencleanerdata\
+        gen_pattern32_2em_rm_r(0x0F, 0xBC + type, dst, src)\
+        gen_func_return(cap_id, cap_eflags)\
+    } \
+    fuku_asm_ret_type fuku_internal_assambler:: fuku_asm_gen_name(_,name,_dw) (const fuku_operand& dst, fuku_register src) { \
+        gencleanerdata\
+        gen_pattern32_2em_op_r(0x0F, 0xBC + type, dst, src)\
+        gen_func_return(cap_id, cap_eflags)\
+    } \
+\
+    fuku_asm_ret_type fuku_internal_assambler:: fuku_asm_gen_name(_,name,_qw) (fuku_register dst, fuku_register src) { \
+        gencleanerdata\
+        gen_pattern64_2em_rm_r(0x0F, 0xBC + type, dst, src)\
+        gen_func_return(cap_id, cap_eflags)\
+    } \
+    fuku_asm_ret_type fuku_internal_assambler:: fuku_asm_gen_name(_,name,_qw) (const fuku_operand& dst, fuku_register src) { \
+        gencleanerdata\
+        gen_pattern64_2em_op_r(0x0F, 0xBC + type, dst, src)\
+        gen_func_return(cap_id, cap_eflags)\
+    }
 
 #define gen_func_body_string_inst(name ,type, cap_idMASK, cap_eflags)\
     fuku_asm_ret_type fuku_internal_assambler:: fuku_asm_gen_name(_,name,b) () { \

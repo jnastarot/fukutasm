@@ -2,7 +2,7 @@
 #include <iostream>
 
 
-#define FUKU_TESTMOD_86 1
+#define FUKU_TESTMOD_86 0
 
 csh cap_handle;
 cs_insn *instruction;
@@ -281,12 +281,16 @@ int main() {
 
     fuku_internal_assambler fuku_asm(FUKU_TESTMOD_86 == 1 ? FUKU_ASSAMBLER_ARCH_X86 : FUKU_ASSAMBLER_ARCH_X64);
   
-    fuku_operand  op = fuku_operand(FUKU_REG_EAX, FUKU_REG_ECX, FUKU_OPERAND_SCALE_2, fuku_immediate(0x12345678));
+    fuku_operand  op = fuku_operand(FUKU_REG_EAX);// fuku_operand(FUKU_REG_EAX, FUKU_REG_ECX, FUKU_OPERAND_SCALE_2, fuku_immediate(0x12345678));
     fuku_register reg1 = FUKU_REG_ECX;
     fuku_register reg2 = FUKU_REG_EDX;
     fuku_immediate imm(0x12345678);
 
-    fuku_assambler().mov(
+    fuku_assambler fasm(FUKU_TESTMOD_86 == 1 ? FUKU_ASSAMBLER_ARCH_X86 : FUKU_ASSAMBLER_ARCH_X64);
+
+    test_2_arg(fasm.mov(reg1, op), reg1, op, FUKU_OPERAND_SIZE_32);
+
+    return 0;
 
 //Data Transfer Instructions
     test_asm_def_full(mov, op, reg1, reg2, imm)
@@ -350,8 +354,8 @@ int main() {
     asm_def_noop_test(das, , FUKU_OPERAND_SIZE_32)
     asm_def_noop_test(aaa, , FUKU_OPERAND_SIZE_32)
     asm_def_noop_test(aas, , FUKU_OPERAND_SIZE_32)
-    test_asm_def_noop_imm(aam, imm)
-    test_asm_def_noop_imm(aad, imm)
+    asm_def_1op_test(aam,, reg1, FUKU_OPERAND_SIZE_32)
+    asm_def_1op_test(aad,, reg1, FUKU_OPERAND_SIZE_32)
 #endif
 //Logical Instructions Instructions
     test_asm_def_full(and, op, reg1, reg2, imm)

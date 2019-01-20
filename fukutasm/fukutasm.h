@@ -183,6 +183,8 @@ public:
     bool is_32() const;
     bool is_64() const;
 
+    fuku_operand_size get_size() const;
+
     bool is_relocate() const;
 
     uint8_t get_immediate8() const;
@@ -211,7 +213,9 @@ class fuku_operand {
     fuku_operand_scale scale;
     fuku_immediate disp;
 public:
-    fuku_operand(const fuku_immediate& disp);                  // [disp/r]
+    explicit fuku_operand(fuku_register base);            // [base]
+    explicit fuku_operand(const fuku_immediate& disp);    // [disp/r]
+    explicit fuku_operand(uint32_t disp);                 // [disp/r]
     fuku_operand(fuku_register base, const fuku_immediate& disp);  // [base + disp/r]
     fuku_operand(fuku_register base, fuku_register index, fuku_operand_scale scale, const fuku_immediate& disp);// [base + index*scale + disp/r]
     fuku_operand(fuku_register index, fuku_operand_scale scale, const fuku_immediate& disp);// [index*scale + disp/r]
@@ -289,25 +293,6 @@ fuku_condition capstone_to_fuku_cond(x86_insn cond);
 #define fuasm_reg  fuku_register
 #define fuasm_op   const fuku_operand&
 #define fuasm_imm  const fuku_immediate&
-
-#define asm_def_noop(name, postfix) \
-        fuku_asm_ret_type fuku_asm_gen_name(_,name,postfix)();
-
-#define asm_def_1op(name, postfix, type1) \
-        fuku_asm_ret_type fuku_asm_gen_name(_,name,postfix)(type1 src);
-
-#define asm_def_2op(name, postfix, type1, type2) \
-        fuku_asm_ret_type fuku_asm_gen_name(_,name,postfix)(type1 dst, type2 src);
-
-#define asm_def_3op(name, postfix, type1, type2, type3) \
-        fuku_asm_ret_type fuku_asm_gen_name(_,name,postfix)(type1 dst, type2 src1, type2 src2);
-
-#define asm_def_cond_1op(name, postfix, type1) \
-        fuku_asm_ret_type fuku_asm_gen_name(_,name,postfix)(fuku_condition cond,type1 dst);
-
-#define asm_def_cond_2op(name, postfix, type1, type2) \
-        fuku_asm_ret_type fuku_asm_gen_name(_,name,postfix)(fuku_condition cond, type1 dst, type2 src);
-
 
 #include "fuku_internal_assambler.h"
 #include "fuku_assambler.h"
