@@ -23,7 +23,7 @@ fuku_instruction::~fuku_instruction(){
 fuku_instruction& fuku_instruction::operator=(const fuku_instruction& line) {
 
     memcpy(this->op_code, line.op_code, line.op_length);
-    this->id = line.id; 
+    this->id = line.id;
 
     this->op_length = line.op_length;
     this->source_virtual_address = line.source_virtual_address;

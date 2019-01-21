@@ -288,9 +288,9 @@ int main() {
 
     fuku_assambler fasm(FUKU_TESTMOD_86 == 1 ? FUKU_ASSAMBLER_ARCH_X86 : FUKU_ASSAMBLER_ARCH_X64);
 
-    test_2_arg(fasm.mov(reg1, op), reg1, op, FUKU_OPERAND_SIZE_32);
+  //  test_2_arg(fasm.mov(reg1, op), reg1, op, FUKU_OPERAND_SIZE_32);
 
-    return 0;
+   // return 0;
 
 //Data Transfer Instructions
     test_asm_def_full(mov, op, reg1, reg2, imm)

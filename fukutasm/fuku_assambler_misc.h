@@ -83,7 +83,7 @@ bool is_valid_op_r_i(const fuku_type& dst,const fuku_type& src) {
 
 fuku_instruction emit_instruction() {
 
-    FUKU_ASSERT_EQ(is_valid_op_r_i(dst, src), false);
+/*    FUKU_ASSERT_EQ(is_valid_op_r_i(dst, src), false);
 
     fuku_operand_size size = get_minimal_op_size(dst, src);
 
@@ -284,6 +284,7 @@ fuku_instruction emit_instruction() {
     default:
         break;
     }
-
+        */
     return fuku_instruction();
+
 }

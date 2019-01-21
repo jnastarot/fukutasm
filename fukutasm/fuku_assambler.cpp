@@ -25,21 +25,21 @@ const fuku_immediate &fuku_type::get_immediate() const {
 #include "fuku_assambler_misc.h"
 
 fuku_assambler::fuku_assambler(fuku_assambler_arch arch) {
-    this->lntrnl_asm = new fuku_internal_assambler(arch);
+
 }
 
 fuku_assambler::~fuku_assambler() {
-    delete this->lntrnl_asm;
+
 }
 
 void fuku_assambler::set_optimization_flags(uint8_t flags) {
-    this->lntrnl_asm->set_optimization_flags(flags);
+    set_optimization_flags(flags);
 }
 void fuku_assambler::set_arch(fuku_assambler_arch arch) {
-    this->lntrnl_asm->set_arch(arch);
+    set_arch(arch);
 }
 fuku_assambler_arch fuku_assambler::get_arch() {
-    return this->lntrnl_asm->get_arch();
+    return get_arch();
 }
 
 fuku_instruction fuku_assambler::mov(fuku_type dst, fuku_type src) {
@@ -54,13 +54,13 @@ fuku_instruction fuku_assambler::mov(fuku_type dst, fuku_type src) {
             switch (src.get_type()) {
 
             case FUKU_T0_REGISTER: {
-                return this->lntrnl_asm->_mov_b(dst.get_register(), src.get_register());
+                return _mov_b(dst.get_register(), src.get_register());
             }
             case FUKU_T0_OPERAND: {
-                return this->lntrnl_asm->_mov_b(dst.get_register(), src.get_operand());
+                return _mov_b(dst.get_register(), src.get_operand());
             }
             case FUKU_T0_IMMEDIATE: {
-                return this->lntrnl_asm->_mov_b(dst.get_register(), src.get_immediate());
+                return _mov_b(dst.get_register(), src.get_immediate());
             }
             default: {
                 FUKU_DEBUG;
@@ -73,10 +73,10 @@ fuku_instruction fuku_assambler::mov(fuku_type dst, fuku_type src) {
             switch (src.get_type()) {
 
             case FUKU_T0_REGISTER: {
-                return this->lntrnl_asm->_mov_b(dst.get_operand(), src.get_register());
+                return _mov_b(dst.get_operand(), src.get_register());
             }
             case FUKU_T0_IMMEDIATE: {
-                return this->lntrnl_asm->_mov_b(dst.get_operand(), src.get_immediate());
+                return _mov_b(dst.get_operand(), src.get_immediate());
             }
             default: { FUKU_DEBUG; break; }
             }
@@ -91,13 +91,13 @@ fuku_instruction fuku_assambler::mov(fuku_type dst, fuku_type src) {
         case FUKU_T0_REGISTER: {
             switch (src.get_type()) {
             case FUKU_T0_REGISTER: {
-                return this->lntrnl_asm->_mov_w(dst.get_register(), src.get_register());
+                return _mov_w(context, dst.get_register(), src.get_register());
             }
             case FUKU_T0_OPERAND: {
-                return this->lntrnl_asm->_mov_w(dst.get_register(), src.get_operand());
+                return _mov_w(dst.get_register(), src.get_operand());
             }
             case FUKU_T0_IMMEDIATE: {
-                return this->lntrnl_asm->_mov_w(dst.get_register(), src.get_immediate());
+                return _mov_w(dst.get_register(), src.get_immediate());
             }
             default: {
                 FUKU_DEBUG;
@@ -109,10 +109,10 @@ fuku_instruction fuku_assambler::mov(fuku_type dst, fuku_type src) {
         case FUKU_T0_OPERAND: {
             switch (src.get_type()) {
             case FUKU_T0_REGISTER: {
-                return this->lntrnl_asm->_mov_w(dst.get_operand(), src.get_register());
+                return _mov_w(dst.get_operand(), src.get_register());
             }
             case FUKU_T0_IMMEDIATE: {
-                return this->lntrnl_asm->_mov_w(dst.get_operand(), src.get_immediate());
+                return _mov_w(dst.get_operand(), src.get_immediate());
             }
             default: { FUKU_DEBUG; break; }
             }
@@ -127,13 +127,13 @@ fuku_instruction fuku_assambler::mov(fuku_type dst, fuku_type src) {
         case FUKU_T0_REGISTER: {
             switch (src.get_type()) {
             case FUKU_T0_REGISTER: {
-                return this->lntrnl_asm->_mov_dw(dst.get_register(), src.get_register());
+                return _mov_dw(dst.get_register(), src.get_register());
             }
             case FUKU_T0_OPERAND: {
-                return this->lntrnl_asm->_mov_dw(dst.get_register(), src.get_operand());
+                return _mov_dw(dst.get_register(), src.get_operand());
             }
             case FUKU_T0_IMMEDIATE: {
-                return this->lntrnl_asm->_mov_dw(dst.get_register(), src.get_immediate());
+                return _mov_dw(dst.get_register(), src.get_immediate());
             }
             default: { FUKU_DEBUG; break; }
             }
@@ -142,10 +142,10 @@ fuku_instruction fuku_assambler::mov(fuku_type dst, fuku_type src) {
         case FUKU_T0_OPERAND: {
             switch (src.get_type()) {
             case FUKU_T0_REGISTER: {
-                return this->lntrnl_asm->_mov_dw(dst.get_operand(), src.get_register());
+                return _mov_dw(dst.get_operand(), src.get_register());
             }
             case FUKU_T0_IMMEDIATE: {
-                return this->lntrnl_asm->_mov_dw(dst.get_operand(), src.get_immediate());
+                return _mov_dw(dst.get_operand(), src.get_immediate());
             }
             default: { FUKU_DEBUG; break; }
             }
@@ -160,13 +160,13 @@ fuku_instruction fuku_assambler::mov(fuku_type dst, fuku_type src) {
         case FUKU_T0_REGISTER: {
             switch (src.get_type()) {
             case FUKU_T0_REGISTER: {
-                return this->lntrnl_asm->_mov_qw(dst.get_register(), src.get_register());
+                return _mov_qw(dst.get_register(), src.get_register());
             }
             case FUKU_T0_OPERAND: {
-                return this->lntrnl_asm->_mov_qw(dst.get_register(), src.get_operand());
+                return _mov_qw(dst.get_register(), src.get_operand());
             }
             case FUKU_T0_IMMEDIATE: {
-                return this->lntrnl_asm->_mov_qw(dst.get_register(), src.get_immediate());
+                return _mov_qw(dst.get_register(), src.get_immediate());
             }
             default: { FUKU_DEBUG; break; }
             }
@@ -175,10 +175,10 @@ fuku_instruction fuku_assambler::mov(fuku_type dst, fuku_type src) {
         case FUKU_T0_OPERAND: {
             switch (src.get_type()) {
             case FUKU_T0_REGISTER: {
-                return this->lntrnl_asm->_mov_qw(dst.get_operand(), src.get_register());
+                return _mov_qw(dst.get_operand(), src.get_register());
             }
             case FUKU_T0_IMMEDIATE: {
-                return this->lntrnl_asm->_mov_qw(dst.get_operand(), src.get_immediate());
+                return _mov_qw(dst.get_operand(), src.get_immediate());
             }
             default: { FUKU_DEBUG; break; }
             }
@@ -194,7 +194,7 @@ fuku_instruction fuku_assambler::mov(fuku_type dst, fuku_type src) {
 }
 
 fuku_instruction fuku_assambler::cmovcc(fuku_condition cond, fuku_type dst, fuku_type src) {
-    return fuku_instruction();
+    fuku_instruction();
 }
 fuku_instruction fuku_assambler::xchg(fuku_type dst, fuku_type src) {
     return fuku_instruction();
@@ -282,16 +282,16 @@ fuku_instruction fuku_assambler::cmp(fuku_type dst, fuku_type src) {
 
 //Decimal Arithmetic Instructions
 fuku_instruction fuku_assambler::daa() {
-    return fuku_instruction();
+    _daa(context);
 }
 fuku_instruction fuku_assambler::das() {
-    return fuku_instruction();
+    _das(context);
 }
 fuku_instruction fuku_assambler::aaa() {
-    return fuku_instruction();
+    _aaa(context);
 }
 fuku_instruction fuku_assambler::aas() {
-    return fuku_instruction();
+    _aas(context);
 }
 fuku_instruction fuku_assambler::aam(fuku_type src) {
     return fuku_instruction();
@@ -380,152 +380,156 @@ fuku_instruction fuku_assambler::ret(fuku_type src) {
     return fuku_instruction();
 }
 fuku_instruction fuku_assambler::int3() {
-    return fuku_instruction();
+    _int3(context);
 }
 fuku_instruction fuku_assambler::enter(fuku_type size, fuku_type nestinglevel) {
     return fuku_instruction();
 }
 fuku_instruction fuku_assambler::leave_() {
-    return fuku_instruction();
+    _leave_(context);
 }
 
 //String Instructions
 fuku_instruction fuku_assambler::outsb() {
-    return fuku_instruction();
+    _outsb(context);
 }
 fuku_instruction fuku_assambler::outsw() {
-    return fuku_instruction();
+    _outsw(context);
 }
 fuku_instruction fuku_assambler::outsd() {
-    return fuku_instruction();
+    _outsd(context);
 }
 fuku_instruction fuku_assambler::movsb() {
-    return fuku_instruction();
+    _movsb(context);
 }
 fuku_instruction fuku_assambler::movsw() {
-    return fuku_instruction();
+    _movsw(context);
 }
 fuku_instruction fuku_assambler::movsd() {
-    return fuku_instruction();
+    _movsd(context);
 }
 fuku_instruction fuku_assambler::movsq() {
-    return fuku_instruction();
+    _movsq(context);
 }
 fuku_instruction fuku_assambler::cmpsb() {
-    return fuku_instruction();
+    _cmpsb(context);
 }
 fuku_instruction fuku_assambler::cmpsw() {
-    return fuku_instruction();
+    _cmpsw(context);
 }
 fuku_instruction fuku_assambler::cmpsd() {
-    return fuku_instruction();
+    _cmpsd(context);
 }
 fuku_instruction fuku_assambler::cmpsq() {
-    return fuku_instruction();
+    _cmpsq(context);
 }
 fuku_instruction fuku_assambler::scasb() {
-    return fuku_instruction();
+    _scasb(context);
 }
 fuku_instruction fuku_assambler::scasw() {
-    return fuku_instruction();
+    _scasw(context);
 }
 fuku_instruction fuku_assambler::scasd() {
-    return fuku_instruction();
+    _scasd(context);
 }
 fuku_instruction fuku_assambler::scasq() {
-    return fuku_instruction();
+    _scasq(context);
 }
 fuku_instruction fuku_assambler::lodsb() {
-    return fuku_instruction();
+    _lodsb(context);
 }
 fuku_instruction fuku_assambler::lodsw() {
-    return fuku_instruction();
+    _lodsw(context);
 }
 fuku_instruction fuku_assambler::lodsd() {
-    return fuku_instruction();
+    _lodsd(context);
 }
 fuku_instruction fuku_assambler::lodsq() {
-    return fuku_instruction();
+    _lodsq(context);
 }
 fuku_instruction fuku_assambler::stosb() {
-    return fuku_instruction();
+    _stosb(context);
 }
 fuku_instruction fuku_assambler::stosw() {
-    return fuku_instruction();
+    _stosw(context);
 }
 fuku_instruction fuku_assambler::stosd() {
-    return fuku_instruction();
+    _stosd(context);
 }
 fuku_instruction fuku_assambler::stosq() {
-    return fuku_instruction();
+    _stosq(context);
 }
 
 fuku_instruction fuku_assambler::stc() {
-    return fuku_instruction();
+    _stc(context);
 }
 fuku_instruction fuku_assambler::clc() {
-    return fuku_instruction();
+    _clc(context);
 }
 fuku_instruction fuku_assambler::cmc() {
-    return fuku_instruction();
+    _cmc(context);
 }
 fuku_instruction fuku_assambler::cld() {
-    return fuku_instruction();
+    _cld(context);
 }
 fuku_instruction fuku_assambler::std() {
-    return fuku_instruction();
+    _std(context);
 }
 fuku_instruction fuku_assambler::lahf() {
-    return fuku_instruction();
+    _lahf(context);
 }
 fuku_instruction fuku_assambler::sahf() {
-    return fuku_instruction();
+    _sahf(context);
 }
 fuku_instruction fuku_assambler::pusha() {
-    return fuku_instruction();
+    _pusha(context);
 }
 fuku_instruction fuku_assambler::pushad() {
-    return fuku_instruction();
+    _pushad(context);
 }
 fuku_instruction fuku_assambler::popa() {
-    return fuku_instruction();
+    _popa(context);
 }
 fuku_instruction fuku_assambler::popad() {
-    return fuku_instruction();
+    _popad(context);
 }
 fuku_instruction fuku_assambler::pushf() {
-    return fuku_instruction();
+    _pushf(context);
 }
 fuku_instruction fuku_assambler::pushfd() {
-    return fuku_instruction();
+    _pushfd(context);
 }
 fuku_instruction fuku_assambler::pushfq() {
-    return fuku_instruction();
+    _pushfq(context);
 }
 fuku_instruction fuku_assambler::popf() {
-    return fuku_instruction();
+    _popf(context);
 }
 fuku_instruction fuku_assambler::popfd() {
-    return fuku_instruction();
+    _popfd(context);
 }
 fuku_instruction fuku_assambler::popfq() {
-    return fuku_instruction();
+    _popfq(context);
 }
 //Miscellaneous Instructions
 fuku_instruction fuku_assambler::lea(fuku_type dst, fuku_type src) {
     return fuku_instruction();
 }
 fuku_instruction fuku_assambler::nop(uint8_t size) {
-    return fuku_instruction();
+    _nop(context, size);
 }
 fuku_instruction fuku_assambler::ud2() {
-    return fuku_instruction();
+    _ud2(context);
 }
 fuku_instruction fuku_assambler::cpuid() {
-    return fuku_instruction();
+    _cpuid(context);
 }
 //Random Number Generator Instructions
 fuku_instruction fuku_assambler::rdrand(fuku_type dst) {
+    if (dst.get_type() != FUKU_T0_REGISTER) {
+        FUKU_DEBUG;
+    };
+
     return fuku_instruction();
 }
 fuku_instruction fuku_assambler::rdseed(fuku_type dst) {
@@ -533,11 +537,11 @@ fuku_instruction fuku_assambler::rdseed(fuku_type dst) {
 }
 //SYSTEM INSTRUCTIONS
 fuku_instruction fuku_assambler::hlt() {
-    return fuku_instruction();
+    _hlt(context);
 }
 fuku_instruction fuku_assambler::rdtsc() {
-    return fuku_instruction();
+    _rdtsc(context);
 }
 fuku_instruction fuku_assambler::lfence() {
-    return fuku_instruction();
+    _lfence(context);
 }

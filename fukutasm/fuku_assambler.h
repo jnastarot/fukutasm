@@ -25,7 +25,7 @@ public:
 };
 
 class fuku_assambler {
-    fuku_internal_assambler *lntrnl_asm;
+    fuku_assambler_ctx context;
 public:
     fuku_assambler(fuku_assambler_arch arch);
     ~fuku_assambler();

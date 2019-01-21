@@ -288,7 +288,7 @@ fuku_condition capstone_to_fuku_cond(x86_insn cond);
 
 #define fuku_asm_gen_name(prefix, sname, postfix) prefix##sname##postfix
 
-#define fuku_asm_ret_type fuku_instruction
+#define fuku_asm_ret_type void
 
 #define fuasm_reg  fuku_register
 #define fuasm_op   const fuku_operand&
