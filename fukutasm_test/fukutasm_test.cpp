@@ -3,7 +3,7 @@
 
 
 #define FUKU_TESTMOD_86 0
-
+/*
 csh cap_handle;
 cs_insn *instruction;
 
@@ -272,26 +272,34 @@ void test_2_arg(fuku_instruction inst,fuku_operand op, fuku_immediate imm, fuku_
 
 
 
-
+*/
 
 int main() {
 
-    cs_open(CS_ARCH_X86, FUKU_TESTMOD_86 == 1 ? CS_MODE_32 : CS_MODE_64, &cap_handle);
-    cs_option(cap_handle, CS_OPT_DETAIL, CS_OPT_ON);
+  //  cs_open(CS_ARCH_X86, FUKU_TESTMOD_86 == 1 ? CS_MODE_32 : CS_MODE_64, &cap_handle);
+   // cs_option(cap_handle, CS_OPT_DETAIL, CS_OPT_ON);
 
-    fuku_internal_assambler fuku_asm(FUKU_TESTMOD_86 == 1 ? FUKU_ASSAMBLER_ARCH_X86 : FUKU_ASSAMBLER_ARCH_X64);
+   // fuku_internal_assambler fuku_asm(FUKU_TESTMOD_86 == 1 ? FUKU_ASSAMBLER_ARCH_X86 : FUKU_ASSAMBLER_ARCH_X64);
   
     fuku_operand  op = fuku_operand(FUKU_REG_EAX);// fuku_operand(FUKU_REG_EAX, FUKU_REG_ECX, FUKU_OPERAND_SCALE_2, fuku_immediate(0x12345678));
-    fuku_register reg1 = FUKU_REG_ECX;
+    fuku_register reg1 = FUKU_REG_CX;
     fuku_register reg2 = FUKU_REG_EDX;
     fuku_immediate imm(0x12345678);
 
     fuku_assambler fasm(FUKU_TESTMOD_86 == 1 ? FUKU_ASSAMBLER_ARCH_X86 : FUKU_ASSAMBLER_ARCH_X64);
 
-  //  test_2_arg(fasm.mov(reg1, op), reg1, op, FUKU_OPERAND_SIZE_32);
+    fuku_instruction inst;
+
+    fukutasm::fuku_assambler_ctx & ctx = fasm.get_context();
+    ctx.arch = FUKU_TESTMOD_86 == 1 ? FUKU_ASSAMBLER_ARCH_X86 : FUKU_ASSAMBLER_ARCH_X64;
+    ctx.short_cfg = 0xFF;
+    ctx.inst = &inst;
+    fasm.xchg(op, reg1);
+
+   // test_2_arg(inst, op , reg1, FUKU_OPERAND_SIZE_32);
 
    // return 0;
-
+    /*
 //Data Transfer Instructions
     test_asm_def_full(mov, op, reg1, reg2, imm)
     asm_def_cond_2op_test(cmovcc,_w, reg1, reg2, FUKU_OPERAND_SIZE_16)
@@ -485,7 +493,7 @@ int main() {
     asm_def_noop_test(hlt, , FUKU_OPERAND_SIZE_32)
     asm_def_noop_test(rdtsc, , FUKU_OPERAND_SIZE_32)
     asm_def_noop_test(lfence, , FUKU_OPERAND_SIZE_32)
-
+    */
     return 0;
 }
 

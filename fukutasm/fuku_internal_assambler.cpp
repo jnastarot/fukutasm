@@ -26,50 +26,51 @@
     operand_size += sizeof(uint32_t);
 
 
+namespace fukutasm {
 
-void clear_space(fuku_assambler_ctx& ctx) {
+inline void clear_space(fuku_assambler_ctx& ctx) {
     memset(ctx.bytecode, 0, sizeof(ctx.bytecode));
     ctx.length = 0;
     ctx.displacment_offset = 0;
     ctx.immediate_offset = 0;
 }
 
-void emit_b(fuku_assambler_ctx& ctx, uint8_t x) {
+inline void emit_b(fuku_assambler_ctx& ctx, uint8_t x) {
     ctx.bytecode[ctx.length] = x;
     ctx.length++;
 }
 
-void emit_w(fuku_assambler_ctx& ctx, uint16_t x) {
+inline void emit_w(fuku_assambler_ctx& ctx, uint16_t x) {
     *(uint16_t*)&ctx.bytecode[ctx.length] = x;
     ctx.length += sizeof(uint16_t);
 }
 
-void emit_dw(fuku_assambler_ctx& ctx, uint32_t x) {
+inline void emit_dw(fuku_assambler_ctx& ctx, uint32_t x) {
     *(uint32_t*)&ctx.bytecode[ctx.length] = x;
     ctx.length += sizeof(uint32_t);
 }
 
-void emit_qw(fuku_assambler_ctx& ctx, uint64_t x) {
+inline void emit_qw(fuku_assambler_ctx& ctx, uint64_t x) {
     *(uint64_t*)&ctx.bytecode[ctx.length] = x;
     ctx.length += sizeof(uint64_t);
 }
 
-void emit_immediate_b(fuku_assambler_ctx& ctx, const fuku_immediate& src) {
+inline void emit_immediate_b(fuku_assambler_ctx& ctx, const fuku_immediate& src) {
     ctx.bytecode[ctx.length] = src.get_immediate8();
     ctx.length++;
 }
 
-void emit_immediate_w(fuku_assambler_ctx& ctx, const fuku_immediate& src) {
+inline void emit_immediate_w(fuku_assambler_ctx& ctx, const fuku_immediate& src) {
     *(uint16_t*)&ctx.bytecode[ctx.length] = src.get_immediate16();
     ctx.length += sizeof(uint16_t);
 }
 
-void emit_immediate_dw(fuku_assambler_ctx& ctx, const fuku_immediate& src) {
+inline void emit_immediate_dw(fuku_assambler_ctx& ctx, const fuku_immediate& src) {
     *(uint32_t*)&ctx.bytecode[ctx.length] = src.get_immediate32();
     ctx.length += sizeof(uint32_t);
 }
 
-void emit_immediate_qw(fuku_assambler_ctx& ctx, const fuku_immediate& src) {
+inline void emit_immediate_qw(fuku_assambler_ctx& ctx, const fuku_immediate& src) {
     *(uint64_t*)&ctx.bytecode[ctx.length] = src.get_immediate64();
     ctx.length += sizeof(uint64_t);
 }
@@ -1302,3 +1303,4 @@ fuku_asm_ret_type _nop(fuku_assambler_ctx& ctx, uint8_t n) {
     }
     gen_func_return(X86_INS_NOP, 0)
 }
+};

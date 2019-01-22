@@ -15,7 +15,7 @@
 #include "..\fukutasm\fukutasm.h"
 
 #pragma comment(lib, "fukutasm.lib")
-#pragma comment(lib, "capstone.lib")
+//#pragma comment(lib, "capstone.lib")
 
 
 #endif 

@@ -25,148 +25,149 @@ public:
 };
 
 class fuku_assambler {
-    fuku_assambler_ctx context;
+    fukutasm::fuku_assambler_ctx context;
+    fuku_code_holder * code_holder;
+    void new_chain_item();
+    
 public:
     fuku_assambler(fuku_assambler_arch arch);
     ~fuku_assambler();
 
-    void set_optimization_flags(uint8_t flags); //fuku_asm_short_cfg
-    void set_arch(fuku_assambler_arch arch);
-    fuku_assambler_arch get_arch();
+    fukutasm::fuku_assambler_ctx& get_context();
 public:
 //Data Transfer Instructions
-    fuku_instruction mov(fuku_type dst, fuku_type src);
-    fuku_instruction cmovcc(fuku_condition cond, fuku_type dst, fuku_type src);
-    fuku_instruction xchg(fuku_type dst, fuku_type src);
-    fuku_instruction bswap(fuku_type dst);
-    fuku_instruction xadd(fuku_type dst, fuku_type src);
-    fuku_instruction cmpxchg(fuku_type dst, fuku_type src);
-    fuku_instruction cmpxchg8b(fuku_type dst);
-    fuku_instruction cmpxchg16b(fuku_type dst);
-    fuku_instruction push(fuku_type src);
-    fuku_instruction pop(fuku_type dst);
-    fuku_instruction cwd();
-    fuku_instruction cdq();
-    fuku_instruction cqo();
-    fuku_instruction movzx(fuku_type dst, fuku_type src);
-    fuku_instruction movsx(fuku_type dst, fuku_type src);
+    void mov(const fuku_type& dst, const fuku_type& src);
+    void cmovcc(fuku_condition cond, const fuku_type& dst, const fuku_type& src);
+    void xchg(const fuku_type& dst, const fuku_type& src);
+    void bswap(const fuku_type& dst);
+    void xadd(const fuku_type& dst, const fuku_type& src);
+    void cmpxchg(const fuku_type& dst, const fuku_type& src);
+    void cmpxchg8b(const fuku_type& dst);
+    void cmpxchg16b(const fuku_type& dst);
+    void push(const fuku_type& src);
+    void pop(const fuku_type& dst);
+    void cwd();
+    void cdq();
+    void cqo();
+    void movzx(const fuku_type& dst, const fuku_type& src);
+    void movsx(const fuku_type& dst, const fuku_type& src);
 
 //Binary Arithmetic Instructions
-    fuku_instruction adcx(fuku_type dst, fuku_type src);
-    fuku_instruction adox(fuku_type dst, fuku_type src);
-    fuku_instruction add(fuku_type dst, fuku_type src);
-    fuku_instruction adc(fuku_type dst, fuku_type src);
-    fuku_instruction sub(fuku_type dst, fuku_type src);
-    fuku_instruction sbb(fuku_type dst, fuku_type src);
-    fuku_instruction imul(fuku_type src);
-    fuku_instruction mul(fuku_type dst);
-    fuku_instruction idiv(fuku_type src);
-    fuku_instruction div(fuku_type dst);
-    fuku_instruction inc(fuku_type src);
-    fuku_instruction dec(fuku_type dst);
-    fuku_instruction neg(fuku_type src);
-    fuku_instruction cmp(fuku_type dst, fuku_type src);
+    void adcx(const fuku_type& dst, const fuku_type& src);
+    void adox(const fuku_type& dst, const fuku_type& src);
+    void add(const fuku_type& dst, const fuku_type& src);
+    void adc(const fuku_type& dst, const fuku_type& src);
+    void sub(const fuku_type& dst, const fuku_type& src);
+    void sbb(const fuku_type& dst, const fuku_type& src);
+    void imul(const fuku_type& src);
+    void mul(const fuku_type& dst);
+    void idiv(const fuku_type& src);
+    void div(const fuku_type& dst);
+    void inc(const fuku_type& src);
+    void dec(const fuku_type& dst);
+    void neg(const fuku_type& src);
+    void cmp(const fuku_type& dst, const fuku_type& src);
 
 //Decimal Arithmetic Instructions
-    fuku_instruction daa();
-    fuku_instruction das();
-    fuku_instruction aaa();
-    fuku_instruction aas();
-    fuku_instruction aam(fuku_type src);
-    fuku_instruction aad(fuku_type src);
+    void daa();
+    void das();
+    void aaa();
+    void aas();
+    void aam(const fuku_type& src);
+    void aad(const fuku_type& src);
 
 //Logical Instructions Instructions
-    fuku_instruction and_(fuku_type dst, fuku_type src);
-    fuku_instruction or_(fuku_type dst, fuku_type src);
-    fuku_instruction xor_(fuku_type dst, fuku_type src);
-    fuku_instruction not_(fuku_type dst);
+    void and_(const fuku_type& dst, const fuku_type& src);
+    void or_(const fuku_type& dst, const fuku_type& src);
+    void xor_(const fuku_type& dst, const fuku_type& src);
+    void not_(const fuku_type& dst);
 
 //Shift and Rotate Instructions
-    fuku_instruction sar(fuku_type dst, fuku_type src);
-    fuku_instruction shr(fuku_type dst, fuku_type src);
-    fuku_instruction shl(fuku_type dst, fuku_type src);
-    fuku_instruction shrd(fuku_type dst, fuku_type src, fuku_type shift);
-    fuku_instruction shld(fuku_type dst, fuku_type src, fuku_type shift);
-    fuku_instruction ror(fuku_type dst, fuku_type src);
-    fuku_instruction rol(fuku_type dst, fuku_type src);
-    fuku_instruction rcr(fuku_type dst, fuku_type src);
-    fuku_instruction rcl(fuku_type dst, fuku_type src);
+    void sar(const fuku_type& dst, const fuku_type& src);
+    void shr(const fuku_type& dst, const fuku_type& src);
+    void shl(const fuku_type& dst, const fuku_type& src);
+    void shrd(const fuku_type& dst, const fuku_type& src, const fuku_type& shift);
+    void shld(const fuku_type& dst, const fuku_type& src, const fuku_type& shift);
+    void ror(const fuku_type& dst, const fuku_type& src);
+    void rol(const fuku_type& dst, const fuku_type& src);
+    void rcr(const fuku_type& dst, const fuku_type& src);
+    void rcl(const fuku_type& dst, const fuku_type& src);
 
 //Bit and Byte Instructions
-    fuku_instruction bt(fuku_type dst, fuku_type src);
-    fuku_instruction bts(fuku_type dst, fuku_type src);
-    fuku_instruction btr(fuku_type dst, fuku_type src);
-    fuku_instruction btc(fuku_type dst, fuku_type src);
-    fuku_instruction setcc(fuku_condition cond, fuku_type dst);
-    fuku_instruction test(fuku_type dst, fuku_type src);
-    fuku_instruction popcnt(fuku_type dst, fuku_type src);
+    void bt(const fuku_type& dst, const fuku_type& src);
+    void bts(const fuku_type& dst, const fuku_type& src);
+    void btr(const fuku_type& dst, const fuku_type& src);
+    void btc(const fuku_type& dst, const fuku_type& src);
+    void setcc(fuku_condition cond, const fuku_type& dst);
+    void test(const fuku_type& dst, const fuku_type& src);
+    void popcnt(const fuku_type& dst, const fuku_type& src);
 
 //Control Transfer Instructions
-    fuku_instruction jmp(fuku_type src);
-    fuku_instruction jcc(fuku_condition cond, fuku_type src);
-    fuku_instruction call(fuku_type src);
-    fuku_instruction ret(fuku_type src);
-    fuku_instruction int3();
-    fuku_instruction enter(fuku_type size, fuku_type nestinglevel);
-    fuku_instruction leave_();
+    void jmp(const fuku_type& src);
+    void jcc(fuku_condition cond, const fuku_type& src);
+    void call(const fuku_type& src);
+    void ret(const fuku_type& src);
+    void int3();
+    void enter(const fuku_type& size, const fuku_type& nestinglevel);
+    void leave_();
 
 //String Instructions
-    fuku_instruction outsb();
-    fuku_instruction outsw();
-    fuku_instruction outsd();
-    fuku_instruction movsb();
-    fuku_instruction movsw();
-    fuku_instruction movsd();
-    fuku_instruction movsq();
-    fuku_instruction cmpsb();
-    fuku_instruction cmpsw();
-    fuku_instruction cmpsd();
-    fuku_instruction cmpsq();
-    fuku_instruction scasb();
-    fuku_instruction scasw();
-    fuku_instruction scasd();
-    fuku_instruction scasq();
-    fuku_instruction lodsb();
-    fuku_instruction lodsw();
-    fuku_instruction lodsd();
-    fuku_instruction lodsq();
-    fuku_instruction stosb();
-    fuku_instruction stosw();
-    fuku_instruction stosd();
-    fuku_instruction stosq();
+    void outsb();
+    void outsw();
+    void outsd();
+    void movsb();
+    void movsw();
+    void movsd();
+    void movsq();
+    void cmpsb();
+    void cmpsw();
+    void cmpsd();
+    void cmpsq();
+    void scasb();
+    void scasw();
+    void scasd();
+    void scasq();
+    void lodsb();
+    void lodsw();
+    void lodsd();
+    void lodsq();
+    void stosb();
+    void stosw();
+    void stosd();
+    void stosq();
 
 //Flag Control (EFLAG) Instructions
-    fuku_instruction stc();
-    fuku_instruction clc();
-    fuku_instruction cmc();
-    fuku_instruction cld();
-    fuku_instruction std();
-    fuku_instruction lahf();
-    fuku_instruction sahf();
-    fuku_instruction pusha();
-    fuku_instruction pushad();
-    fuku_instruction popa();
-    fuku_instruction popad();
-    fuku_instruction pushf();
-    fuku_instruction pushfd();
-    fuku_instruction pushfq();
-    fuku_instruction popf();
-    fuku_instruction popfd();
-    fuku_instruction popfq();
+    void stc();
+    void clc();
+    void cmc();
+    void cld();
+    void std();
+    void lahf();
+    void sahf();
+    void pusha();
+    void pushad();
+    void popa();
+    void popad();
+    void pushf();
+    void pushfd();
+    void pushfq();
+    void popf();
+    void popfd();
+    void popfq();
 
 //Miscellaneous Instructions
-    fuku_instruction lea(fuku_type dst, fuku_type src);
-    fuku_instruction nop(uint8_t size = 1);
-    fuku_instruction ud2();
-    fuku_instruction cpuid();
+    void lea(const fuku_type& dst, const fuku_type& src);
+    void nop(uint8_t size = 1);
+    void ud2();
+    void cpuid();
 
 //Random Number Generator Instructions
-    fuku_instruction rdrand(fuku_type dst);
-    fuku_instruction rdseed(fuku_type dst);
+    void rdrand(const fuku_type& dst);
+    void rdseed(const fuku_type& dst);
 
 //SYSTEM INSTRUCTIONS
-    fuku_instruction hlt();
-    fuku_instruction rdtsc();
-    fuku_instruction lfence();
+    void hlt();
+    void rdtsc();
+    void lfence();
 };
 
