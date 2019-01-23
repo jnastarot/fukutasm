@@ -1,5 +1,7 @@
 #pragma once
 
+#include "fuku_internal_assambler.h"
+
 enum fuku_t0_types {
     FUKU_T0_REGISTER = 1,
     FUKU_T0_OPERAND  = 2,
@@ -27,8 +29,7 @@ public:
 class fuku_assambler {
     fukutasm::fuku_assambler_ctx context;
     fuku_code_holder * code_holder;
-    void new_chain_item();
-    
+    void on_new_chain_item();
 public:
     fuku_assambler(fuku_assambler_arch arch);
     ~fuku_assambler();

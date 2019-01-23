@@ -257,6 +257,9 @@ fuku_immediate::fuku_immediate(uint64_t immediate)
 fuku_immediate::fuku_immediate(uint64_t immediate, bool is_rel)
     : immediate_value(immediate), relocate(is_rel) {}
 
+fuku_immediate::fuku_immediate(const fuku_immediate& imm) {
+    this->operator=(imm);
+}
 
 fuku_immediate::~fuku_immediate() {};
 
@@ -353,25 +356,39 @@ int64_t fuku_immediate::get_signed_value64() const {
 
 
 
-fuku_operand::fuku_operand(fuku_register base)
-    : base(base), index(FUKU_REG_NONE), scale(FUKU_OPERAND_SCALE_1), disp(0) {}
+fuku_operand::fuku_operand(fuku_register base, fuku_operand_size size)
+    : base(base), index(FUKU_REG_NONE), scale(FUKU_OPERAND_SCALE_1), disp(0), size(size) {}
 
-fuku_operand::fuku_operand(uint32_t disp) 
-    : base(FUKU_REG_NONE), index(FUKU_REG_NONE), scale(FUKU_OPERAND_SCALE_1), disp(disp) {}
+fuku_operand::fuku_operand(uint32_t disp, fuku_operand_size size)
+    : base(FUKU_REG_NONE), index(FUKU_REG_NONE), scale(FUKU_OPERAND_SCALE_1), disp(disp), size(size) {}
 
-fuku_operand::fuku_operand(const fuku_immediate& disp)
-    : base(FUKU_REG_NONE), index(FUKU_REG_NONE), scale(FUKU_OPERAND_SCALE_1), disp(disp){}
+fuku_operand::fuku_operand(const fuku_immediate& disp, fuku_operand_size size)
+    : base(FUKU_REG_NONE), index(FUKU_REG_NONE), scale(FUKU_OPERAND_SCALE_1), disp(disp), size(size) {}
 
-fuku_operand::fuku_operand(fuku_register base, const fuku_immediate& disp) 
-    : base(base), index(FUKU_REG_NONE), scale(FUKU_OPERAND_SCALE_1), disp(disp) {}
+fuku_operand::fuku_operand(fuku_register base, const fuku_immediate& disp, fuku_operand_size size)
+    : base(base), index(FUKU_REG_NONE), scale(FUKU_OPERAND_SCALE_1), disp(disp), size(size) {}
 
-fuku_operand::fuku_operand(fuku_register base, fuku_register index, fuku_operand_scale scale, const fuku_immediate& disp)
-    : base(base), index(index), scale(scale), disp(disp) {}
+fuku_operand::fuku_operand(fuku_register base, fuku_register index, fuku_operand_scale scale, const fuku_immediate& disp, fuku_operand_size size)
+    : base(base), index(index), scale(scale), disp(disp), size(size) {}
 
-fuku_operand::fuku_operand(fuku_register index, fuku_operand_scale scale, const fuku_immediate& disp) 
-    : base(FUKU_REG_NONE), index(index), scale(scale), disp(disp) {}
+fuku_operand::fuku_operand(fuku_register index, fuku_operand_scale scale, const fuku_immediate& disp, fuku_operand_size size)
+    : base(FUKU_REG_NONE), index(index), scale(scale), disp(disp), size(size) {}
+
+fuku_operand::fuku_operand(const fuku_operand& op) {
+    this->operator=(op);
+}
 
 fuku_operand::~fuku_operand() {}
+
+fuku_operand& fuku_operand::operator=(const fuku_operand& op) {
+    this->base  = op.base;
+    this->index = op.index;
+    this->scale = op.scale;
+    this->disp  = op.disp;
+    this->size  = op.size;
+
+    return *this;
+}
 
 void fuku_operand::set_base(fuku_register base) {
     this->base = base;
@@ -389,6 +406,10 @@ void fuku_operand::set_disp(const fuku_immediate& disp) {
     this->disp = disp;
 }
 
+void fuku_operand::set_size(fuku_operand_size size) {
+    this->size = size;
+}
+
 fuku_register fuku_operand::get_base() const {
     return this->base;
 }
@@ -403,6 +424,10 @@ fuku_operand_scale fuku_operand::get_scale() const {
 
 const fuku_immediate& fuku_operand::get_disp() const {
     return this->disp;
+}
+
+fuku_operand_size fuku_operand::get_size() const {
+    return this->size;
 }
 
 fuku_mem_opernad_type fuku_operand::get_type() const {

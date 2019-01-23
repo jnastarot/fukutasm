@@ -19,11 +19,14 @@
     <Filter Include="Исходные файлы\code_holder">
       <UniqueIdentifier>{1c758d8d-3ded-4207-9e29-ee4dc315b1e2}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Исходные файлы\assambler_internal">
-      <UniqueIdentifier>{ca725dc5-771a-4682-9174-b40f17549d55}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Исходные файлы\assambler">
       <UniqueIdentifier>{309bee1b-0cfd-47ca-a77f-df650cb243e0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\operands_objects">
+      <UniqueIdentifier>{d1be68da-57df-482e-9634-83ba342883fb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\assambler\assambler_internal">
+      <UniqueIdentifier>{ca725dc5-771a-4682-9174-b40f17549d55}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -40,19 +43,28 @@
       <Filter>Исходные файлы\code_holder</Filter>
     </ClInclude>
     <ClInclude Include="fuku_internal_assambler.h">
-      <Filter>Исходные файлы\assambler_internal</Filter>
+      <Filter>Исходные файлы\assambler\assambler_internal</Filter>
     </ClInclude>
     <ClInclude Include="fuku_internal_assambler_func_macro.h">
-      <Filter>Исходные файлы\assambler_internal</Filter>
+      <Filter>Исходные файлы\assambler\assambler_internal</Filter>
     </ClInclude>
     <ClInclude Include="fuku_internal_assambler_pattern_macro.h">
-      <Filter>Исходные файлы\assambler_internal</Filter>
+      <Filter>Исходные файлы\assambler\assambler_internal</Filter>
     </ClInclude>
     <ClInclude Include="fuku_assambler.h">
       <Filter>Исходные файлы\assambler</Filter>
     </ClInclude>
     <ClInclude Include="fuku_assambler_misc.h">
       <Filter>Исходные файлы\assambler</Filter>
+    </ClInclude>
+    <ClInclude Include="fuku_operand.h">
+      <Filter>Исходные файлы\operands_objects</Filter>
+    </ClInclude>
+    <ClInclude Include="fuku_register.h">
+      <Filter>Исходные файлы\operands_objects</Filter>
+    </ClInclude>
+    <ClInclude Include="fuku_immediate.h">
+      <Filter>Исходные файлы\operands_objects</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -69,7 +81,7 @@
       <Filter>Исходные файлы\code_holder</Filter>
     </ClCompile>
     <ClCompile Include="fuku_internal_assambler.cpp">
-      <Filter>Исходные файлы\assambler_internal</Filter>
+      <Filter>Исходные файлы\assambler\assambler_internal</Filter>
     </ClCompile>
     <ClCompile Include="fuku_assambler.cpp">
       <Filter>Исходные файлы\assambler</Filter>
