@@ -1,10 +1,12 @@
 #include "stdafx.h"
 #include "fuku_assambler.h"
 
+#define UNUSUAL_DATASET FUKU_DEBUG
+
 using namespace fukutasm;
 
-fuku_type::fuku_type(fuku_register reg)
-    :reg(reg), type(FUKU_T0_REGISTER){}
+fuku_type::fuku_type(const fuku_register& reg)
+    :reg(&reg), type(FUKU_T0_REGISTER){}
 fuku_type::fuku_type(const fuku_operand& op)
     : op(&op), type(FUKU_T0_OPERAND) {}
 fuku_type::fuku_type(const fuku_immediate& imm)
@@ -14,8 +16,8 @@ fuku_type::~fuku_type(){}
 const fuku_t0_types fuku_type::get_type() const {
     return this->type;
 }
-const fuku_register fuku_type::get_register() const {
-    return this->reg;
+const fuku_register &fuku_type::get_register() const {
+    return *this->reg;
 }
 const fuku_operand  &fuku_type::get_operand() const {
     return *this->op;
@@ -36,6 +38,11 @@ fuku_assambler::~fuku_assambler() {
 
 fuku_assambler_ctx& fuku_assambler::get_context() {
     return this->context;
+}
+
+
+void fuku_assambler::on_new_chain_item() {
+    
 }
 
 void fuku_assambler::mov(const fuku_type& dst, const fuku_type& src) {
@@ -69,29 +76,29 @@ void fuku_assambler::mov(const fuku_type& dst, const fuku_type& src) {
 
 void fuku_assambler::cmovcc(fuku_condition cond, const fuku_type& dst, const fuku_type& src) {
     fuku_assambler_command_2op_graph(
-        FUKU_DEBUG,
-        FUKU_DEBUG,
-        FUKU_DEBUG,
-        FUKU_DEBUG,
-        FUKU_DEBUG,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
 
         _cmovcc_w(context, cond, dst.get_register(), src.get_register());,
         _cmovcc_w(context, cond, dst.get_register(), src.get_operand());,
-        FUKU_DEBUG,
-        FUKU_DEBUG,
-        FUKU_DEBUG,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
 
         _cmovcc_dw(context, cond, dst.get_register(), src.get_register());,
         _cmovcc_dw(context, cond, dst.get_register(), src.get_operand());,
-        FUKU_DEBUG,
-        FUKU_DEBUG,
-        FUKU_DEBUG,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
 
         _cmovcc_qw(context, cond, dst.get_register(), src.get_register());,
         _cmovcc_qw(context, cond, dst.get_register(), src.get_operand());,
-        FUKU_DEBUG,
-        FUKU_DEBUG,
-        FUKU_DEBUG
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET
     )
     on_new_chain_item();
 }
@@ -99,151 +106,151 @@ void fuku_assambler::xchg(const fuku_type& dst, const fuku_type& src) {
     fuku_assambler_command_2op_graph(
         _xchg_b(context, dst.get_register(), src.get_register());,
         _xchg_b(context, src.get_operand(), dst.get_register());,
-        FUKU_DEBUG,
+        UNUSUAL_DATASET,
         _xchg_b(context, dst.get_operand(), src.get_register());,
-        FUKU_DEBUG,
+        UNUSUAL_DATASET,
 
         _xchg_w(context, dst.get_operand(), src.get_register());,
         _xchg_w(context, src.get_operand(), dst.get_register());,
-        FUKU_DEBUG,
+        UNUSUAL_DATASET,
         _xchg_w(context, dst.get_operand(), src.get_register());,
-        FUKU_DEBUG,
+        UNUSUAL_DATASET,
 
         _xchg_dw(context, dst.get_register(), src.get_register());,
         _xchg_dw(context, src.get_operand(), dst.get_register());,
-        FUKU_DEBUG,
+        UNUSUAL_DATASET,
         _xchg_dw(context, dst.get_operand(), src.get_register());,
-        FUKU_DEBUG,
+        UNUSUAL_DATASET,
 
         _xchg_qw(context, dst.get_register(), src.get_register());,
         _xchg_qw(context, src.get_operand(), dst.get_register());,
-        FUKU_DEBUG,
+        UNUSUAL_DATASET,
         _xchg_qw(context, dst.get_operand(), src.get_register());,
-        FUKU_DEBUG
+        UNUSUAL_DATASET
     )
     on_new_chain_item();
 }
 void fuku_assambler::bswap(const fuku_type& dst) {
     fuku_assambler_command_1op_graph(dst,
-        FUKU_DEBUG,
-        FUKU_DEBUG,
-        FUKU_DEBUG,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
 
-        FUKU_DEBUG,
-        FUKU_DEBUG,
-        FUKU_DEBUG,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
 
         _bswap_dw(context, dst.get_register());,
-        FUKU_DEBUG,
-        FUKU_DEBUG,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
 
         _bswap_qw(context, dst.get_register());,
-        FUKU_DEBUG,
-        FUKU_DEBUG
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET
     )
     on_new_chain_item();
 }
 void fuku_assambler::xadd(const fuku_type& dst, const fuku_type& src) {
     fuku_assambler_command_2op_graph(
         _xadd_b(context, dst.get_register(), src.get_register());,
-        FUKU_DEBUG,
-        FUKU_DEBUG,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
         _xadd_b(context, dst.get_operand(), src.get_register());,
-        FUKU_DEBUG,
+        UNUSUAL_DATASET,
 
         _xadd_w(context, dst.get_register(), src.get_register()); ,
-        FUKU_DEBUG,
-        FUKU_DEBUG,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
         _xadd_w(context, dst.get_operand(), src.get_register()); ,
-        FUKU_DEBUG,
+        UNUSUAL_DATASET,
 
         _xadd_dw(context, dst.get_register(), src.get_register()); ,
-        FUKU_DEBUG,
-        FUKU_DEBUG,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
         _xadd_dw(context, dst.get_operand(), src.get_register()); ,
-        FUKU_DEBUG,
+        UNUSUAL_DATASET,
 
         _xadd_qw(context, dst.get_register(), src.get_register()); ,
-        FUKU_DEBUG,
-        FUKU_DEBUG,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
         _xadd_qw(context, dst.get_operand(), src.get_register()); ,
-        FUKU_DEBUG
+        UNUSUAL_DATASET
     )
     on_new_chain_item();
 }
 void fuku_assambler::cmpxchg(const fuku_type& dst, const fuku_type& src) {
     fuku_assambler_command_2op_graph(
         _cmpxchg_b(context, dst.get_register(), src.get_register());,
-        FUKU_DEBUG,
-        FUKU_DEBUG,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
         _cmpxchg_b(context, dst.get_operand(), src.get_register());,
-        FUKU_DEBUG,
+        UNUSUAL_DATASET,
 
         _cmpxchg_w(context, dst.get_register(), src.get_register()); ,
-        FUKU_DEBUG,
-        FUKU_DEBUG,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
         _cmpxchg_w(context, dst.get_operand(), src.get_register()); ,
-        FUKU_DEBUG,
+        UNUSUAL_DATASET,
 
         _cmpxchg_dw(context, dst.get_register(), src.get_register()); ,
-        FUKU_DEBUG,
-        FUKU_DEBUG,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
         _cmpxchg_dw(context, dst.get_operand(), src.get_register()); ,
-        FUKU_DEBUG,
+        UNUSUAL_DATASET,
 
         _cmpxchg_qw(context, dst.get_register(), src.get_register()); ,
-        FUKU_DEBUG,
-        FUKU_DEBUG,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
         _cmpxchg_qw(context, dst.get_operand(), src.get_register()); ,
-        FUKU_DEBUG
+        UNUSUAL_DATASET
     )
     on_new_chain_item();
 }
 void fuku_assambler::cmpxchg8b(const fuku_type& dst) {
     fuku_assambler_command_1op_graph(dst,
-        FUKU_DEBUG,
-        FUKU_DEBUG,
-        FUKU_DEBUG,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
         
-        FUKU_DEBUG,
-        FUKU_DEBUG,
-        FUKU_DEBUG,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
         
-        FUKU_DEBUG,
+        UNUSUAL_DATASET,
         _cmpxchg8b(context, dst.get_operand()); ,
-        FUKU_DEBUG,
+        UNUSUAL_DATASET,
         
-        FUKU_DEBUG,
-        FUKU_DEBUG,
-        FUKU_DEBUG
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET
     )
     on_new_chain_item();
 }
 void fuku_assambler::cmpxchg16b(const fuku_type& dst) {
     fuku_assambler_command_1op_graph(dst,
-        FUKU_DEBUG,
-        FUKU_DEBUG,
-        FUKU_DEBUG,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
 
-        FUKU_DEBUG,
-        FUKU_DEBUG,
-        FUKU_DEBUG,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
 
-        FUKU_DEBUG,
+        UNUSUAL_DATASET,
         _cmpxchg16b(context, dst.get_operand()); ,
-        FUKU_DEBUG,
+        UNUSUAL_DATASET,
         
-        FUKU_DEBUG,
-        FUKU_DEBUG,
-        FUKU_DEBUG
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET
     )
     on_new_chain_item();
 }
 void fuku_assambler::push(const fuku_type& src) {
     fuku_assambler_command_1op_graph(src,
-        FUKU_DEBUG,
-        FUKU_DEBUG,
-        FUKU_DEBUG,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
 
         _push_w(context,  src.get_register());,
         _push_w(context, src.get_operand());  ,
@@ -261,21 +268,21 @@ void fuku_assambler::push(const fuku_type& src) {
 }
 void fuku_assambler::pop(const fuku_type& dst) {
     fuku_assambler_command_1op_graph(dst,
-        FUKU_DEBUG,
-        FUKU_DEBUG,
-        FUKU_DEBUG,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
 
         _pop_w(context, dst.get_register()); ,
         _pop_w(context, dst.get_operand());  ,
-        FUKU_DEBUG,
+        UNUSUAL_DATASET,
 
         _pop_dw(context, dst.get_register());,
         _pop_dw(context, dst.get_operand()); ,
-        FUKU_DEBUG,
+        UNUSUAL_DATASET,
 
         _pop_qw(context, dst.get_register());,
         _pop_qw(context, dst.get_operand()); ,
-        FUKU_DEBUG
+        UNUSUAL_DATASET
     )
     on_new_chain_item();
 }
@@ -298,57 +305,57 @@ void fuku_assambler::movsx(const fuku_type& dst, const fuku_type& src) {
 //Binary Arithmetic Instructions
 void fuku_assambler::adcx(const fuku_type& dst, const fuku_type& src) {
     fuku_assambler_command_2op_graph(
-        FUKU_DEBUG,
-        FUKU_DEBUG,
-        FUKU_DEBUG,
-        FUKU_DEBUG,
-        FUKU_DEBUG,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
 
-        FUKU_DEBUG,
-        FUKU_DEBUG,
-        FUKU_DEBUG,
-        FUKU_DEBUG,
-        FUKU_DEBUG,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
 
         _adcx_dw(context, dst.get_register(), src.get_register()); ,
         _adcx_dw(context, dst.get_register(), src.get_operand()); ,
-        FUKU_DEBUG,
-        FUKU_DEBUG,
-        FUKU_DEBUG,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
 
         _adcx_qw(context, dst.get_register(), src.get_register()); ,
         _adcx_qw(context, dst.get_register(), src.get_operand()); ,
-        FUKU_DEBUG,
-        FUKU_DEBUG,
-        FUKU_DEBUG
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET
     )
     on_new_chain_item();
 }
 void fuku_assambler::adox(const fuku_type& dst, const fuku_type& src) {
     fuku_assambler_command_2op_graph(
-        FUKU_DEBUG, 
-        FUKU_DEBUG, 
-        FUKU_DEBUG,
-        FUKU_DEBUG,
-        FUKU_DEBUG,
+        UNUSUAL_DATASET, 
+        UNUSUAL_DATASET, 
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
 
-        FUKU_DEBUG,
-        FUKU_DEBUG,
-        FUKU_DEBUG,
-        FUKU_DEBUG,
-        FUKU_DEBUG,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
 
         _adcx_dw(context, dst.get_register(), src.get_register());,
         _adcx_dw(context, dst.get_register(), src.get_operand());,
-        FUKU_DEBUG,
-        FUKU_DEBUG,
-        FUKU_DEBUG,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
 
         _adcx_qw(context, dst.get_register(), src.get_register());,
         _adcx_qw(context, dst.get_register(), src.get_operand());,
-        FUKU_DEBUG,
-        FUKU_DEBUG,
-        FUKU_DEBUG
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET
         )
     on_new_chain_item();
 }
@@ -468,19 +475,19 @@ void fuku_assambler::imul(const fuku_type& src) {
     fuku_assambler_command_1op_graph(src,
         _imul_b(context, src.get_register());,
         _imul_b(context, src.get_operand()); ,
-        FUKU_DEBUG,
+        UNUSUAL_DATASET,
 
         _imul_w(context, src.get_register()); ,
         _imul_w(context, src.get_operand());,
-        FUKU_DEBUG,
+        UNUSUAL_DATASET,
 
         _imul_dw(context, src.get_register()); ,
         _imul_dw(context, src.get_operand());,
-        FUKU_DEBUG,
+        UNUSUAL_DATASET,
 
         _imul_qw(context, src.get_register()); ,
         _imul_qw(context, src.get_operand());,
-        FUKU_DEBUG,
+        UNUSUAL_DATASET
     )
     on_new_chain_item();
 }
@@ -488,19 +495,19 @@ void fuku_assambler::mul(const fuku_type& dst) {
     fuku_assambler_command_1op_graph(dst,
         _mul_b(context, dst.get_register());,
         _mul_b(context, dst.get_operand()); ,
-        FUKU_DEBUG,
+        UNUSUAL_DATASET,
 
         _mul_w(context, dst.get_register()); ,
         _mul_w(context, dst.get_operand());,
-        FUKU_DEBUG,
+        UNUSUAL_DATASET,
 
         _mul_dw(context, dst.get_register()); ,
         _mul_dw(context, dst.get_operand());,
-        FUKU_DEBUG,
+        UNUSUAL_DATASET,
 
         _mul_qw(context, dst.get_register()); ,
         _mul_qw(context, dst.get_operand());,
-        FUKU_DEBUG,
+        UNUSUAL_DATASET
     )
     on_new_chain_item();
 }
@@ -508,19 +515,19 @@ void fuku_assambler::idiv(const fuku_type& src) {
     fuku_assambler_command_1op_graph(src,
         _idiv_b(context, src.get_register());,
         _idiv_b(context, src.get_operand()); ,
-        FUKU_DEBUG,
+        UNUSUAL_DATASET,
 
         _idiv_w(context, src.get_register()); ,
         _idiv_w(context, src.get_operand());,
-        FUKU_DEBUG,
+        UNUSUAL_DATASET,
 
         _idiv_dw(context, src.get_register()); ,
         _idiv_dw(context, src.get_operand());,
-        FUKU_DEBUG,
+        UNUSUAL_DATASET,
 
         _idiv_qw(context, src.get_register()); ,
         _idiv_qw(context, src.get_operand());,
-        FUKU_DEBUG,
+        UNUSUAL_DATASET
     )
     on_new_chain_item();
 }
@@ -528,19 +535,19 @@ void fuku_assambler::div(const fuku_type& dst) {
     fuku_assambler_command_1op_graph(dst,
         _div_b(context, dst.get_register());,
         _div_b(context, dst.get_operand()); ,
-        FUKU_DEBUG,
+        UNUSUAL_DATASET,
 
         _div_w(context, dst.get_register()); ,
         _div_w(context, dst.get_operand());,
-        FUKU_DEBUG,
+        UNUSUAL_DATASET,
 
         _div_dw(context, dst.get_register()); ,
         _div_dw(context, dst.get_operand());,
-        FUKU_DEBUG,
+        UNUSUAL_DATASET,
 
         _div_qw(context, dst.get_register()); ,
         _div_qw(context, dst.get_operand());,
-        FUKU_DEBUG,
+        UNUSUAL_DATASET
     )
     on_new_chain_item();
 }
@@ -548,19 +555,19 @@ void fuku_assambler::inc(const fuku_type& src) {
     fuku_assambler_command_1op_graph(src,
         _inc_b(context, src.get_register());,
         _inc_b(context, src.get_operand()); ,
-        FUKU_DEBUG,
+        UNUSUAL_DATASET,
 
         _inc_w(context, src.get_register()); ,
         _inc_w(context, src.get_operand());,
-        FUKU_DEBUG,
+        UNUSUAL_DATASET,
 
         _inc_dw(context, src.get_register()); ,
         _inc_dw(context, src.get_operand());,
-        FUKU_DEBUG,
+        UNUSUAL_DATASET,
 
         _inc_qw(context, src.get_register()); ,
         _inc_qw(context, src.get_operand());,
-        FUKU_DEBUG,
+        UNUSUAL_DATASET
     )
     on_new_chain_item();
 }
@@ -568,19 +575,19 @@ void fuku_assambler::dec(const fuku_type& dst) {
     fuku_assambler_command_1op_graph(dst,
         _dec_b(context, dst.get_register());,
         _dec_b(context, dst.get_operand()); ,
-        FUKU_DEBUG,
+        UNUSUAL_DATASET,
 
         _dec_w(context, dst.get_register()); ,
         _dec_w(context, dst.get_operand());,
-        FUKU_DEBUG,
+        UNUSUAL_DATASET,
 
         _dec_dw(context, dst.get_register()); ,
         _dec_dw(context, dst.get_operand());,
-        FUKU_DEBUG,
+        UNUSUAL_DATASET,
 
         _dec_qw(context, dst.get_register()); ,
         _dec_qw(context, dst.get_operand());,
-        FUKU_DEBUG,
+        UNUSUAL_DATASET
     )
     on_new_chain_item();
 }
@@ -588,19 +595,19 @@ void fuku_assambler::neg(const fuku_type& src) {
     fuku_assambler_command_1op_graph(src,
         _neg_b(context, src.get_register());,
         _neg_b(context, src.get_operand()); ,
-        FUKU_DEBUG,
+        UNUSUAL_DATASET,
 
         _neg_w(context, src.get_register()); ,
         _neg_w(context, src.get_operand());,
-        FUKU_DEBUG,
+        UNUSUAL_DATASET,
 
         _neg_dw(context, src.get_register()); ,
         _neg_dw(context, src.get_operand());,
-        FUKU_DEBUG,
+        UNUSUAL_DATASET,
 
         _neg_qw(context, src.get_register()); ,
         _neg_qw(context, src.get_operand());,
-        FUKU_DEBUG,
+        UNUSUAL_DATASET
     )
     on_new_chain_item();
 }
@@ -742,32 +749,119 @@ void fuku_assambler::not_(const fuku_type& dst) {
     fuku_assambler_command_1op_graph(dst,
         _not_b(context, dst.get_register());,
         _not_b(context, dst.get_operand()); ,
-        FUKU_DEBUG,
+        UNUSUAL_DATASET,
 
         _not_w(context, dst.get_register()); ,
         _not_w(context, dst.get_operand());,
-        FUKU_DEBUG,
+        UNUSUAL_DATASET,
 
         _not_dw(context, dst.get_register()); ,
         _not_dw(context, dst.get_operand());,
-        FUKU_DEBUG,
+        UNUSUAL_DATASET,
 
         _not_qw(context, dst.get_register()); ,
         _not_qw(context, dst.get_operand());,
-        FUKU_DEBUG,
+        UNUSUAL_DATASET,
     )
     on_new_chain_item();
 }
 
 //Shift and Rotate Instructions
 void fuku_assambler::sar(const fuku_type& dst, const fuku_type& src) {
-    
+    if (src.get_type() == FUKU_T0_REGISTER && src.get_register().get_index() != FUKU_REG_INDEX_CX) {
+        UNUSUAL_DATASET
+    }
+
+    fuku_assambler_command_2op_graph(
+        _sar_cl_b(context, dst.get_register()); ,
+        UNUSUAL_DATASET,
+        _sar_b(context, dst.get_register(), src.get_immediate()); ,
+        _sar_cl_b(context, dst.get_operand()); ,
+        _sar_b(context, dst.get_operand(), src.get_immediate()); ,
+
+        _sar_cl_w(context, dst.get_register());,
+        UNUSUAL_DATASET,
+        _sar_w(context, dst.get_register(), src.get_immediate());,
+        _sar_cl_w(context, dst.get_operand());,
+        _sar_w(context, dst.get_operand(), src.get_immediate());,
+
+        _sar_cl_dw(context, dst.get_register());,
+        UNUSUAL_DATASET,
+        _sar_dw(context, dst.get_register(), src.get_immediate());,
+        _sar_cl_dw(context, dst.get_operand());,
+        _sar_dw(context, dst.get_operand(), src.get_immediate());,
+
+        _sar_cl_qw(context, dst.get_register());,
+        UNUSUAL_DATASET,
+        _sar_qw(context, dst.get_register(), src.get_immediate());,
+        _sar_cl_qw(context, dst.get_operand());,
+        _sar_qw(context, dst.get_operand(), src.get_immediate());
+    )
+    on_new_chain_item();
 }
 void fuku_assambler::shr(const fuku_type& dst, const fuku_type& src) {
-    
+    if (src.get_type() == FUKU_T0_REGISTER && src.get_register().get_index() != FUKU_REG_INDEX_CX) {
+        UNUSUAL_DATASET
+    }
+
+    fuku_assambler_command_2op_graph(
+        _shr_cl_b(context, dst.get_register());,
+        UNUSUAL_DATASET,
+        _shr_b(context, dst.get_register(), src.get_immediate());,
+        _shr_cl_b(context, dst.get_operand());,
+        _shr_b(context, dst.get_operand(), src.get_immediate());,
+
+        _shr_cl_w(context, dst.get_register()); ,
+        UNUSUAL_DATASET,
+        _shr_w(context, dst.get_register(), src.get_immediate()); ,
+        _shr_cl_w(context, dst.get_operand()); ,
+        _shr_w(context, dst.get_operand(), src.get_immediate()); ,
+
+        _shr_cl_dw(context, dst.get_register()); ,
+        UNUSUAL_DATASET,
+        _shr_dw(context, dst.get_register(), src.get_immediate()); ,
+        _shr_cl_dw(context, dst.get_operand()); ,
+        _shr_dw(context, dst.get_operand(), src.get_immediate()); ,
+
+        _shr_cl_qw(context, dst.get_register()); ,
+        UNUSUAL_DATASET,
+        _shr_qw(context, dst.get_register(), src.get_immediate()); ,
+        _shr_cl_qw(context, dst.get_operand()); ,
+        _shr_qw(context, dst.get_operand(), src.get_immediate()); 
+    )
+    on_new_chain_item();
 }
 void fuku_assambler::shl(const fuku_type& dst, const fuku_type& src) {
-    
+    if (src.get_type() == FUKU_T0_REGISTER && src.get_register().get_index() != FUKU_REG_INDEX_CX) {
+        UNUSUAL_DATASET
+    }
+
+    fuku_assambler_command_2op_graph(
+        _shl_cl_b(context, dst.get_register()); ,
+        UNUSUAL_DATASET,
+        _shl_b(context, dst.get_register(), src.get_immediate()); ,
+        _shl_cl_b(context, dst.get_operand()); ,
+        _shl_b(context, dst.get_operand(), src.get_immediate()); ,
+
+        _shl_cl_w(context, dst.get_register());,
+        UNUSUAL_DATASET,
+        _shl_w(context, dst.get_register(), src.get_immediate());,
+        _shl_cl_w(context, dst.get_operand());,
+        _shl_w(context, dst.get_operand(), src.get_immediate());,
+
+        _shl_cl_dw(context, dst.get_register());,
+        UNUSUAL_DATASET,
+        _shl_dw(context, dst.get_register(), src.get_immediate());,
+        _shl_cl_dw(context, dst.get_operand());,
+        _shl_dw(context, dst.get_operand(), src.get_immediate());,
+
+        _shl_cl_qw(context, dst.get_register());,
+        UNUSUAL_DATASET,
+        _shl_qw(context, dst.get_register(), src.get_immediate());,
+        _shl_cl_qw(context, dst.get_operand());,
+        _shl_qw(context, dst.get_operand(), src.get_immediate());
+    )
+    on_new_chain_item();
 }
 void fuku_assambler::shrd(const fuku_type& dst, const fuku_type& src, const fuku_type& shift) {
     
@@ -776,30 +870,246 @@ void fuku_assambler::shld(const fuku_type& dst, const fuku_type& src, const fuku
     
 }
 void fuku_assambler::ror(const fuku_type& dst, const fuku_type& src) {
-    
+    if (src.get_type() == FUKU_T0_REGISTER && src.get_register().get_index() != FUKU_REG_INDEX_CX) {
+        UNUSUAL_DATASET
+    }
+
+    fuku_assambler_command_2op_graph(
+        _ror_cl_b(context, dst.get_register()); ,
+        UNUSUAL_DATASET,
+        _ror_b(context, dst.get_register(), src.get_immediate()); ,
+        _ror_cl_b(context, dst.get_operand()); ,
+        _ror_b(context, dst.get_operand(), src.get_immediate()); ,
+
+        _ror_cl_w(context, dst.get_register());,
+        UNUSUAL_DATASET,
+        _ror_w(context, dst.get_register(), src.get_immediate());,
+        _ror_cl_w(context, dst.get_operand());,
+        _ror_w(context, dst.get_operand(), src.get_immediate());,
+
+        _ror_cl_dw(context, dst.get_register());,
+        UNUSUAL_DATASET,
+        _ror_dw(context, dst.get_register(), src.get_immediate());,
+        _ror_cl_dw(context, dst.get_operand());,
+        _ror_dw(context, dst.get_operand(), src.get_immediate());,
+
+        _ror_cl_qw(context, dst.get_register());,
+        UNUSUAL_DATASET,
+        _ror_qw(context, dst.get_register(), src.get_immediate());,
+        _ror_cl_qw(context, dst.get_operand());,
+        _ror_qw(context, dst.get_operand(), src.get_immediate());
+    )
+    on_new_chain_item();
 }
 void fuku_assambler::rol(const fuku_type& dst, const fuku_type& src) {
-    
+    if (src.get_type() == FUKU_T0_REGISTER && src.get_register().get_index() != FUKU_REG_INDEX_CX) {
+        UNUSUAL_DATASET
+    }
+
+    fuku_assambler_command_2op_graph(
+        _rol_cl_b(context, dst.get_register()); ,
+        UNUSUAL_DATASET,
+        _rol_b(context, dst.get_register(), src.get_immediate()); ,
+        _rol_cl_b(context, dst.get_operand()); ,
+        _rol_b(context, dst.get_operand(), src.get_immediate()); ,
+
+        _rol_cl_w(context, dst.get_register());,
+        UNUSUAL_DATASET,
+        _rol_w(context, dst.get_register(), src.get_immediate());,
+        _rol_cl_w(context, dst.get_operand());,
+        _rol_w(context, dst.get_operand(), src.get_immediate());,
+
+        _rol_cl_dw(context, dst.get_register());,
+        UNUSUAL_DATASET,
+        _rol_dw(context, dst.get_register(), src.get_immediate());,
+        _rol_cl_dw(context, dst.get_operand());,
+        _rol_dw(context, dst.get_operand(), src.get_immediate());,
+
+        _rol_cl_qw(context, dst.get_register());,
+        UNUSUAL_DATASET,
+        _rol_qw(context, dst.get_register(), src.get_immediate());,
+        _rol_cl_qw(context, dst.get_operand());,
+        _rol_qw(context, dst.get_operand(), src.get_immediate());
+    )
+    on_new_chain_item();
 }
 void fuku_assambler::rcr(const fuku_type& dst, const fuku_type& src) {
-    
+    if (src.get_type() == FUKU_T0_REGISTER && src.get_register().get_index() != FUKU_REG_INDEX_CX) {
+        UNUSUAL_DATASET
+    }
+
+    fuku_assambler_command_2op_graph(
+        _rcr_cl_b(context, dst.get_register()); ,
+        UNUSUAL_DATASET,
+        _rcr_b(context, dst.get_register(), src.get_immediate()); ,
+        _rcr_cl_b(context, dst.get_operand()); ,
+        _rcr_b(context, dst.get_operand(), src.get_immediate()); ,
+
+        _rcr_cl_w(context, dst.get_register());,
+        UNUSUAL_DATASET,
+        _rcr_w(context, dst.get_register(), src.get_immediate());,
+        _rcr_cl_w(context, dst.get_operand());,
+        _rcr_w(context, dst.get_operand(), src.get_immediate());,
+
+        _rcr_cl_dw(context, dst.get_register());,
+        UNUSUAL_DATASET,
+        _rcr_dw(context, dst.get_register(), src.get_immediate());,
+        _rcr_cl_dw(context, dst.get_operand());,
+        _rcr_dw(context, dst.get_operand(), src.get_immediate());,
+
+        _rcr_cl_qw(context, dst.get_register());,
+        UNUSUAL_DATASET,
+        _rcr_qw(context, dst.get_register(), src.get_immediate());,
+        _rcr_cl_qw(context, dst.get_operand());,
+        _rcr_qw(context, dst.get_operand(), src.get_immediate());
+    )
+    on_new_chain_item();
 }
 void fuku_assambler::rcl(const fuku_type& dst, const fuku_type& src) {
-    
+    if (src.get_type() == FUKU_T0_REGISTER && src.get_register().get_index() != FUKU_REG_INDEX_CX) {
+        UNUSUAL_DATASET
+    }
+
+    fuku_assambler_command_2op_graph(
+        _rcl_cl_b(context, dst.get_register()); ,
+        UNUSUAL_DATASET,
+        _rcl_b(context, dst.get_register(), src.get_immediate()); ,
+        _rcl_cl_b(context, dst.get_operand()); ,
+        _rcl_b(context, dst.get_operand(), src.get_immediate()); ,
+
+        _rcl_cl_w(context, dst.get_register());,
+        UNUSUAL_DATASET,
+        _rcl_w(context, dst.get_register(), src.get_immediate());,
+        _rcl_cl_w(context, dst.get_operand());,
+        _rcl_w(context, dst.get_operand(), src.get_immediate());,
+
+        _rcl_cl_dw(context, dst.get_register());,
+        UNUSUAL_DATASET,
+        _rcl_dw(context, dst.get_register(), src.get_immediate());,
+        _rcl_cl_dw(context, dst.get_operand());,
+        _rcl_dw(context, dst.get_operand(), src.get_immediate());,
+
+        _rcl_cl_qw(context, dst.get_register());,
+        UNUSUAL_DATASET,
+        _rcl_qw(context, dst.get_register(), src.get_immediate());,
+        _rcl_cl_qw(context, dst.get_operand());,
+        _rcl_qw(context, dst.get_operand(), src.get_immediate());
+    )
+    on_new_chain_item();
 }
 
 //Bit and Byte Instructions
 void fuku_assambler::bt(const fuku_type& dst, const fuku_type& src) {
-    
+    fuku_assambler_command_2op_graph(
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+
+        _bt_w(context, dst.get_register(), src.get_register()); ,
+        UNUSUAL_DATASET,
+        _bt_w(context, dst.get_register(), src.get_immediate()); ,
+        _bt_w(context, dst.get_operand(), src.get_register()); ,
+        _bt_w(context, dst.get_operand(), src.get_immediate()); ,
+
+        _bt_dw(context, dst.get_register(), src.get_register()); ,
+        UNUSUAL_DATASET,
+        _bt_dw(context, dst.get_register(), src.get_immediate()); ,
+        _bt_dw(context, dst.get_operand(), src.get_register()); ,
+        _bt_dw(context, dst.get_operand(), src.get_immediate()); ,
+
+        _bt_qw(context, dst.get_register(), src.get_register()); ,
+        UNUSUAL_DATASET,
+        _bt_qw(context, dst.get_register(), src.get_immediate()); ,
+        _bt_qw(context, dst.get_operand(), src.get_register()); ,
+        _bt_qw(context, dst.get_operand(), src.get_immediate()); 
+    )
+    on_new_chain_item();
 }
 void fuku_assambler::bts(const fuku_type& dst, const fuku_type& src) {
-    
+    fuku_assambler_command_2op_graph(
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+
+        _bts_w(context, dst.get_register(), src.get_register()); ,
+        UNUSUAL_DATASET,
+        _bts_w(context, dst.get_register(), src.get_immediate()); ,
+        _bts_w(context, dst.get_operand(), src.get_register()); ,
+        _bts_w(context, dst.get_operand(), src.get_immediate()); ,
+
+        _bts_dw(context, dst.get_register(), src.get_register()); ,
+        UNUSUAL_DATASET,
+        _bts_dw(context, dst.get_register(), src.get_immediate()); ,
+        _bts_dw(context, dst.get_operand(), src.get_register()); ,
+        _bts_dw(context, dst.get_operand(), src.get_immediate()); ,
+
+        _bts_qw(context, dst.get_register(), src.get_register()); ,
+        UNUSUAL_DATASET,
+        _bts_qw(context, dst.get_register(), src.get_immediate()); ,
+        _bts_qw(context, dst.get_operand(), src.get_register()); ,
+        _bts_qw(context, dst.get_operand(), src.get_immediate()); 
+    )
+    on_new_chain_item();
 }
 void fuku_assambler::btr(const fuku_type& dst, const fuku_type& src) {
-    
+    fuku_assambler_command_2op_graph(
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+
+        _btr_w(context, dst.get_register(), src.get_register()); ,
+        UNUSUAL_DATASET,
+        _btr_w(context, dst.get_register(), src.get_immediate()); ,
+        _btr_w(context, dst.get_operand(), src.get_register()); ,
+        _btr_w(context, dst.get_operand(), src.get_immediate()); ,
+
+        _btr_dw(context, dst.get_register(), src.get_register()); ,
+        UNUSUAL_DATASET,
+        _btr_dw(context, dst.get_register(), src.get_immediate()); ,
+        _btr_dw(context, dst.get_operand(), src.get_register()); ,
+        _btr_dw(context, dst.get_operand(), src.get_immediate()); ,
+
+        _btr_qw(context, dst.get_register(), src.get_register()); ,
+        UNUSUAL_DATASET,
+        _btr_qw(context, dst.get_register(), src.get_immediate()); ,
+        _btr_qw(context, dst.get_operand(), src.get_register()); ,
+        _btr_qw(context, dst.get_operand(), src.get_immediate()); 
+    )
+    on_new_chain_item();
 }
 void fuku_assambler::btc(const fuku_type& dst, const fuku_type& src) {
-    
+    fuku_assambler_command_2op_graph(
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+
+        _btc_w(context, dst.get_register(), src.get_register()); ,
+        UNUSUAL_DATASET,
+        _btc_w(context, dst.get_register(), src.get_immediate()); ,
+        _btc_w(context, dst.get_operand(), src.get_register()); ,
+        _btc_w(context, dst.get_operand(), src.get_immediate()); ,
+
+        _btc_dw(context, dst.get_register(), src.get_register()); ,
+        UNUSUAL_DATASET,
+        _btc_dw(context, dst.get_register(), src.get_immediate()); ,
+        _btc_dw(context, dst.get_operand(), src.get_register()); ,
+        _btc_dw(context, dst.get_operand(), src.get_immediate()); ,
+
+        _btc_qw(context, dst.get_register(), src.get_register()); ,
+        UNUSUAL_DATASET,
+        _btc_qw(context, dst.get_register(), src.get_immediate()); ,
+        _btc_qw(context, dst.get_operand(), src.get_register()); ,
+        _btc_qw(context, dst.get_operand(), src.get_immediate()); 
+    )
+    on_new_chain_item();
 }
 void fuku_assambler::setcc(fuku_condition cond, const fuku_type& dst) {
     
@@ -807,25 +1117,25 @@ void fuku_assambler::setcc(fuku_condition cond, const fuku_type& dst) {
 void fuku_assambler::test(const fuku_type& dst, const fuku_type& src) {
     fuku_assambler_command_2op_graph(
         _test_b(context, dst.get_register(), src.get_register());,
-        FUKU_DEBUG,
+        UNUSUAL_DATASET,
         _test_b(context, dst.get_register(), src.get_immediate());,
         _test_b(context, dst.get_operand(), src.get_register());,
         _test_b(context, dst.get_operand(), src.get_immediate());,
 
         _test_w(context, dst.get_register(), src.get_register()); ,
-        FUKU_DEBUG,
+        UNUSUAL_DATASET,
         _test_w(context, dst.get_register(), src.get_immediate()); ,
         _test_w(context, dst.get_operand(), src.get_register()); ,
         _test_w(context, dst.get_operand(), src.get_immediate()); ,
 
         _test_dw(context, dst.get_register(), src.get_register()); ,
-        FUKU_DEBUG,
+        UNUSUAL_DATASET,
         _test_dw(context, dst.get_register(), src.get_immediate()); ,
         _test_dw(context, dst.get_operand(), src.get_register()); ,
         _test_dw(context, dst.get_operand(), src.get_immediate()); ,
 
         _test_qw(context, dst.get_register(), src.get_register()); ,
-        FUKU_DEBUG,
+        UNUSUAL_DATASET,
         _test_qw(context, dst.get_register(), src.get_immediate()); ,
         _test_qw(context, dst.get_operand(), src.get_register()); ,
         _test_qw(context, dst.get_operand(), src.get_immediate()); 
@@ -833,19 +1143,42 @@ void fuku_assambler::test(const fuku_type& dst, const fuku_type& src) {
     on_new_chain_item();
 }
 void fuku_assambler::popcnt(const fuku_type& dst, const fuku_type& src) {
-    
+    fuku_assambler_command_2op_graph(
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+
+        _popcnt_w(context, dst.get_register(), src.get_register()); ,
+        _popcnt_w(context, dst.get_register(), dst.get_operand()); ,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+
+        _popcnt_dw(context, dst.get_register(), src.get_register()); ,
+        _popcnt_dw(context, dst.get_register(), dst.get_operand()); ,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+
+        _popcnt_qw(context, dst.get_register(), src.get_register()); ,
+        _popcnt_qw(context, dst.get_register(), dst.get_operand()); ,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET
+    )
+    on_new_chain_item();
 }
 
 //Control Transfer Instructions
 void fuku_assambler::jmp(const fuku_type& src) {
     fuku_assambler_command_1op_graph(src,
-        FUKU_DEBUG,
-        FUKU_DEBUG,
-        FUKU_DEBUG,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
 
-        FUKU_DEBUG,
-        FUKU_DEBUG,
-        FUKU_DEBUG,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
 
         _jmp(context, src.get_register()); ,
         _jmp(context, src.get_operand());,
@@ -858,17 +1191,34 @@ void fuku_assambler::jmp(const fuku_type& src) {
     on_new_chain_item();
 }
 void fuku_assambler::jcc(fuku_condition cond, const fuku_type& src) {
-    
+    fuku_assambler_command_1op_graph(src,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+        _jcc(context, cond, src.get_immediate()); ,
+
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+        _jcc(context, cond, src.get_immediate());,
+    )
+    on_new_chain_item();
 }
 void fuku_assambler::call(const fuku_type& src) {
     fuku_assambler_command_1op_graph(src,
-        FUKU_DEBUG,
-        FUKU_DEBUG,
-        FUKU_DEBUG,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
 
-        FUKU_DEBUG,
-        FUKU_DEBUG,
-        FUKU_DEBUG,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
 
         _call(context, src.get_register()); ,
         _call(context, src.get_operand());  ,
@@ -882,7 +1232,24 @@ void fuku_assambler::call(const fuku_type& src) {
 }
 void fuku_assambler::ret(const fuku_type& src) {
     
+    fuku_assambler_command_1op_graph(src,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
 
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+        src.get_immediate().get_immediate16() ? _ret(context, src.get_immediate()) : _ret(context); ,
+
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+        src.get_immediate().get_immediate16() ? _ret(context, src.get_immediate()) : _ret(context);,
+    )
+    on_new_chain_item();
 }
 void fuku_assambler::int3() {
     _int3(context); on_new_chain_item();
@@ -1019,29 +1386,29 @@ void fuku_assambler::popfq() {
 //Miscellaneous Instructions
 void fuku_assambler::lea(const fuku_type& dst, const fuku_type& src) {
     fuku_assambler_command_2op_graph(
-        FUKU_DEBUG,
-        FUKU_DEBUG,
-        FUKU_DEBUG,
-        FUKU_DEBUG,
-        FUKU_DEBUG,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
 
-        FUKU_DEBUG,
+        UNUSUAL_DATASET,
         _lea_w(context, dst.get_register(), src.get_operand()); ,
-        FUKU_DEBUG,
-        FUKU_DEBUG,
-        FUKU_DEBUG,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
 
-        FUKU_DEBUG,
+        UNUSUAL_DATASET,
         _lea_dw(context, dst.get_register(), src.get_operand()); ,
-        FUKU_DEBUG,
-        FUKU_DEBUG,
-        FUKU_DEBUG,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
 
-        FUKU_DEBUG,
+        UNUSUAL_DATASET,
         _lea_qw(context, dst.get_register(), src.get_operand()); ,
-        FUKU_DEBUG,
-        FUKU_DEBUG,
-        FUKU_DEBUG
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET
     )
     on_new_chain_item();
 }
@@ -1056,11 +1423,44 @@ void fuku_assambler::cpuid() {
 }
 //Random Number Generator Instructions
 void fuku_assambler::rdrand(const fuku_type& dst) {
-    
-    
+    fuku_assambler_command_1op_graph(dst,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+
+        _rdrand_w(context, dst.get_register()); ,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+
+        _rdrand_dw(context, dst.get_register());,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+
+        _rdrand_qw(context, dst.get_register()); ,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET
+    )
+    on_new_chain_item();
 }
 void fuku_assambler::rdseed(const fuku_type& dst) {
-    
+    fuku_assambler_command_1op_graph(dst,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+
+        _rdseed_w(context, dst.get_register()); ,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+
+        _rdseed_dw(context, dst.get_register());,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+
+        _rdseed_qw(context, dst.get_register()); ,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET
+    )
+    on_new_chain_item();
 }
 //SYSTEM INSTRUCTIONS
 void fuku_assambler::hlt() {

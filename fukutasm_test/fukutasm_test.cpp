@@ -31,7 +31,7 @@ void test_no_arg(fuku_instruction inst, fuku_operand_size size) {
     //    printf("op count error  ");
     }
 
-   // printf("%s %s\n", instruction[0].mnemonic, instruction[0].op_str);
+    printf("%s %s\n", instruction[0].mnemonic, instruction[0].op_str);
 
 
     cs_free(instruction, count);
@@ -61,7 +61,7 @@ void test_1_arg(fuku_instruction inst, fuku_operand op, fuku_operand_size size) 
         printf("op count error  ");
     }
 
-   // printf("%s %s\n", instruction[0].mnemonic, instruction[0].op_str);
+    printf("%s %s\n", instruction[0].mnemonic, instruction[0].op_str);
 
 
     cs_free(instruction, count);
@@ -90,7 +90,7 @@ void test_1_arg(fuku_instruction inst, fuku_register reg, fuku_operand_size size
         printf("op count error  ");
     }
 
-   // printf("%s %s\n", instruction[0].mnemonic, instruction[0].op_str);
+    printf("%s %s\n", instruction[0].mnemonic, instruction[0].op_str);
 
 
     cs_free(instruction, count);
@@ -118,7 +118,7 @@ void test_1_arg(fuku_instruction inst, fuku_immediate imm, fuku_operand_size siz
         printf("op count error  ");
     }
 
-   // printf("%s %s\n", instruction[0].mnemonic, instruction[0].op_str);
+    printf("%s %s\n", instruction[0].mnemonic, instruction[0].op_str);
 
 
     cs_free(instruction, count);
@@ -148,7 +148,7 @@ void test_2_arg(fuku_instruction inst, fuku_operand op, fuku_register reg, fuku_
         printf("op count error  ");
     }
 
-   // printf("%s %s\n", instruction[0].mnemonic, instruction[0].op_str);
+    printf("%s %s\n", instruction[0].mnemonic, instruction[0].op_str);
     
 
     cs_free(instruction, count);
@@ -177,7 +177,7 @@ void test_2_arg(fuku_instruction inst, fuku_register reg1, fuku_register reg2, f
         printf("op count error  ");
     }
 
-   // printf("%s %s\n", instruction[0].mnemonic, instruction[0].op_str);
+    printf("%s %s\n", instruction[0].mnemonic, instruction[0].op_str);
 
 
     cs_free(instruction, count);
@@ -206,7 +206,7 @@ void test_2_arg(fuku_instruction inst, fuku_register reg, fuku_operand op, fuku_
         printf("op count error  ");
     }
 
-   // printf("%s %s\n", instruction[0].mnemonic, instruction[0].op_str);
+    printf("%s %s\n", instruction[0].mnemonic, instruction[0].op_str);
 
 
     cs_free(instruction, count);
@@ -235,7 +235,7 @@ void test_2_arg(fuku_instruction inst, fuku_register reg, fuku_immediate imm, fu
         printf("op count error  ");
     }
 
-  //  printf("%s %s\n", instruction[0].mnemonic, instruction[0].op_str);
+    printf("%s %s\n", instruction[0].mnemonic, instruction[0].op_str);
 
 
     cs_free(instruction, count);
@@ -264,7 +264,7 @@ void test_2_arg(fuku_instruction inst,fuku_operand op, fuku_immediate imm, fuku_
         printf("op count error  ");
     }
 
-   // printf("%s %s\n", instruction[0].mnemonic, instruction[0].op_str);
+    printf("%s %s\n", instruction[0].mnemonic, instruction[0].op_str);
 
 
     cs_free(instruction, count);
@@ -371,15 +371,15 @@ int main() {
     test_asm_def_full(xor, op, reg1, reg2, imm)
     test_asm_def_r_op_one_op(not, op, reg1)
 //Shift and Rotate Instructions
-    test_asm_def_full_shift(sar, op, reg2, imm)
-    test_asm_def_full_shift(shr, op, reg2, imm)
-    test_asm_def_full_shift(shl, op, reg2, imm)
+//    test_asm_def_full_shift(sar, op, reg2, imm)
+ //   test_asm_def_full_shift(shr, op, reg2, imm)
+ //   test_asm_def_full_shift(shl, op, reg2, imm)
     //asm_def_shXd_inst(shrd)
     //asm_def_shXd_inst(shld)
-    test_asm_def_full_shift(ror, op, reg2, imm)
-    test_asm_def_full_shift(rol, op, reg2, imm)
-    test_asm_def_full_shift(rcr, op, reg2, imm)
-    test_asm_def_full_shift(rcl, op, reg2, imm)
+ //   test_asm_def_full_shift(ror, op, reg2, imm)
+ //   test_asm_def_full_shift(rol, op, reg2, imm)
+ //   test_asm_def_full_shift(rcr, op, reg2, imm)
+ //   test_asm_def_full_shift(rcl, op, reg2, imm)
 //Bit and Byte Instructions
     test_gen_func_body_bit(bt, op, reg1, reg2, imm)
     test_gen_func_body_bit(bts, op, reg1, reg2, imm)

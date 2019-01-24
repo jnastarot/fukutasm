@@ -2,7 +2,7 @@
 #include "fukutasm.h"
 
 struct {
-	fuku_register register_;
+    fuku_register_enum register_;
 	fuku_register_index register_index_;
 	fuku_operand_size register_size_;
 	bool is_x64_arch;
@@ -97,13 +97,13 @@ struct {
 };
 
 
-fuku_register registers64[] = { FUKU_REG_RAX, FUKU_REG_RCX, FUKU_REG_RDX,  FUKU_REG_RBX,  FUKU_REG_RSP,  FUKU_REG_RBP,  FUKU_REG_RSI,  FUKU_REG_RDI,
+fuku_register_enum registers64[] = { FUKU_REG_RAX, FUKU_REG_RCX, FUKU_REG_RDX,  FUKU_REG_RBX,  FUKU_REG_RSP,  FUKU_REG_RBP,  FUKU_REG_RSI,  FUKU_REG_RDI,
                                 FUKU_REG_R8,  FUKU_REG_R9,  FUKU_REG_R10,  FUKU_REG_R11,  FUKU_REG_R12,  FUKU_REG_R13,  FUKU_REG_R14,  FUKU_REG_R15 };
-fuku_register registers32[] = { FUKU_REG_EAX, FUKU_REG_ECX, FUKU_REG_EDX,  FUKU_REG_EBX,  FUKU_REG_ESP,  FUKU_REG_EBP,  FUKU_REG_ESI,  FUKU_REG_EDI, 
+fuku_register_enum registers32[] = { FUKU_REG_EAX, FUKU_REG_ECX, FUKU_REG_EDX,  FUKU_REG_EBX,  FUKU_REG_ESP,  FUKU_REG_EBP,  FUKU_REG_ESI,  FUKU_REG_EDI,
                                 FUKU_REG_R8D, FUKU_REG_R9D, FUKU_REG_R10D, FUKU_REG_R11D, FUKU_REG_R12D, FUKU_REG_R13D, FUKU_REG_R14D, FUKU_REG_R15D };
-fuku_register registers16[] = { FUKU_REG_AX,  FUKU_REG_CX,  FUKU_REG_DX,   FUKU_REG_BX,   FUKU_REG_SP,   FUKU_REG_BP,   FUKU_REG_SI,   FUKU_REG_DI,
+fuku_register_enum registers16[] = { FUKU_REG_AX,  FUKU_REG_CX,  FUKU_REG_DX,   FUKU_REG_BX,   FUKU_REG_SP,   FUKU_REG_BP,   FUKU_REG_SI,   FUKU_REG_DI,
                                 FUKU_REG_R8W, FUKU_REG_R9W, FUKU_REG_R10W, FUKU_REG_R11W, FUKU_REG_R12W, FUKU_REG_R13W, FUKU_REG_R14W, FUKU_REG_R15W };
-fuku_register registers8[] = {  FUKU_REG_AH,  FUKU_REG_CH,  FUKU_REG_DH,   FUKU_REG_BH,
+fuku_register_enum registers8[] = {  FUKU_REG_AH,  FUKU_REG_CH,  FUKU_REG_DH,   FUKU_REG_BH,
                                 FUKU_REG_AL,  FUKU_REG_CL,  FUKU_REG_DL,   FUKU_REG_BL,   FUKU_REG_SPL,  FUKU_REG_BPL,  FUKU_REG_SIL,  FUKU_REG_DIL,
                                 FUKU_REG_R8B, FUKU_REG_R9B, FUKU_REG_R10B, FUKU_REG_R11B, FUKU_REG_R12B, FUKU_REG_R13B, FUKU_REG_R14B, FUKU_REG_R15B };
 
@@ -140,7 +140,7 @@ x86_insn capstone_movcc[] = {
 };
 
 
-fuku_register_index fuku_get_index_by_register(fuku_register reg) {
+fuku_register_index fuku_get_index_by_register(fuku_register_enum reg) {
 
     if (reg <= FUKU_REG_NONE || reg >= FUKU_REG_MAX) {
         return FUKU_REG_INDEX_INVALID;
@@ -149,7 +149,7 @@ fuku_register_index fuku_get_index_by_register(fuku_register reg) {
     return ext_register_info[reg].register_index_;
 }
 
-fuku_register fuku_get_register_by_index(fuku_register_index idx, bool x64ext, fuku_operand_size size) {
+fuku_register_enum fuku_get_register_by_index(fuku_register_index idx, bool x64ext, fuku_operand_size size) {
 
     if ( (idx < FUKU_REG_INDEX_AX || idx > FUKU_REG_INDEX_DI) ||
           (size <= FUKU_OPERAND_SIZE_0 || size > FUKU_OPERAND_SIZE_64)) {
@@ -176,7 +176,7 @@ fuku_register fuku_get_register_by_index(fuku_register_index idx, bool x64ext, f
     }
 }
 
-fuku_operand_size fuku_get_register_size(fuku_register reg) {
+fuku_operand_size fuku_get_register_size(fuku_register_enum reg) {
     if (reg <= FUKU_REG_NONE || reg >= FUKU_REG_MAX) {
         return FUKU_OPERAND_SIZE_0;
     }
@@ -184,7 +184,7 @@ fuku_operand_size fuku_get_register_size(fuku_register reg) {
     return ext_register_info[reg].register_size_;
 }
 
-bool fuku_is_x64arch_reg(fuku_register reg) {
+bool fuku_is_x64arch_reg(fuku_register_enum reg) {
 
     if (reg <= FUKU_REG_NONE || reg >= FUKU_REG_MAX) {
         return false;
@@ -193,7 +193,7 @@ bool fuku_is_x64arch_reg(fuku_register reg) {
     return ext_register_info[reg].is_x64_arch;
 }
 
-uint8_t fuku_is_x64arch_ext_reg(fuku_register reg) {
+uint8_t fuku_is_x64arch_ext_reg(fuku_register_enum reg) {
 
     if (reg <= FUKU_REG_NONE || reg >= FUKU_REG_MAX) {
         return false;
@@ -202,42 +202,10 @@ uint8_t fuku_is_x64arch_ext_reg(fuku_register reg) {
     return ext_register_info[reg].is_x64_arch_ext;
 }
 
-bool fuku_is_x32arch_reg(fuku_register reg) {
+bool fuku_is_x32arch_reg(fuku_register_enum reg) {
     return !fuku_is_x64arch_reg(reg);
 }
 
-bool fuku_is_64bit_reg(fuku_register reg) {
-
-    if (reg <= FUKU_REG_NONE || reg >= FUKU_REG_MAX) {
-        return false;
-    }
-
-    return ext_register_info[reg].register_size_ == FUKU_OPERAND_SIZE_64;
-}
-
-bool fuku_is_32bit_reg(fuku_register reg) {
-    if (reg <= FUKU_REG_NONE || reg >= FUKU_REG_MAX) {
-        return false;
-    }
-
-    return ext_register_info[reg].register_size_ == FUKU_OPERAND_SIZE_32;
-}
-
-bool fuku_is_16bit_reg(fuku_register reg) {
-    if (reg <= FUKU_REG_NONE || reg >= FUKU_REG_MAX) {
-        return false;
-    }
-
-    return ext_register_info[reg].register_size_ == FUKU_OPERAND_SIZE_16;
-}
-
-bool fuku_is_8bit_reg(fuku_register reg) {
-    if (reg <= FUKU_REG_NONE || reg >= FUKU_REG_MAX) {
-        return false;
-    }
-
-    return ext_register_info[reg].register_size_ == FUKU_OPERAND_SIZE_8;
-}
 
 uint8_t fuku_to_capstone_reg(fuku_register reg) {
     return 0;
@@ -245,6 +213,52 @@ uint8_t fuku_to_capstone_reg(fuku_register reg) {
 
 uint8_t capstone_to_fuku_reg(fuku_register reg) {
     return 0;
+}
+
+fuku_register::fuku_register() 
+ :reg(FUKU_REG_NONE), index(FUKU_REG_INDEX_INVALID), size(FUKU_OPERAND_SIZE_0), ext64(0){}
+
+fuku_register::fuku_register(const fuku_register& reg) {
+    operator=(reg);
+}
+fuku_register::fuku_register(fuku_register_enum reg) {
+    this->set_reg(reg);;
+}
+fuku_register::~fuku_register() {}
+
+fuku_register& fuku_register::operator=(const fuku_register& reg) {
+    this->reg = reg.reg;
+    this->size = reg.size;
+    this->index = reg.index;
+    this->ext64 = reg.ext64;
+
+    return *this;
+}
+
+fuku_register& fuku_register::operator=(fuku_register_enum reg) {
+    set_reg(reg);
+
+    return *this;
+}
+
+void fuku_register::set_reg(fuku_register_enum reg) {
+    this->reg = reg;
+    this->size = fuku_get_register_size(reg);
+    this->index = fuku_get_index_by_register(reg);
+    this->ext64 = fuku_is_x64arch_ext_reg(reg);
+}
+
+fuku_register_enum fuku_register::get_reg() const {
+    return this->reg;
+}
+fuku_register_index fuku_register::get_index() const {
+    return this->index;
+}
+fuku_operand_size fuku_register::get_size() const {
+    return this->size;
+}
+bool fuku_register::is_ext64() const {
+    return this->ext64;
 }
 
 
@@ -356,7 +370,9 @@ int64_t fuku_immediate::get_signed_value64() const {
 
 
 
-fuku_operand::fuku_operand(fuku_register base, fuku_operand_size size)
+fuku_operand::fuku_operand(const fuku_register& base, fuku_operand_size size)
+    : base(base), index(FUKU_REG_NONE), scale(FUKU_OPERAND_SCALE_1), disp(0), size(size) {}
+fuku_operand::fuku_operand(fuku_register_enum base, fuku_operand_size size)
     : base(base), index(FUKU_REG_NONE), scale(FUKU_OPERAND_SCALE_1), disp(0), size(size) {}
 
 fuku_operand::fuku_operand(uint32_t disp, fuku_operand_size size)
@@ -365,13 +381,19 @@ fuku_operand::fuku_operand(uint32_t disp, fuku_operand_size size)
 fuku_operand::fuku_operand(const fuku_immediate& disp, fuku_operand_size size)
     : base(FUKU_REG_NONE), index(FUKU_REG_NONE), scale(FUKU_OPERAND_SCALE_1), disp(disp), size(size) {}
 
-fuku_operand::fuku_operand(fuku_register base, const fuku_immediate& disp, fuku_operand_size size)
+fuku_operand::fuku_operand(const fuku_register& base, const fuku_immediate& disp, fuku_operand_size size)
+    : base(base), index(FUKU_REG_NONE), scale(FUKU_OPERAND_SCALE_1), disp(disp), size(size) {}
+fuku_operand::fuku_operand(fuku_register_enum base, const fuku_immediate& disp, fuku_operand_size size)
     : base(base), index(FUKU_REG_NONE), scale(FUKU_OPERAND_SCALE_1), disp(disp), size(size) {}
 
-fuku_operand::fuku_operand(fuku_register base, fuku_register index, fuku_operand_scale scale, const fuku_immediate& disp, fuku_operand_size size)
+fuku_operand::fuku_operand(const fuku_register& base, const fuku_register& index, fuku_operand_scale scale, const fuku_immediate& disp, fuku_operand_size size)
+    : base(base), index(index), scale(scale), disp(disp), size(size) {}
+fuku_operand::fuku_operand(fuku_register_enum base, fuku_register_enum index, fuku_operand_scale scale, const fuku_immediate& disp, fuku_operand_size size)
     : base(base), index(index), scale(scale), disp(disp), size(size) {}
 
-fuku_operand::fuku_operand(fuku_register index, fuku_operand_scale scale, const fuku_immediate& disp, fuku_operand_size size)
+fuku_operand::fuku_operand(const fuku_register& index, fuku_operand_scale scale, const fuku_immediate& disp, fuku_operand_size size)
+    : base(FUKU_REG_NONE), index(index), scale(scale), disp(disp), size(size) {}
+fuku_operand::fuku_operand(fuku_register_enum index, fuku_operand_scale scale, const fuku_immediate& disp, fuku_operand_size size)
     : base(FUKU_REG_NONE), index(index), scale(scale), disp(disp), size(size) {}
 
 fuku_operand::fuku_operand(const fuku_operand& op) {
@@ -390,11 +412,11 @@ fuku_operand& fuku_operand::operator=(const fuku_operand& op) {
     return *this;
 }
 
-void fuku_operand::set_base(fuku_register base) {
+void fuku_operand::set_base(const fuku_register& base) {
     this->base = base;
 }
 
-void fuku_operand::set_index(fuku_register index) {
+void fuku_operand::set_index(const fuku_register& index) {
     this->index = index;
 }
 
@@ -410,11 +432,11 @@ void fuku_operand::set_size(fuku_operand_size size) {
     this->size = size;
 }
 
-fuku_register fuku_operand::get_base() const {
+const fuku_register& fuku_operand::get_base() const {
     return this->base;
 }
 
-fuku_register fuku_operand::get_index() const {
+const fuku_register& fuku_operand::get_index() const {
     return this->index;
 }
 
@@ -432,8 +454,8 @@ fuku_operand_size fuku_operand::get_size() const {
 
 fuku_mem_opernad_type fuku_operand::get_type() const {
    
-    if (base != FUKU_REG_NONE) {
-        if (index != FUKU_REG_NONE) {
+    if (base.get_reg() != FUKU_REG_NONE) {
+        if (index.get_reg() != FUKU_REG_NONE) {
             if (disp.get_immediate64()) {
                 return fuku_mem_opernad_type::FUKU_MEM_OPERAND_BASE_INDEX_DISP;
             }
@@ -451,7 +473,7 @@ fuku_mem_opernad_type fuku_operand::get_type() const {
         }
     }
     else {
-        if (index != FUKU_REG_NONE) {
+        if (index.get_reg() != FUKU_REG_NONE) {
             return fuku_mem_opernad_type::FUKU_MEM_OPERAND_INDEX_DISP;
         }
         else {
@@ -461,18 +483,7 @@ fuku_mem_opernad_type fuku_operand::get_type() const {
 }
 
 uint8_t fuku_operand::get_low_rex() const {
-
-    uint8_t result = 0;
-
-    if (base != FUKU_REG_NONE) {
-        result |= fuku_is_x64arch_ext_reg(base);
-    }
-
-    if (index != FUKU_REG_NONE) {
-        result |= fuku_is_x64arch_ext_reg(base) << 1;
-    }
-
-    return result;
+    return ((index.is_ext64() ? 1 : 0) << 1) | (base.is_ext64() ? 1 : 0);
 }
 
 x86_insn fuku_to_capstone_cc(fuku_condition cond, fuku_to_cap_convert_type type) {

@@ -60,25 +60,17 @@ enum fuku_assambler_arch {
 	R8 = 0 R9 = 1 R10 = 2
 	and them lowest parts etc
 */
-fuku_register_index fuku_get_index_by_register(fuku_register reg);
-fuku_register       fuku_get_register_by_index(fuku_register_index idx, bool x64ext, fuku_operand_size size);
-fuku_operand_size   fuku_get_register_size(fuku_register reg);
+fuku_register_index fuku_get_index_by_register(fuku_register_enum reg);
+fuku_register_enum  fuku_get_register_by_index(fuku_register_index idx, bool x64ext, fuku_operand_size size);
+fuku_operand_size   fuku_get_register_size(fuku_register_enum reg);
 
 //  returns true for RAX - RDI,SPL - DIL, R8 - R15
-bool fuku_is_x64arch_reg(fuku_register reg);
+bool fuku_is_x64arch_reg(fuku_register_enum reg);
 //  returns true for R8 - R15 , return 0 - 1
-uint8_t fuku_is_x64arch_ext_reg(fuku_register reg);
+uint8_t fuku_is_x64arch_ext_reg(fuku_register_enum reg);
 //  returns true for EAX - EDI
-bool fuku_is_x32arch_reg(fuku_register reg);
+bool fuku_is_x32arch_reg(fuku_register_enum reg);
 
-//  returns true for RAX - RDI and R8 - R15 
-bool fuku_is_64bit_reg(fuku_register reg);
-//  returns true for EAX - EDI
-bool fuku_is_32bit_reg(fuku_register reg);
-//  returns true for AX - DI
-bool fuku_is_16bit_reg(fuku_register reg);
-//  returns true for AH,AL - Dl and R8B - R15B 
-bool fuku_is_8bit_reg(fuku_register reg);
 
 enum fuku_to_cap_convert_type {
     CONVERT_TYPE_JCC,
@@ -86,8 +78,8 @@ enum fuku_to_cap_convert_type {
     CONVERT_TYPE_CMOVCC,
 };
 
-uint8_t fuku_to_capstone_reg(fuku_register reg);
-uint8_t capstone_to_fuku_reg(fuku_register reg);
+uint8_t fuku_to_capstone_reg(const fuku_register& reg);
+uint8_t capstone_to_fuku_reg(const fuku_register& reg);
 
 x86_insn fuku_to_capstone_cc(fuku_condition cond, fuku_to_cap_convert_type type);
 fuku_condition capstone_to_fuku_cond(x86_insn cond);
@@ -100,7 +92,7 @@ fuku_condition capstone_to_fuku_cond(x86_insn cond);
 
 #define fuku_asm_ret_type void
 
-#define fuasm_reg  fuku_register
+#define fuasm_reg  const fuku_register&
 #define fuasm_op   const fuku_operand&
 #define fuasm_imm  const fuku_immediate&
 

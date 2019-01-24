@@ -11,17 +11,19 @@ enum fuku_t0_types {
 
 class fuku_type {
     fuku_t0_types type;
-    fuku_register reg;
-    const fuku_operand *op;
-    const fuku_immediate *imm;
+    union {
+        const fuku_register* reg;
+        const fuku_operand *op;
+        const fuku_immediate *imm;
+    };
 public:
-    fuku_type(fuku_register reg);
+    fuku_type(const fuku_register& reg);
     fuku_type(const fuku_operand& op);
     fuku_type(const fuku_immediate& imm);
     ~fuku_type();
 public:
     const fuku_t0_types get_type() const;
-    const fuku_register get_register() const;
+    const fuku_register &get_register() const;
     const fuku_operand  &get_operand() const;
     const fuku_immediate &get_immediate() const;
 };

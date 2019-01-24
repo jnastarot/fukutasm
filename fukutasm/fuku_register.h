@@ -1,6 +1,6 @@
 #pragma once
 
-enum fuku_register {
+enum fuku_register_enum {
     FUKU_REG_NONE,
 
  /*|_____64bit____|*/
@@ -105,3 +105,30 @@ enum fuku_register_index {
 
     FUKU_REG_INDEX_INVALID = -1
 };
+
+#pragma pack(push, 1)
+
+class fuku_register {
+    fuku_register_enum reg;
+    fuku_register_index index;
+    fuku_operand_size size;
+
+    bool ext64;
+public:
+    fuku_register();
+    fuku_register(const fuku_register& reg);
+    fuku_register(fuku_register_enum reg);
+    ~fuku_register();
+
+    fuku_register& operator=(const fuku_register& reg);
+    fuku_register& operator=(fuku_register_enum reg);
+public:
+    void set_reg(fuku_register_enum reg);
+public:
+    fuku_register_enum get_reg() const;
+    fuku_register_index get_index() const;
+    fuku_operand_size get_size() const;
+    bool is_ext64() const;
+};
+
+#pragma pack(pop)

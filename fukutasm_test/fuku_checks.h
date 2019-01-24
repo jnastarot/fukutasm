@@ -60,7 +60,7 @@ void check_operand(fuku_operand& op, cs_x86_op * csop, uint32_t disp_size, fuku_
 
     switch (op.get_type()) {
     case FUKU_MEM_OPERAND_BASE_ONLY: {
-        if (convert_cs_to_fuku(csop->mem.base) != fuku_get_index_by_register(op.get_base())) { printf("reg error type  "); }
+        if (convert_cs_to_fuku(csop->mem.base) != op.get_base().get_index()) { printf("reg error type  "); }
         break;
     }
     case    FUKU_MEM_OPERAND_DISP_ONLY: {
@@ -70,27 +70,27 @@ void check_operand(fuku_operand& op, cs_x86_op * csop, uint32_t disp_size, fuku_
         break;
     }
     case    FUKU_MEM_OPERAND_BASE_DISP: {
-        if (convert_cs_to_fuku(csop->mem.base) != fuku_get_index_by_register(op.get_base())) { printf("reg error type  "); }
+        if (convert_cs_to_fuku(csop->mem.base) != op.get_base().get_index()) { printf("reg error type  "); }
         if (!check_imm(csop->mem.disp, op.get_disp(), disp_size)) {
             printf("disp error  ");
         }
         break;
     }
     case    FUKU_MEM_OPERAND_INDEX_DISP: {
-        if (convert_cs_to_fuku(csop->mem.index) != fuku_get_index_by_register(op.get_index())) { printf("idx error type  "); }
+        if (convert_cs_to_fuku(csop->mem.index) != op.get_index().get_index()) { printf("idx error type  "); }
         if (!check_imm(csop->mem.disp, op.get_disp(), disp_size)) {
             printf("disp error  ");
         }
         break;
     }
     case    FUKU_MEM_OPERAND_BASE_INDEX: {
-        if (convert_cs_to_fuku(csop->mem.base) != fuku_get_index_by_register(op.get_base())) { printf("reg error type  "); }
-        if (convert_cs_to_fuku(csop->mem.index) != fuku_get_index_by_register(op.get_index())) { printf("idx error type  "); }
+        if (convert_cs_to_fuku(csop->mem.base) != op.get_base().get_index()) { printf("reg error type  "); }
+        if (convert_cs_to_fuku(csop->mem.index) != op.get_index().get_index()) { printf("idx error type  "); }
         break;
     }
     case    FUKU_MEM_OPERAND_BASE_INDEX_DISP: {
-        if (convert_cs_to_fuku(csop->mem.base) != fuku_get_index_by_register(op.get_base())) { printf("reg error type  "); }
-        if (convert_cs_to_fuku(csop->mem.index) != fuku_get_index_by_register(op.get_index())) { printf("idx error type  "); }
+        if (convert_cs_to_fuku(csop->mem.base) != op.get_base().get_index()) { printf("reg error type  "); }
+        if (convert_cs_to_fuku(csop->mem.index) != op.get_index().get_index()) { printf("idx error type  "); }
         if (!check_imm(csop->mem.disp, op.get_disp(), disp_size)) {
             printf("disp error  ");
         }
@@ -105,7 +105,7 @@ void check_register(fuku_register reg, cs_x86_op * csop, fuku_operand_size size)
         return;
     }
 
-    if (convert_cs_to_fuku(csop->reg) != fuku_get_index_by_register(reg)) { printf("reg error type  "); }
+    if (convert_cs_to_fuku(csop->reg) != reg.get_index()) { printf("reg error type  "); }
 }
 
 void check_immediate(fuku_immediate& imm, cs_x86_op * csop, uint32_t imm_size, fuku_operand_size size) {
