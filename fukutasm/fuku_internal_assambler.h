@@ -29,6 +29,8 @@ namespace fukutasm {
 
         uint8_t displacment_offset;
         uint8_t immediate_offset;
+        bool disp_reloc;
+        bool imm_reloc;
 
         uint8_t short_cfg;
 

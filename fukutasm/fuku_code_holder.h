@@ -2,6 +2,11 @@
 
 #pragma pack(push, 1)
 
+struct fuku_image_relocation {
+    uint32_t relocation_id;
+    uint64_t virtual_address;
+};
+
 struct fuku_code_association {
     uint64_t original_virtual_address;
     uint64_t virtual_address;
@@ -9,16 +14,12 @@ struct fuku_code_association {
 
 struct fuku_code_label {
     uint8_t has_linked_instruction;
-    
+    uint32_t refs_count;
+
     union {
         uint64_t dst_address;
         fuku_instruction * instruction;
     };
-};
-
-struct fuku_image_relocation {
-    uint32_t relocation_id;
-    uint64_t virtual_address;
 };
 
 struct fuku_code_relocation {

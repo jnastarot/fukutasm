@@ -86,6 +86,7 @@ size_t fuku_code_holder::create_label(fuku_instruction* line) {
         fuku_code_label label;
         label.has_linked_instruction = 1;
         label.instruction = line;
+        label.refs_count = 0;
 
         labels.push_back(label);
     }
@@ -98,6 +99,7 @@ size_t fuku_code_holder::create_label(uint64_t dst_address) {
     fuku_code_label label;
     label.has_linked_instruction = 0;
     label.dst_address = dst_address;
+    label.refs_count = 0;
 
     labels.push_back(label);
 
@@ -112,11 +114,13 @@ size_t fuku_code_holder::create_relocation(uint8_t offset, uint64_t dst_address,
 
         relocations[idx] = { relocation_id , offset , create_label(dst_address) };
 
+        labels[relocations[idx].label_idx].refs_count++;
         return idx;
     }
     else {
         relocations.push_back({ relocation_id , offset , create_label(dst_address) });
 
+        labels[relocations[relocations.size()-1].label_idx].refs_count++;
         return relocations.size() - 1;
     }
 }
@@ -129,11 +133,13 @@ size_t fuku_code_holder::create_relocation(uint8_t offset, fuku_instruction* lin
 
         relocations[idx] = { relocation_id , offset , create_label(line) };
 
+        labels[relocations[idx].label_idx].refs_count++;
         return idx;
     }
     else {
         relocations.push_back({ relocation_id , offset , create_label(line) });
 
+        labels[relocations[relocations.size() - 1].label_idx].refs_count++;
         return relocations.size() - 1;
     }
 }
@@ -146,11 +152,13 @@ size_t fuku_code_holder::create_relocation_lb(uint8_t offset, size_t label_idx, 
 
         relocations[idx] = { relocation_id , offset , label_idx };
 
+        labels[label_idx].refs_count++;
         return idx;
     }
     else {
         relocations.push_back({ relocation_id , offset , label_idx });
 
+        labels[label_idx].refs_count++;
         return relocations.size() - 1;
     }
 }
@@ -163,11 +171,13 @@ size_t fuku_code_holder::create_relocation(const fuku_code_relocation& reloc) {
 
         relocations[idx] = reloc;
 
+        labels[relocations[idx].label_idx].refs_count++;
         return idx;
     }
     else {
         relocations.push_back(reloc);
 
+        labels[relocations[relocations.size() - 1].label_idx].refs_count++;
         return relocations.size() - 1;
     }
 }
@@ -180,11 +190,13 @@ size_t fuku_code_holder::create_rip_relocation(uint8_t offset, uint64_t dst_addr
 
         rip_relocations[idx] = { offset , create_label(dst_address) };
 
+        labels[rip_relocations[idx].label_idx].refs_count++;
         return idx;
     }
     else {
         rip_relocations.push_back({ offset , create_label(dst_address) });
 
+        labels[rip_relocations[rip_relocations.size() - 1].label_idx].refs_count++;
         return rip_relocations.size() - 1;
     }
 }
@@ -197,11 +209,13 @@ size_t fuku_code_holder::create_rip_relocation(uint8_t offset, fuku_instruction*
 
         rip_relocations[idx] = { offset , create_label(line) };
 
+        labels[rip_relocations[idx].label_idx].refs_count++;
         return idx;
     }
     else {
         rip_relocations.push_back({ offset , create_label(line) });
 
+        labels[rip_relocations[rip_relocations.size() - 1].label_idx].refs_count++;
         return rip_relocations.size() - 1;
     }
 }
@@ -214,11 +228,13 @@ size_t fuku_code_holder::create_rip_relocation_lb(uint8_t offset, size_t label_i
 
         rip_relocations[idx] = { offset , label_idx };
 
+        labels[label_idx].refs_count++;
         return idx;
     }
     else {
         rip_relocations.push_back({ offset , label_idx });
 
+        labels[label_idx].refs_count++;
         return rip_relocations.size() - 1;
     }
 }
@@ -231,11 +247,13 @@ size_t fuku_code_holder::create_rip_relocation(const fuku_code_rip_relocation& r
 
         rip_relocations[idx] = rip_reloc;
 
+        labels[rip_relocations[idx].label_idx].refs_count++;
         return idx;
     }
     else {
         rip_relocations.push_back(rip_reloc);
 
+        labels[rip_relocations[rip_relocations.size() - 1].label_idx].refs_count++;
         return rip_relocations.size() - 1;
     }
 }
@@ -245,9 +263,12 @@ void  fuku_code_holder::delete_relocation(size_t idx) {
     if (idx < relocations.size() ) {
 
         if (relocations.size() - 1 == idx) {
+            labels[relocations[idx].label_idx].refs_count--;
             relocations.erase(relocations.begin() + idx);
         }
         else {
+            labels[relocations[idx].label_idx].refs_count--;
+
             memset(&relocations[idx], 0 , sizeof(fuku_code_relocation));
             available_relocations.push_back(idx);
         }
@@ -259,9 +280,12 @@ void  fuku_code_holder::delete_rip_relocation(size_t idx) {
     if (idx < rip_relocations.size()) {
 
         if (rip_relocations.size() - 1 == idx) {
+            labels[rip_relocations[idx].label_idx].refs_count--;
             rip_relocations.erase(rip_relocations.begin() + idx);
         }
         else {
+            labels[rip_relocations[idx].label_idx].refs_count--;
+
             memset(&rip_relocations[idx], 0, sizeof(fuku_code_rip_relocation));
             available_rip_relocations.push_back(idx);
         }
@@ -588,7 +612,7 @@ bool fuku_code_holder::merge_labels() {
         auto& label = labels[label_idx];
 
         if (label.has_linked_instruction) {
-            new_labels_chain[label_idx] = { label_idx, label.has_linked_instruction, label.dst_address };
+            new_labels_chain[label_idx] = { label_idx, label.has_linked_instruction, label.refs_count, label.dst_address };
         }
         else {
 
@@ -600,11 +624,11 @@ bool fuku_code_holder::merge_labels() {
                     line->set_label_idx(label_idx);
                 }
 
-                new_labels_chain[label_idx] = { line->get_label_idx(), 1, (uint64_t)line };
+                new_labels_chain[label_idx] = { line->get_label_idx(), 1, label.refs_count, (uint64_t)line };
             }
             else {
 
-                new_labels_chain[label_idx] = { label_idx, label.has_linked_instruction, label.dst_address };
+                new_labels_chain[label_idx] = { label_idx, label.has_linked_instruction, label.refs_count, label.dst_address };
             }
         }
     }
@@ -635,29 +659,34 @@ bool fuku_code_holder::merge_labels() {
 
         if (has_incorrect) {
 
-            for (size_t label_idx = 0; label_idx < new_labels_chain.size(); label_idx++) {
+            {   //associate old labels map with new labels map
 
-                auto& label_chain = new_labels_chain[label_idx];
+                for (size_t label_idx = 0; label_idx < new_labels_chain.size(); label_idx++) {
 
-                if (label_chain.new_label_idx != label_idx) {
+                    auto& label_chain = new_labels_chain[label_idx];
 
-                    label_new_map[label_idx] = label_new_map[label_chain.new_label_idx];
+                    if (label_chain.new_label_idx != label_idx) {
+                        label_new_map[label_idx] = label_new_map[label_chain.new_label_idx];
+                        new_labels[label_new_map[label_idx]].refs_count++;
+                    }
                 }
             }
 
+            {   //reset labels idx to new vector idxs
 
-            for (auto& line : lines) {
+                for (auto& line : lines) {
 
-                if (line.get_label_idx() != -1) {
-                    line.set_label_idx(label_new_map[line.get_label_idx()]);
+                    if (line.get_label_idx() != -1) {
+                        line.set_label_idx(label_new_map[line.get_label_idx()]);
+                    }
                 }
-            }
 
-            for (auto& reloc : relocations) {
-                reloc.label_idx = label_new_map[reloc.label_idx];
-            }
-            for (auto& rip_reloc : rip_relocations) {
-                rip_reloc.label_idx = label_new_map[rip_reloc.label_idx];
+                for (auto& reloc : relocations) {
+                    reloc.label_idx = label_new_map[reloc.label_idx];
+                }
+                for (auto& rip_reloc : rip_relocations) {
+                    rip_reloc.label_idx = label_new_map[rip_reloc.label_idx];
+                }
             }
 
             this->labels = new_labels;

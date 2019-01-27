@@ -29,7 +29,14 @@ const fuku_immediate &fuku_type::get_immediate() const {
 #include "fuku_assambler_misc.h"
 
 fuku_assambler::fuku_assambler(fuku_assambler_arch arch) {
+    memset(&context, 0, sizeof(context));
+    context.arch = arch;
+    context.short_cfg = 0xFF;
+    context.inst = &inst;
 
+    hold_type = ASSAMBLER_HOLD_TYPE_NOOVERWRITE;
+    code_holder = 0;
+    first_emit = true;
 }
 
 fuku_assambler::~fuku_assambler() {
@@ -40,9 +47,57 @@ fuku_assambler_ctx& fuku_assambler::get_context() {
     return this->context;
 }
 
+fuku_assambler& fuku_assambler::set_holder(fuku_code_holder * code_holder, fuku_assambler_hold_type hold_type) {
+    this->code_holder = code_holder;
+    this->hold_type = hold_type;
+    this->position = this->code_holder->get_lines().begin();
+
+    return *this;
+}
+
+fuku_assambler& fuku_assambler::set_position(linestorage::iterator& position) {
+    this->position = position;
+
+    return *this;
+}
+
+fuku_assambler& fuku_assambler::set_first_emit(bool first_emit) {
+    this->first_emit = first_emit;
+
+    return *this;
+}
 
 void fuku_assambler::on_new_chain_item() {
     
+    if (!code_holder) { return; }
+
+    switch (hold_type) {
+    case ASSAMBLER_HOLD_TYPE_NOOVERWRITE: {
+       code_holder->get_lines().insert(position, *context.inst);
+       break;
+    }
+    case ASSAMBLER_HOLD_TYPE_FIRST_OVERWRITE: {
+        if (first_emit) {
+            *position = *context.inst;
+            position++;
+        }
+        else {
+            code_holder->get_lines().insert(position, *context.inst);
+        }
+       break;
+    }
+    case ASSAMBLER_HOLD_TYPE_FULL_OVERWRITE: {
+       if (position == code_holder->get_lines().end()) {
+            code_holder->get_lines().insert(code_holder->get_lines().end(), *context.inst);
+            position = code_holder->get_lines().end();
+       }
+       else {
+           *position = *context.inst;
+           position++;
+       }
+       break;
+    }
+    }
 }
 
 void fuku_assambler::mov(const fuku_type& dst, const fuku_type& src) {

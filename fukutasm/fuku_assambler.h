@@ -28,15 +28,31 @@ public:
     const fuku_immediate &get_immediate() const;
 };
 
+enum fuku_assambler_hold_type {
+    ASSAMBLER_HOLD_TYPE_NOOVERWRITE,
+    ASSAMBLER_HOLD_TYPE_FIRST_OVERWRITE,
+    ASSAMBLER_HOLD_TYPE_FULL_OVERWRITE,
+};
+
 class fuku_assambler {
+    fuku_instruction inst;
     fukutasm::fuku_assambler_ctx context;
+
+    fuku_assambler_hold_type hold_type;
     fuku_code_holder * code_holder;
+    linestorage::iterator position;
+    bool first_emit;
+
     void on_new_chain_item();
 public:
     fuku_assambler(fuku_assambler_arch arch);
     ~fuku_assambler();
 
     fukutasm::fuku_assambler_ctx& get_context();
+
+    fuku_assambler& set_holder(fuku_code_holder * code_holder, fuku_assambler_hold_type hold_type);
+    fuku_assambler& set_position(linestorage::iterator& position);
+    fuku_assambler& set_first_emit(bool first_emit);
 public:
 //Data Transfer Instructions
     void mov(const fuku_type& dst, const fuku_type& src);
