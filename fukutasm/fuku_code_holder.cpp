@@ -639,7 +639,7 @@ bool fuku_code_holder::merge_labels() {
         std::vector<size_t> label_new_map;
 
         new_labels.reserve(new_labels_chain.size());
-        label_new_map.resize(new_labels.size());
+        label_new_map.resize(labels.size());
 
         bool has_incorrect = false;
 
