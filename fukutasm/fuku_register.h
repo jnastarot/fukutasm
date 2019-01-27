@@ -132,3 +132,7 @@ public:
 };
 
 #pragma pack(pop)
+
+inline fuku_register reg_(fuku_register_enum reg) {
+    return fuku_register(reg);
+}

@@ -38,3 +38,11 @@ public:
     int32_t get_signed_value32() const;
     int64_t get_signed_value64() const;
 };
+
+inline fuku_immediate imm(uint64_t imm) {
+    return fuku_immediate(imm);
+}
+
+inline fuku_immediate imm(uint64_t imm, bool relocate) {
+    return fuku_immediate(imm, relocate);
+}
