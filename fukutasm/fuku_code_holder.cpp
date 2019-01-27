@@ -688,8 +688,8 @@ bool fuku_code_holder::merge_labels() {
                     rip_reloc.label_idx = label_new_map[rip_reloc.label_idx];
                 }
             }
-
-            this->labels = new_labels;
+            
+            this->labels = std::move(new_labels);
         }
     }
 

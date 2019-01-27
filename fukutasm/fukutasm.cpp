@@ -196,7 +196,7 @@ bool fuku_is_x64arch_reg(fuku_register_enum reg) {
 uint8_t fuku_is_x64arch_ext_reg(fuku_register_enum reg) {
 
     if (reg <= FUKU_REG_NONE || reg >= FUKU_REG_MAX) {
-        return false;
+        return 0;
     }
 
     return ext_register_info[reg].is_x64_arch_ext;

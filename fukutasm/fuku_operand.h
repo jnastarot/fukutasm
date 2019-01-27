@@ -74,19 +74,19 @@ public:
     inline fuku_operand name(const fuku_register& base, const fuku_immediate& disp) {\
         return fuku_operand(base, disp, size);\
     }\
-    inline fuku_operand name(fuku_register base, const fuku_immediate& disp) {\
+    inline fuku_operand name(fuku_register_enum base, const fuku_immediate& disp) {\
         return fuku_operand(base, disp, size);\
     }\
     inline fuku_operand name(const fuku_register& base, const fuku_register& index, fuku_operand_scale scale, const fuku_immediate& disp) {\
         return fuku_operand(base, index, scale, disp, size);\
     }\
-    inline fuku_operand name(fuku_register base, fuku_register index, fuku_operand_scale scale, const fuku_immediate& disp) {\
+    inline fuku_operand name(fuku_register_enum base, fuku_register_enum index, fuku_operand_scale scale, const fuku_immediate& disp) {\
         return fuku_operand(base, index, scale, disp, size);\
     }\
     inline fuku_operand name(const fuku_register& index, fuku_operand_scale scale, const fuku_immediate& disp) {\
         return fuku_operand(index, scale, size);\
     }\
-    inline fuku_operand name(fuku_register index, fuku_operand_scale scale, const fuku_immediate& disp) {\
+    inline fuku_operand name(fuku_register_enum index, fuku_operand_scale scale, const fuku_immediate& disp) {\
         return fuku_operand(index, scale, size);\
     }\
     }
