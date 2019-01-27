@@ -79,6 +79,10 @@ fuku_assambler& fuku_assambler::set_first_emit(bool first_emit) {
     return *this;
 }
 
+fuku_instruction* fuku_assambler::get_last_emit() {
+    return &(*--this->position);
+}
+
 void fuku_assambler::on_new_chain_item() {
     
     if (!code_holder) { return; }
@@ -90,8 +94,14 @@ void fuku_assambler::on_new_chain_item() {
     }
     case ASSAMBLER_HOLD_TYPE_FIRST_OVERWRITE: {
         if (first_emit) {
-            *position = *context.inst;
-            position++;
+            if (position == code_holder->get_lines().end()) {
+                code_holder->get_lines().insert(code_holder->get_lines().end(), *context.inst);
+                position = code_holder->get_lines().end();
+            }
+            else {
+                *position = *context.inst;
+                position++;
+            }
         }
         else {
             code_holder->get_lines().insert(position, *context.inst);

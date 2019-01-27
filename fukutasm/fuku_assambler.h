@@ -54,6 +54,8 @@ public:
     fuku_assambler& set_holder(fuku_code_holder * code_holder, fuku_assambler_hold_type hold_type);
     fuku_assambler& set_position(linestorage::iterator& position);
     fuku_assambler& set_first_emit(bool first_emit);
+
+    fuku_instruction* get_last_emit();
 public:
 //Data Transfer Instructions
     void mov(const fuku_type& dst, const fuku_type& src);
