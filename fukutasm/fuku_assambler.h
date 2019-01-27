@@ -45,6 +45,7 @@ class fuku_assambler {
 
     void on_new_chain_item();
 public:
+    fuku_assambler();
     fuku_assambler(fuku_assambler_arch arch);
     ~fuku_assambler();
 

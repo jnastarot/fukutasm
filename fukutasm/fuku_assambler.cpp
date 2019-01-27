@@ -28,6 +28,17 @@ const fuku_immediate &fuku_type::get_immediate() const {
 
 #include "fuku_assambler_misc.h"
 
+fuku_assambler::fuku_assambler() {
+    memset(&context, 0, sizeof(context));
+    context.arch = FUKU_ASSAMBLER_ARCH_X86;
+    context.short_cfg = 0xFF;
+    context.inst = &inst;
+
+    hold_type = ASSAMBLER_HOLD_TYPE_NOOVERWRITE;
+    code_holder = 0;
+    first_emit = true;
+}
+
 fuku_assambler::fuku_assambler(fuku_assambler_arch arch) {
     memset(&context, 0, sizeof(context));
     context.arch = arch;
@@ -38,6 +49,7 @@ fuku_assambler::fuku_assambler(fuku_assambler_arch arch) {
     code_holder = 0;
     first_emit = true;
 }
+
 
 fuku_assambler::~fuku_assambler() {
 
@@ -816,7 +828,7 @@ void fuku_assambler::not_(const fuku_type& dst) {
 
         _not_qw(context, dst.get_register()); ,
         _not_qw(context, dst.get_operand());,
-        UNUSUAL_DATASET,
+        UNUSUAL_DATASET
     )
     on_new_chain_item();
 }
@@ -1202,6 +1214,8 @@ void fuku_assambler::popcnt(const fuku_type& dst, const fuku_type& src) {
         UNUSUAL_DATASET,
         UNUSUAL_DATASET,
         UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
 
         _popcnt_w(context, dst.get_register(), src.get_register()); ,
         _popcnt_w(context, dst.get_register(), dst.get_operand()); ,
@@ -1241,7 +1255,7 @@ void fuku_assambler::jmp(const fuku_type& src) {
 
         _jmp(context, src.get_register()); ,
         _jmp(context, src.get_operand());,
-        _jmp(context, src.get_immediate()); ,
+        _jmp(context, src.get_immediate()); 
     )
     on_new_chain_item();
 }
@@ -1261,7 +1275,7 @@ void fuku_assambler::jcc(fuku_condition cond, const fuku_type& src) {
 
         UNUSUAL_DATASET,
         UNUSUAL_DATASET,
-        _jcc(context, cond, src.get_immediate());,
+        _jcc(context, cond, src.get_immediate());
     )
     on_new_chain_item();
 }
@@ -1281,7 +1295,7 @@ void fuku_assambler::call(const fuku_type& src) {
 
         _call(context, src.get_register()); ,
         _call(context, src.get_operand());  ,
-        _call(context, src.get_immediate());,
+        _call(context, src.get_immediate());
     )
     on_new_chain_item();
 }
@@ -1302,7 +1316,7 @@ void fuku_assambler::ret(const fuku_type& src) {
 
         UNUSUAL_DATASET,
         UNUSUAL_DATASET,
-        src.get_immediate().get_immediate16() ? _ret(context, src.get_immediate()) : _ret(context);,
+        src.get_immediate().get_immediate16() ? _ret(context, src.get_immediate()) : _ret(context);
     )
     on_new_chain_item();
 }
