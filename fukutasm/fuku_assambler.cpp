@@ -125,7 +125,7 @@ void fuku_assambler::on_emit() {
 
 fuku_assambler_ctx& fuku_assambler::on_new_chain_item() {
     
-    if (!code_holder) { return; }
+    if (!code_holder) { return context; }
 
     switch (hold_type) {
     case ASSAMBLER_HOLD_TYPE_NOOVERWRITE: {
