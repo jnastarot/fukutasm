@@ -59,24 +59,28 @@ inline void emit_qw(fuku_assambler_ctx& ctx, uint64_t x) {
 
 inline void emit_immediate_b(fuku_assambler_ctx& ctx, const fuku_immediate& src) {
     ctx.bytecode[ctx.length] = src.get_immediate8();
+    ctx.immediate_offset = ctx.length;
     ctx.length++;
     ctx.imm_reloc = src.is_relocate();
 }
 
 inline void emit_immediate_w(fuku_assambler_ctx& ctx, const fuku_immediate& src) {
     *(uint16_t*)&ctx.bytecode[ctx.length] = src.get_immediate16();
+    ctx.immediate_offset = ctx.length;
     ctx.length += sizeof(uint16_t);
     ctx.imm_reloc = src.is_relocate();
 }
 
 inline void emit_immediate_dw(fuku_assambler_ctx& ctx, const fuku_immediate& src) {
     *(uint32_t*)&ctx.bytecode[ctx.length] = src.get_immediate32();
+    ctx.immediate_offset = ctx.length;
     ctx.length += sizeof(uint32_t);
     ctx.imm_reloc = src.is_relocate();
 }
 
 inline void emit_immediate_qw(fuku_assambler_ctx& ctx, const fuku_immediate& src) {
     *(uint64_t*)&ctx.bytecode[ctx.length] = src.get_immediate64();
+    ctx.immediate_offset = ctx.length;
     ctx.length += sizeof(uint64_t);
     ctx.imm_reloc = src.is_relocate();
 }
