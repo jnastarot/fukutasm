@@ -98,6 +98,8 @@ void fuku_assambler::on_emit() {
                     this->context.inst = &(*position);
                     position++;
                 }
+
+                first_emit = false;
                 break;
             }
         }
@@ -126,40 +128,6 @@ void fuku_assambler::on_emit() {
 fuku_assambler_ctx& fuku_assambler::on_new_chain_item() {
     
     if (!code_holder) { return context; }
-
-    switch (hold_type) {
-    case ASSAMBLER_HOLD_TYPE_NOOVERWRITE: {
-       code_holder->get_lines().insert(position, *context.inst);
-       break;
-    }
-    case ASSAMBLER_HOLD_TYPE_FIRST_OVERWRITE: {
-        if (first_emit) {
-            if (position == code_holder->get_lines().end()) {
-                code_holder->get_lines().insert(code_holder->get_lines().end(), *context.inst);
-                position = code_holder->get_lines().end();
-            }
-            else {
-                *position = *context.inst;
-                position++;
-            }
-        }
-        else {
-            code_holder->get_lines().insert(position, *context.inst);
-        }
-       break;
-    }
-    case ASSAMBLER_HOLD_TYPE_FULL_OVERWRITE: {
-       if (position == code_holder->get_lines().end()) {
-            code_holder->get_lines().insert(code_holder->get_lines().end(), *context.inst);
-            position = code_holder->get_lines().end();
-       }
-       else {
-           *position = *context.inst;
-           position++;
-       }
-       break;
-    }
-    }
 
     return context;
 }
