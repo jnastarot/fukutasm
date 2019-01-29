@@ -430,12 +430,12 @@ fuku_assambler_ctx& fuku_assambler::cqo() {
 fuku_assambler_ctx& fuku_assambler::movzx(const fuku_type& dst, const fuku_type& src) {
     on_emit();
 
-    
+    return on_new_chain_item();
 }
 fuku_assambler_ctx& fuku_assambler::movsx(const fuku_type& dst, const fuku_type& src) {
     on_emit();
 
-    
+    return on_new_chain_item();
 }
 
 //Binary Arithmetic Instructions
@@ -1025,10 +1025,10 @@ fuku_assambler_ctx& fuku_assambler::shl(const fuku_type& dst, const fuku_type& s
     return on_new_chain_item();
 }
 fuku_assambler_ctx& fuku_assambler::shrd(const fuku_type& dst, const fuku_type& src, const fuku_type& shift) {
-    
+    return on_new_chain_item();
 }
 fuku_assambler_ctx& fuku_assambler::shld(const fuku_type& dst, const fuku_type& src, const fuku_type& shift) {
-    
+    return on_new_chain_item();
 }
 fuku_assambler_ctx& fuku_assambler::ror(const fuku_type& dst, const fuku_type& src) {
     if (src.get_type() == FUKU_T0_REGISTER && src.get_register().get_index() != FUKU_REG_INDEX_CX) {
@@ -1277,7 +1277,7 @@ fuku_assambler_ctx& fuku_assambler::btc(const fuku_type& dst, const fuku_type& s
     return on_new_chain_item();
 }
 fuku_assambler_ctx& fuku_assambler::setcc(fuku_condition cond, const fuku_type& dst) {
-    
+    return on_new_chain_item();
 }
 fuku_assambler_ctx& fuku_assambler::test(const fuku_type& dst, const fuku_type& src) {
     on_emit();
