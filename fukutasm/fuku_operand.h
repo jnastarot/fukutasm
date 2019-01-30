@@ -27,12 +27,12 @@ public:
     explicit fuku_operand(fuku_register_enum base, fuku_operand_size size);   // [base]
     explicit fuku_operand(const fuku_immediate& disp, fuku_operand_size size);    // [disp/r]
     explicit fuku_operand(uint32_t disp, fuku_operand_size size);                 // [disp/r]
-    fuku_operand(const fuku_register& base, const fuku_immediate& disp, fuku_operand_size size);  // [base + disp/r]
-    fuku_operand(fuku_register_enum base, const fuku_immediate& disp, fuku_operand_size size);  // [base + disp/r]
-    fuku_operand(const fuku_register& base, const fuku_register& index, fuku_operand_scale scale, const fuku_immediate& disp, fuku_operand_size size);// [base + index*scale + disp/r]
-    fuku_operand(fuku_register_enum base, fuku_register_enum index, fuku_operand_scale scale, const fuku_immediate& disp, fuku_operand_size size);// [base + index*scale + disp/r]
-    fuku_operand(const fuku_register& index, fuku_operand_scale scale, const fuku_immediate& disp, fuku_operand_size size);// [index*scale + disp/r]
-    fuku_operand(fuku_register_enum index, fuku_operand_scale scale, const fuku_immediate& disp, fuku_operand_size size);// [index*scale + disp/r]
+    explicit fuku_operand(const fuku_register& base, const fuku_immediate& disp, fuku_operand_size size);  // [base + disp/r]
+    explicit fuku_operand(fuku_register_enum base, const fuku_immediate& disp, fuku_operand_size size);  // [base + disp/r]
+    explicit fuku_operand(const fuku_register& base, const fuku_register& index, fuku_operand_scale scale, const fuku_immediate& disp, fuku_operand_size size);// [base + index*scale + disp/r]
+    explicit fuku_operand(fuku_register_enum base, fuku_register_enum index, fuku_operand_scale scale, const fuku_immediate& disp, fuku_operand_size size);// [base + index*scale + disp/r]
+    explicit fuku_operand(const fuku_register& index, fuku_operand_scale scale, const fuku_immediate& disp, fuku_operand_size size);// [index*scale + disp/r]
+    explicit fuku_operand(fuku_register_enum index, fuku_operand_scale scale, const fuku_immediate& disp, fuku_operand_size size);// [index*scale + disp/r]
 
     fuku_operand(const fuku_operand& op);
 
