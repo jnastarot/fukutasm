@@ -84,10 +84,10 @@ public:
         return fuku_operand(base, index, scale, disp, size);\
     }\
     inline fuku_operand name(const fuku_register& index, fuku_operand_scale scale, const fuku_immediate& disp) {\
-        return fuku_operand(index, scale, size);\
+        return fuku_operand(index, scale, disp, size);\
     }\
     inline fuku_operand name(fuku_register_enum index, fuku_operand_scale scale, const fuku_immediate& disp) {\
-        return fuku_operand(index, scale, size);\
+        return fuku_operand(index, scale, disp,  size);\
     }\
     }
     
