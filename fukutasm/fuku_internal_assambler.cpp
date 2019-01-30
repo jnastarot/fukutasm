@@ -307,10 +307,25 @@ void emit_operand_x86(fuku_assambler_ctx& ctx, const fuku_operand& rm_reg, fuku_
     case fuku_mem_opernad_type::FUKU_MEM_OPERAND_INDEX_DISP: {
         FUKU_ASSERT(index_idx != FUKU_REG_INDEX_SP);
 
-        // [index*scale + disp/r]
-        set_modrm(0, FUKU_REG_INDEX_SP);
         set_sib(rm_reg.get_scale(),0, index_idx, FUKU_REG_INDEX_BP);
-        set_dispr(rm_reg.get_disp().get_immediate32());
+
+        // [base + index*scale + disp/r]
+        if (rm_reg.get_disp().get_immediate32() == 0 && base_idx != FUKU_REG_INDEX_BP) {
+            // [base + index*scale]
+            set_modrm(0, FUKU_REG_INDEX_SP);
+        }
+        else if (is_used_short_disp() && rm_reg.get_disp().is_8()) {
+            // [base + index*scale + disp8]
+            set_modrm(1, FUKU_REG_INDEX_SP);
+            set_disp8(rm_reg.get_disp().get_immediate8());
+        }
+        else {
+            // [base + index*scale + disp/r]
+            set_modrm(2, FUKU_REG_INDEX_SP);
+            set_dispr(rm_reg.get_disp().get_immediate32());
+        }
+
+
         break;
     }
 
