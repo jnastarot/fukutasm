@@ -79,10 +79,6 @@ fuku_assambler& fuku_assambler::set_first_emit(bool first_emit) {
     return *this;
 }
 
-fuku_instruction* fuku_assambler::get_last_emit() {
-    return &(*--this->position);
-}
-
 void fuku_assambler::on_emit() {
     if (code_holder) {
         

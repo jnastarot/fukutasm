@@ -267,13 +267,13 @@ fuku_operand_size get_minimal_op_size(fuku_assambler_ctx& ctx, const fuku_type& 
         switch (src.get_type()) {
 
         case FUKU_T0_REGISTER: {
-            return src.get_register().get_size();
+            return src.get_operand().get_size();
         }
         case FUKU_T0_OPERAND: {
             break;
         }
         case FUKU_T0_IMMEDIATE: {
-            return src.get_immediate().get_size();
+            return src.get_operand().get_size();
         }
         }
         break;
