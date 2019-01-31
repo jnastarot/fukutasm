@@ -2,18 +2,17 @@
 #include "fuku_internal_assambler.h"
 #include "fuku_internal_assambler_func_macro.h"
 
-#define set_modrm(mod, reg_idx) \
+#define set_modrm(mod, reg, rm) \
     FUKU_ASSERT_GT(mod , 3);\
-    raw_operand[0] = (uint8_t(mod) << 6) | reg_idx;\
+    raw_operand[0] = (mod << 6 | reg << 3 | rm);\
     if(operand_size < 1){operand_size = 1;}
 
-
-#define set_sib(scale,is_index_ext,reg_idx_index,reg_idx_base)\
+#define set_sib(scale, reg_idx_index,reg_idx_base)\
     FUKU_ASSERT_GT(operand_size, 1);\
     FUKU_ASSERT_GT(scale , 3);\
-    FUKU_ASSERT_NEQ( ((!is_index_ext && reg_idx_index == FUKU_REG_INDEX_SP) || reg_idx_base == FUKU_REG_INDEX_SP), 0);\
     raw_operand[1] = (scale << 6) | (reg_idx_index << 3) | reg_idx_base;\
     if(operand_size < 2){operand_size = 2;}
+
 
 #define set_disp8(disp)\
     raw_operand[operand_size] = (uint8_t)disp;\
@@ -150,7 +149,6 @@ inline void emit_modrm(fuku_assambler_ctx& ctx, const fuku_register& rm_reg, int
     emit_b(ctx, 0xC0 | code << 3 | rm_reg.get_index());
 }
 
-
 void emit_operand_x64(fuku_assambler_ctx& ctx, const fuku_operand& rm_reg, fuku_register_index reg) {
 
     uint8_t raw_operand[6] = { 0 };
@@ -162,7 +160,7 @@ void emit_operand_x64(fuku_assambler_ctx& ctx, const fuku_operand& rm_reg, fuku_
     switch (rm_reg.get_type()) {
 
     case fuku_mem_opernad_type::FUKU_MEM_OPERAND_DISP_ONLY: {
-        set_modrm(0, FUKU_REG_INDEX_BP);
+        set_modrm(0, reg, FUKU_REG_INDEX_BP);
         set_dispr(rm_reg.get_disp().get_immediate32());
         break;
     }
@@ -170,22 +168,27 @@ void emit_operand_x64(fuku_assambler_ctx& ctx, const fuku_operand& rm_reg, fuku_
     case fuku_mem_opernad_type::FUKU_MEM_OPERAND_BASE_ONLY:
     case fuku_mem_opernad_type::FUKU_MEM_OPERAND_BASE_DISP: {
 
+        if (base_idx == FUKU_REG_INDEX_SP) {
+            set_sib(FUKU_OPERAND_SCALE_1, FUKU_REG_INDEX_SP, base_idx);
+        }
+
         // [base + disp/r]
         if (rm_reg.get_disp().get_immediate32() == 0 && base_idx != FUKU_REG_INDEX_BP) {
 
             // [base]
-            set_modrm(0, base_idx);
+            set_modrm(0, reg, base_idx);
+            
         }
         else if (is_used_short_disp() && rm_reg.get_disp().is_8()) {
 
             // [base + disp8]
-            set_modrm(1, base_idx);
+            set_modrm(1, reg, base_idx);
             set_disp8(rm_reg.get_disp().get_immediate8());
         }
         else {
 
             // [base + disp/r]
-            set_modrm(2, base_idx);
+            set_modrm(2, reg, base_idx);
             set_dispr(rm_reg.get_disp().get_immediate32());
         }
 
@@ -197,21 +200,21 @@ void emit_operand_x64(fuku_assambler_ctx& ctx, const fuku_operand& rm_reg, fuku_
 
         FUKU_ASSERT(index_idx != FUKU_REG_INDEX_SP);
 
-        set_sib(rm_reg.get_scale(), rm_reg.get_index().is_ext64(), index_idx, base_idx);
+        set_sib(rm_reg.get_scale(), index_idx, base_idx);
 
         // [base + index*scale + disp/r]
         if (rm_reg.get_disp().get_immediate32() == 0 && base_idx != FUKU_REG_INDEX_BP) {
             // [base + index*scale]
-            set_modrm(0, FUKU_REG_INDEX_SP);
+            set_modrm(0, reg, FUKU_REG_INDEX_SP);
         }
         else if (is_used_short_disp() && rm_reg.get_disp().is_8()) {
             // [base + index*scale + disp8]
-            set_modrm(1, FUKU_REG_INDEX_SP);
+            set_modrm(1, reg, FUKU_REG_INDEX_SP);
             set_disp8(rm_reg.get_disp().get_immediate8());
         }
         else {
             // [base + index*scale + disp/r]
-            set_modrm(2, FUKU_REG_INDEX_SP);
+            set_modrm(2, reg, FUKU_REG_INDEX_SP);
             set_dispr(rm_reg.get_disp().get_immediate32());
         }
 
@@ -221,8 +224,8 @@ void emit_operand_x64(fuku_assambler_ctx& ctx, const fuku_operand& rm_reg, fuku_
         FUKU_ASSERT(index_idx != FUKU_REG_INDEX_SP);
 
         // [index*scale + disp/r]
-        set_modrm(0, FUKU_REG_INDEX_SP);
-        set_sib(rm_reg.get_scale(), rm_reg.get_index().is_ext64() , index_idx, FUKU_REG_INDEX_BP);
+        set_modrm(0, reg, FUKU_REG_INDEX_SP);
+        set_sib(rm_reg.get_scale(), index_idx, FUKU_REG_INDEX_BP);
         set_dispr(rm_reg.get_disp().get_immediate32());
         break;
     }
@@ -249,7 +252,7 @@ void emit_operand_x86(fuku_assambler_ctx& ctx, const fuku_operand& rm_reg, fuku_
     switch (rm_reg.get_type()) {
 
     case fuku_mem_opernad_type::FUKU_MEM_OPERAND_DISP_ONLY: {
-        set_modrm(0, FUKU_REG_INDEX_BP);
+        set_modrm(0, reg, FUKU_REG_INDEX_BP);
         set_dispr(rm_reg.get_disp().get_immediate32());
         break;
     }
@@ -258,22 +261,22 @@ void emit_operand_x86(fuku_assambler_ctx& ctx, const fuku_operand& rm_reg, fuku_
     case fuku_mem_opernad_type::FUKU_MEM_OPERAND_BASE_DISP: {
 
         if (base_idx == FUKU_REG_INDEX_SP) {
-            set_sib(FUKU_OPERAND_SCALE_1, 0, FUKU_REG_INDEX_SP, base_idx);
+            set_sib(FUKU_OPERAND_SCALE_1, FUKU_REG_INDEX_SP, base_idx);
         }
 
         // [base + disp/r]
         if (rm_reg.get_disp().get_immediate32() == 0 && base_idx != FUKU_REG_INDEX_BP) {
             // [base]
-            set_modrm(0, base_idx);
+            set_modrm(0, reg, base_idx);
         }
         else if (is_used_short_disp() && rm_reg.get_disp().is_8()) {
             // [base + disp8]
-            set_modrm(1, base_idx);
+            set_modrm(1, reg, base_idx);
             set_disp8(rm_reg.get_disp().get_immediate8());
         }
         else {
             // [base + disp/r]
-            set_modrm(2, base_idx);
+            set_modrm(2, reg, base_idx);
             set_dispr(rm_reg.get_disp().get_immediate32());
         }
         break;
@@ -282,23 +285,21 @@ void emit_operand_x86(fuku_assambler_ctx& ctx, const fuku_operand& rm_reg, fuku_
     case fuku_mem_opernad_type::FUKU_MEM_OPERAND_BASE_INDEX:
     case fuku_mem_opernad_type::FUKU_MEM_OPERAND_BASE_INDEX_DISP: {
 
-        FUKU_ASSERT(index_idx != FUKU_REG_INDEX_SP);
-
-        set_sib(rm_reg.get_scale(), 0, index_idx, base_idx);
+        set_sib(rm_reg.get_scale(), index_idx, base_idx);
 
         // [base + index*scale + disp/r]
         if (rm_reg.get_disp().get_immediate32() == 0 && base_idx != FUKU_REG_INDEX_BP) {
             // [base + index*scale]
-            set_modrm(0, FUKU_REG_INDEX_SP);
+            set_modrm(0, reg, FUKU_REG_INDEX_SP);
         }
         else if (is_used_short_disp() && rm_reg.get_disp().is_8()) {
             // [base + index*scale + disp8]
-            set_modrm(1, FUKU_REG_INDEX_SP);
+            set_modrm(1, reg, FUKU_REG_INDEX_SP);
             set_disp8(rm_reg.get_disp().get_immediate8());
         }
         else {
             // [base + index*scale + disp/r]
-            set_modrm(2, FUKU_REG_INDEX_SP);
+            set_modrm(2, reg, FUKU_REG_INDEX_SP);
             set_dispr(rm_reg.get_disp().get_immediate32());
         }
 
@@ -307,25 +308,9 @@ void emit_operand_x86(fuku_assambler_ctx& ctx, const fuku_operand& rm_reg, fuku_
     case fuku_mem_opernad_type::FUKU_MEM_OPERAND_INDEX_DISP: {
         FUKU_ASSERT(index_idx != FUKU_REG_INDEX_SP);
 
-        set_sib(rm_reg.get_scale(),0, index_idx, FUKU_REG_INDEX_BP);
-
-        // [base + index*scale + disp/r]
-        if (rm_reg.get_disp().get_immediate32() == 0 && base_idx != FUKU_REG_INDEX_BP) {
-            // [base + index*scale]
-            set_modrm(0, FUKU_REG_INDEX_SP);
-        }
-        else if (is_used_short_disp() && rm_reg.get_disp().is_8()) {
-            // [base + index*scale + disp8]
-            set_modrm(1, FUKU_REG_INDEX_SP);
-            set_disp8(rm_reg.get_disp().get_immediate8());
-        }
-        else {
-            // [base + index*scale + disp/r]
-            set_modrm(2, FUKU_REG_INDEX_SP);
-            set_dispr(rm_reg.get_disp().get_immediate32());
-        }
-
-
+        set_modrm(0, reg, FUKU_REG_INDEX_SP);
+        set_sib(rm_reg.get_scale(), index_idx, FUKU_REG_INDEX_BP)
+        set_dispr(rm_reg.get_disp().get_immediate32());
         break;
     }
 
@@ -334,9 +319,7 @@ void emit_operand_x86(fuku_assambler_ctx& ctx, const fuku_operand& rm_reg, fuku_
     }
 
 
-    ctx.bytecode[ctx.length] = (raw_operand[0] & ~0x38) | (reg << 3);
-
-    for (unsigned i = 1; i < operand_size; i++) { ctx.bytecode[ctx.length + i] = raw_operand[i];}
+    for (unsigned i = 0; i < operand_size; i++) { ctx.bytecode[ctx.length + i] = raw_operand[i];}
     ctx.length += operand_size;
 }
 

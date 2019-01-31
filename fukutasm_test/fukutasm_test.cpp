@@ -281,7 +281,7 @@ int main() {
 
    // fuku_internal_assambler fuku_asm(FUKU_TESTMOD_86 == 1 ? FUKU_ASSAMBLER_ARCH_X86 : FUKU_ASSAMBLER_ARCH_X64);
   //  fuku_operand  op = qword_ptr(FUKU_REG_EAX);// fuku_operand(FUKU_REG_EAX, FUKU_REG_ECX, FUKU_OPERAND_SCALE_2, fuku_immediate(0x12345678));
-    fuku_register reg1 = FUKU_REG_CX;
+    fuku_register reg1 = FUKU_REG_EDX;
     fuku_register reg2 = FUKU_REG_EDX;
     fuku_immediate imm(0x12345678);
 
@@ -299,7 +299,44 @@ int main() {
    // test_2_arg(inst, op , reg1, FUKU_OPERAND_SIZE_32);
 
    // return 0;z
-    
+    uint64_t vall = 0x1000000;
+    //operand test
+    asm_def_2op_test(mov,_dw,  dword_ptr(FUKU_REG_EAX), reg1, FUKU_OPERAND_SIZE_32)
+    asm_def_2op_test(mov, _dw, dword_ptr(FUKU_REG_ECX), reg1, FUKU_OPERAND_SIZE_32)
+    asm_def_2op_test(mov, _dw, dword_ptr(FUKU_REG_EDX), reg1, FUKU_OPERAND_SIZE_32)
+    asm_def_2op_test(mov, _dw, dword_ptr(FUKU_REG_EBX), reg1, FUKU_OPERAND_SIZE_32)
+    asm_def_2op_test(mov, _dw, dword_ptr(FUKU_REG_EBP), reg1, FUKU_OPERAND_SIZE_32)
+    asm_def_2op_test(mov, _dw, dword_ptr(FUKU_REG_ESP), reg1, FUKU_OPERAND_SIZE_32)
+    asm_def_2op_test(mov, _dw, dword_ptr(FUKU_REG_EDI), reg1, FUKU_OPERAND_SIZE_32)
+    asm_def_2op_test(mov, _dw, dword_ptr(FUKU_REG_ESI), reg1, FUKU_OPERAND_SIZE_32)
+
+    asm_def_2op_test(mov,_dw,  dword_ptr(FUKU_REG_EAX, vall), reg1, FUKU_OPERAND_SIZE_32)
+    asm_def_2op_test(mov, _dw, dword_ptr(FUKU_REG_ECX, vall), reg1, FUKU_OPERAND_SIZE_32)
+    asm_def_2op_test(mov, _dw, dword_ptr(FUKU_REG_EDX, vall), reg1, FUKU_OPERAND_SIZE_32)
+    asm_def_2op_test(mov, _dw, dword_ptr(FUKU_REG_EBX, vall), reg1, FUKU_OPERAND_SIZE_32)
+    asm_def_2op_test(mov, _dw, dword_ptr(FUKU_REG_EBP, vall), reg1, FUKU_OPERAND_SIZE_32)
+    asm_def_2op_test(mov, _dw, dword_ptr(FUKU_REG_ESP, vall), reg1, FUKU_OPERAND_SIZE_32)
+    asm_def_2op_test(mov, _dw, dword_ptr(FUKU_REG_EDI, vall), reg1, FUKU_OPERAND_SIZE_32)
+    asm_def_2op_test(mov, _dw, dword_ptr(FUKU_REG_ESI, vall), reg1, FUKU_OPERAND_SIZE_32)
+
+    asm_def_2op_test(mov,_dw,  dword_ptr(FUKU_REG_EAX, FUKU_OPERAND_SCALE_2, vall), reg1, FUKU_OPERAND_SIZE_32)
+    asm_def_2op_test(mov, _dw, dword_ptr(FUKU_REG_ECX, FUKU_OPERAND_SCALE_2, vall), reg1, FUKU_OPERAND_SIZE_32)
+    asm_def_2op_test(mov, _dw, dword_ptr(FUKU_REG_EDX, FUKU_OPERAND_SCALE_2, vall), reg1, FUKU_OPERAND_SIZE_32)
+    asm_def_2op_test(mov, _dw, dword_ptr(FUKU_REG_EBX, FUKU_OPERAND_SCALE_2, vall), reg1, FUKU_OPERAND_SIZE_32)
+    asm_def_2op_test(mov, _dw, dword_ptr(FUKU_REG_EBP, FUKU_OPERAND_SCALE_2, vall), reg1, FUKU_OPERAND_SIZE_32)
+    asm_def_2op_test(mov, _dw, dword_ptr(FUKU_REG_ESP, FUKU_OPERAND_SCALE_2, vall), reg1, FUKU_OPERAND_SIZE_32)
+    asm_def_2op_test(mov, _dw, dword_ptr(FUKU_REG_EDI, FUKU_OPERAND_SCALE_2, vall), reg1, FUKU_OPERAND_SIZE_32)
+    asm_def_2op_test(mov, _dw, dword_ptr(FUKU_REG_ESI, FUKU_OPERAND_SCALE_2, vall), reg1, FUKU_OPERAND_SIZE_32)
+
+    asm_def_2op_test(mov,_dw,  dword_ptr(FUKU_REG_EAX, FUKU_REG_ESP, FUKU_OPERAND_SCALE_2, vall), reg1, FUKU_OPERAND_SIZE_32)
+    asm_def_2op_test(mov, _dw, dword_ptr(FUKU_REG_ECX, FUKU_REG_ESP, FUKU_OPERAND_SCALE_2, vall), reg1, FUKU_OPERAND_SIZE_32)
+    asm_def_2op_test(mov, _dw, dword_ptr(FUKU_REG_EDX, FUKU_REG_ESP, FUKU_OPERAND_SCALE_2, vall), reg1, FUKU_OPERAND_SIZE_32)
+    asm_def_2op_test(mov, _dw, dword_ptr(FUKU_REG_EBX, FUKU_REG_ESP, FUKU_OPERAND_SCALE_2, vall), reg1, FUKU_OPERAND_SIZE_32)
+    asm_def_2op_test(mov, _dw, dword_ptr(FUKU_REG_EBP, FUKU_REG_ESP, FUKU_OPERAND_SCALE_2, vall), reg1, FUKU_OPERAND_SIZE_32)
+    asm_def_2op_test(mov, _dw, dword_ptr(FUKU_REG_ESP, FUKU_REG_ESP, FUKU_OPERAND_SCALE_2, vall), reg1, FUKU_OPERAND_SIZE_32)
+    asm_def_2op_test(mov, _dw, dword_ptr(FUKU_REG_EDI, FUKU_REG_ESP, FUKU_OPERAND_SCALE_2, vall), reg1, FUKU_OPERAND_SIZE_32)
+    asm_def_2op_test(mov, _dw, dword_ptr(FUKU_REG_ESI, FUKU_REG_ESP, FUKU_OPERAND_SCALE_2, vall), reg1, FUKU_OPERAND_SIZE_32)
+
 //Data Transfer Instructions
     test_asm_def_full(mov, op, reg1, reg2, imm)
     asm_def_cond_2op_test(cmovcc,_w, reg1, reg2, FUKU_OPERAND_SIZE_16)
@@ -362,8 +399,8 @@ int main() {
     asm_def_noop_test(das, , FUKU_OPERAND_SIZE_32)
     asm_def_noop_test(aaa, , FUKU_OPERAND_SIZE_32)
     asm_def_noop_test(aas, , FUKU_OPERAND_SIZE_32)
-    asm_def_1op_test(aam,, reg1, FUKU_OPERAND_SIZE_32)
-    asm_def_1op_test(aad,, reg1, FUKU_OPERAND_SIZE_32)
+//    asm_def_1op_test(aam,, reg1, FUKU_OPERAND_SIZE_32)
+ //   asm_def_1op_test(aad,, reg1, FUKU_OPERAND_SIZE_32)
 #endif
 //Logical Instructions Instructions
     test_asm_def_full(and, op, reg1, reg2, imm)
