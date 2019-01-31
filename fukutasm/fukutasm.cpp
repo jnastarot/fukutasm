@@ -556,7 +556,7 @@ fuku_register_enum capstone_to_fuku_reg(x86_reg reg) {
 }
 
 fuku_operand capstone_to_fuku_op(x86_insn inst) {
-    return fuku_operand();
+    return fuku_operand(FUKU_REG_NONE, FUKU_OPERAND_SIZE_0);
 }
 
 fuku_condition capstone_to_fuku_cond(x86_insn cond) {
