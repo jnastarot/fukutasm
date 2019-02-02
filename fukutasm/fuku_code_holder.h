@@ -49,8 +49,6 @@ class fuku_code_holder {
     std::vector<fuku_instruction *> original_lines; //sorted instructions with valid source_virtual_address
 
     linestorage  lines;
-
-    bool merge_labels();
 public:
     fuku_code_holder();
     fuku_code_holder(fuku_assambler_arch arch);
@@ -61,6 +59,7 @@ public:
     fuku_code_holder& operator=(const fuku_code_holder& code_holder);
 
     bool merge_code(const fuku_code_holder& code_holder);
+    bool merge_labels();
 public:
     void   update_virtual_address(uint64_t destination_virtual_address);
     void   update_origin_idxs();
