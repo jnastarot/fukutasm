@@ -752,7 +752,7 @@ bool fuku_code_holder::merge_code(const fuku_code_holder& code_holder) {
                 }
             }
 
-            if (label_count) { //fix new items label idxs
+            if (label_count || code_holder.get_labels().size()) { //fix new items label idxs
 
                 auto& src_relocs = code_holder.get_relocations();
                 auto& src_rip_relocs = code_holder.get_rip_relocations();
