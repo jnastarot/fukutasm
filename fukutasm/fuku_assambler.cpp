@@ -196,7 +196,7 @@ fuku_assambler_ctx& fuku_assambler::xchg(const fuku_type& dst, const fuku_type& 
         _xchg_b(context, dst.get_operand(), src.get_register());,
         UNUSUAL_DATASET,
 
-        _xchg_w(context, dst.get_operand(), src.get_register());,
+        _xchg_w(context, dst.get_register(), src.get_register());,
         _xchg_w(context, src.get_operand(), dst.get_register());,
         UNUSUAL_DATASET,
         _xchg_w(context, dst.get_operand(), src.get_register());,
