@@ -597,6 +597,11 @@ fuku_asm_ret_type _xchg_qw(fuku_assambler_ctx& ctx, const fuku_register& dst, co
     gen_pattern64_1em_rm_r(0x87, dst, src)
     gen_func_return(X86_INS_XCHG, 0)
 }
+fuku_asm_ret_type _bswap_w(fuku_assambler_ctx& ctx, const fuku_register& dst) {
+    gencleanerdata
+    gen_pattern32_1em_rm_idx_word(0x0F, dst, 1)
+    gen_func_return(X86_INS_BSWAP, 0)
+}
 fuku_asm_ret_type _bswap_dw(fuku_assambler_ctx& ctx, const fuku_register& dst) {
     gencleanerdata
     gen_pattern32_1em_rm_idx(0x0F, dst, 1)
@@ -785,6 +790,11 @@ fuku_asm_ret_type _pop_qw(fuku_assambler_ctx& ctx, const fuku_operand& dst) {
 gen_func_body_twobyte_no_arg(cwd,  FUKU_PREFIX_OVERRIDE_DATA,0x99, X86_INS_CWD, 0)
 gen_func_body_onebyte_no_arg(cdq,  0x99, X86_INS_CDQ, 0)
 gen_func_body_twobyte_no_arg(cqo,  0x48, 0x99, X86_INS_CQO, 0)
+
+gen_func_body_twobyte_no_arg(cbw, FUKU_PREFIX_OVERRIDE_DATA, 0x98, X86_INS_CBW, 0)
+gen_func_body_onebyte_no_arg(cwde, 0x98, X86_INS_CWDE, 0)
+gen_func_body_twobyte_no_arg(cdqe, 0x48, 0x98, X86_INS_CDQE, 0)
+
 gen_func_body_movxx(movzx, 0xB6, X86_INS_MOVZX)
 gen_func_body_movxx(movsx, 0xBE, X86_INS_MOVSX)
 fuku_asm_ret_type _movsx_dword_dw(fuku_assambler_ctx& ctx, const fuku_register& dst, const fuku_register& src) {

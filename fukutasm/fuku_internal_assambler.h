@@ -76,6 +76,7 @@ namespace fukutasm {
         asm_def_2op(xchg, _qw, fuasm_reg, fuasm_reg)
         asm_def_2op(xchg, _qw, fuasm_op, fuasm_reg)
 
+        asm_def_1op(bswap_w, , fuasm_reg)
         asm_def_1op(bswap_dw, , fuasm_reg)
         asm_def_1op(bswap_qw, , fuasm_reg)
 
@@ -120,6 +121,10 @@ namespace fukutasm {
         asm_def_noop(cwd, )
         asm_def_noop(cdq, )
         asm_def_noop(cqo, )
+
+        asm_def_noop(cbw, )
+        asm_def_noop(cwde, )
+        asm_def_noop(cdqe, )
 
         asm_def_2op(movzx, _byte_w, fuasm_reg, fuasm_reg)
         asm_def_2op(movzx, _byte_w, fuasm_reg, fuasm_op)

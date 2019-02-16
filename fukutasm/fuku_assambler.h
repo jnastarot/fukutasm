@@ -70,6 +70,9 @@ public:
     fukutasm::fuku_assambler_ctx& cwd();
     fukutasm::fuku_assambler_ctx& cdq();
     fukutasm::fuku_assambler_ctx& cqo();
+    fukutasm::fuku_assambler_ctx& cbw();
+    fukutasm::fuku_assambler_ctx& cwde();
+    fukutasm::fuku_assambler_ctx& cdqe();
     fukutasm::fuku_assambler_ctx& movzx(const fuku_type& dst, const fuku_type& src);
     fukutasm::fuku_assambler_ctx& movsx(const fuku_type& dst, const fuku_type& src);
 

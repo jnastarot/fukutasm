@@ -221,7 +221,7 @@ fuku_assambler_ctx& fuku_assambler::bswap(const fuku_type& dst) {
         UNUSUAL_DATASET,
         UNUSUAL_DATASET,
 
-        UNUSUAL_DATASET,
+        _bswap_w(context, dst.get_register()); ,
         UNUSUAL_DATASET,
         UNUSUAL_DATASET,
 
@@ -389,6 +389,19 @@ fuku_assambler_ctx& fuku_assambler::cqo() {
     on_emit();
     _cqo(context); return on_new_chain_item();
 }
+fuku_assambler_ctx& fuku_assambler::cbw() {
+    on_emit();
+    _cbw(context); return on_new_chain_item();
+}
+fuku_assambler_ctx& fuku_assambler::cwde() {
+    on_emit();
+    _cwde(context); return on_new_chain_item();
+}
+fuku_assambler_ctx& fuku_assambler::cdqe() {
+    on_emit();
+    _cdqe(context); return on_new_chain_item();
+}
+
 fuku_assambler_ctx& fuku_assambler::movzx(const fuku_type& dst, const fuku_type& src) {
     on_emit();
 
