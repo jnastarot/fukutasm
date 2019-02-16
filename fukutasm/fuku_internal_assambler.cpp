@@ -172,24 +172,26 @@ void emit_operand_x64(fuku_assambler_ctx& ctx, const fuku_operand& rm_reg, fuku_
             set_sib(FUKU_OPERAND_SCALE_1, FUKU_REG_INDEX_SP, base_idx);
         }
 
+        auto& disp = rm_reg.get_disp();
+
         // [base + disp/r]
-        if (rm_reg.get_disp().get_immediate32() == 0 && base_idx != FUKU_REG_INDEX_BP) {
+        if (disp.get_immediate32() == 0 && base_idx != FUKU_REG_INDEX_BP) {
 
             // [base]
             set_modrm(0, reg, base_idx);
             
         }
-        else if (is_used_short_disp() && rm_reg.get_disp().is_8()) {
+        else if (is_used_short_disp() && disp.is_8()) {
 
             // [base + disp8]
             set_modrm(1, reg, base_idx);
-            set_disp8(rm_reg.get_disp().get_immediate8());
+            set_disp8(disp.get_immediate8());
         }
         else {
 
             // [base + disp/r]
             set_modrm(2, reg, base_idx);
-            set_dispr(rm_reg.get_disp().get_immediate32());
+            set_dispr(disp.get_immediate32());
         }
 
         break;
@@ -264,20 +266,22 @@ void emit_operand_x86(fuku_assambler_ctx& ctx, const fuku_operand& rm_reg, fuku_
             set_sib(FUKU_OPERAND_SCALE_1, FUKU_REG_INDEX_SP, base_idx);
         }
 
+        auto& disp = rm_reg.get_disp();
+
         // [base + disp/r]
-        if (rm_reg.get_disp().get_immediate32() == 0 && base_idx != FUKU_REG_INDEX_BP) {
+        if (disp.get_immediate32() == 0 && base_idx != FUKU_REG_INDEX_BP) {
             // [base]
             set_modrm(0, reg, base_idx);
         }
-        else if (is_used_short_disp() && rm_reg.get_disp().is_8()) {
+        else if (is_used_short_disp() && disp.is_8()) {
             // [base + disp8]
             set_modrm(1, reg, base_idx);
-            set_disp8(rm_reg.get_disp().get_immediate8());
+            set_disp8(disp.get_immediate8());
         }
         else {
             // [base + disp/r]
             set_modrm(2, reg, base_idx);
-            set_dispr(rm_reg.get_disp().get_immediate32());
+            set_dispr(disp.get_immediate32());
         }
         break;
     }
@@ -354,7 +358,7 @@ fuku_asm_ret_type _mov_b(fuku_assambler_ctx& ctx, const fuku_register& dst,const
 }
 fuku_asm_ret_type _mov_b(fuku_assambler_ctx& ctx, const fuku_register& dst, const fuku_operand& src) {
     gencleanerdata  
-    if(is_used_short_eax() && dst.get_index() == FUKU_REG_AX &&
+    if(is_used_short_eax() && dst.get_reg() == FUKU_REG_AL &&
         src.get_type() == FUKU_MEM_OPERAND_DISP_ONLY ){
         emit_optional_rex_32(ctx, src, dst);
         emit_b(ctx, 0xA0);
@@ -373,7 +377,7 @@ fuku_asm_ret_type _mov_b(fuku_assambler_ctx& ctx, const fuku_operand& dst, const
 }
 fuku_asm_ret_type _mov_b(fuku_assambler_ctx& ctx, const fuku_operand& dst, const fuku_register& src) {
     gencleanerdata 
-    if(is_used_short_eax() && src.get_index() == FUKU_REG_AX &&
+    if(is_used_short_eax() && src.get_reg() == FUKU_REG_AL &&
         dst.get_type() == fuku_mem_opernad_type::FUKU_MEM_OPERAND_DISP_ONLY ){
         emit_optional_rex_32(ctx, dst, src);
         emit_b(ctx, 0xA2);
@@ -400,7 +404,7 @@ fuku_asm_ret_type _mov_w(fuku_assambler_ctx& ctx, const fuku_register& dst, cons
 }
 fuku_asm_ret_type _mov_w(fuku_assambler_ctx& ctx, const fuku_register& dst, const fuku_operand& src) {
     gencleanerdata
-    if (is_used_short_eax() && dst.get_index() == FUKU_REG_AX &&
+    if (is_used_short_eax() && dst.get_reg() == FUKU_REG_AX &&
         src.get_type() == fuku_mem_opernad_type::FUKU_MEM_OPERAND_DISP_ONLY) {
         emit_b(ctx, FUKU_PREFIX_OVERRIDE_DATA);
         emit_optional_rex_32(ctx, src, dst);
@@ -415,7 +419,7 @@ fuku_asm_ret_type _mov_w(fuku_assambler_ctx& ctx, const fuku_register& dst, cons
 }
 fuku_asm_ret_type _mov_w(fuku_assambler_ctx& ctx, const fuku_operand& dst, const fuku_register& src) {
     gencleanerdata
-    if (is_used_short_eax() && src.get_index() == FUKU_REG_AX &&
+    if (is_used_short_eax() && src.get_reg() == FUKU_REG_AX &&
         dst.get_type() == fuku_mem_opernad_type::FUKU_MEM_OPERAND_DISP_ONLY) {
         emit_b(ctx, FUKU_PREFIX_OVERRIDE_DATA);
         emit_optional_rex_32(ctx, dst, src);
@@ -442,7 +446,7 @@ fuku_asm_ret_type _mov_dw(fuku_assambler_ctx& ctx, const fuku_register& dst, con
 }
 fuku_asm_ret_type _mov_dw(fuku_assambler_ctx& ctx, const fuku_register& dst, const fuku_operand& src) {
     gencleanerdata
-    if (is_used_short_eax() && dst.get_index() == FUKU_REG_AX &&
+    if (is_used_short_eax() && dst.get_reg() == FUKU_REG_EAX &&
         src.get_type() == fuku_mem_opernad_type::FUKU_MEM_OPERAND_DISP_ONLY) {
         emit_optional_rex_32(ctx, dst);
         emit_b(ctx, 0xA3);
@@ -466,7 +470,7 @@ fuku_asm_ret_type _mov_dw(fuku_assambler_ctx& ctx, const fuku_operand& dst, cons
 }
 fuku_asm_ret_type _mov_dw(fuku_assambler_ctx& ctx, const fuku_operand& dst, const fuku_register& src) {
     gencleanerdata
-    if (is_used_short_eax() && src.get_index() == FUKU_REG_AX &&
+    if (is_used_short_eax() && src.get_reg() == FUKU_REG_EAX &&
         dst.get_type() == fuku_mem_opernad_type::FUKU_MEM_OPERAND_DISP_ONLY) {
         emit_optional_rex_32(ctx, dst, src);
         emit_b(ctx, 0xA3);
@@ -487,7 +491,7 @@ fuku_asm_ret_type _mov_qw(fuku_assambler_ctx& ctx, const fuku_register& dst, con
 }
 fuku_asm_ret_type _mov_qw(fuku_assambler_ctx& ctx, const fuku_register& dst, const fuku_operand& src) {
     gencleanerdata
-    if (is_used_short_eax() && dst.get_index() == FUKU_REG_AX &&
+    if (is_used_short_eax() && dst.get_reg() == FUKU_REG_RAX &&
         src.get_type() == fuku_mem_opernad_type::FUKU_MEM_OPERAND_DISP_ONLY) {
         emit_rex_64(ctx, dst);
         emit_b(ctx, 0xA3);
@@ -511,7 +515,7 @@ fuku_asm_ret_type _mov_qw(fuku_assambler_ctx& ctx, const fuku_operand& dst, cons
 }
 fuku_asm_ret_type _mov_qw(fuku_assambler_ctx& ctx, const fuku_operand& dst, const fuku_register& src) {
     gencleanerdata   
-    if (is_used_short_eax() && src.get_index() == FUKU_REG_AX &&
+    if (is_used_short_eax() && src.get_reg() == FUKU_REG_RAX &&
         dst.get_type() == fuku_mem_opernad_type::FUKU_MEM_OPERAND_DISP_ONLY) {
         emit_rex_64(ctx, dst, src);
         emit_b(ctx, 0xA3);
@@ -953,7 +957,7 @@ fuku_asm_ret_type _test_b(fuku_assambler_ctx& ctx, const fuku_register& dst, con
 }
 fuku_asm_ret_type _test_b(fuku_assambler_ctx& ctx, const fuku_register& dst, const fuku_immediate& src) {
     gencleanerdata
-    if (is_used_short_eax() && dst.get_index() == FUKU_REG_AL) {
+    if (is_used_short_eax() && dst.get_reg() == FUKU_REG_AL) {
         gen_pattern32_1em_immb(0xA8, src)
     }
     else {
@@ -978,7 +982,7 @@ fuku_asm_ret_type _test_w(fuku_assambler_ctx& ctx, const fuku_register& dst, con
 }
 fuku_asm_ret_type _test_w(fuku_assambler_ctx& ctx, const fuku_register& dst, const fuku_immediate& src) {
     gencleanerdata    
-    if (is_used_short_eax() && dst.get_index() == FUKU_REG_AX) {
+    if (is_used_short_eax() && dst.get_reg() == FUKU_REG_AX) {
         gen_pattern32_1em_immw_word(0xA9, src)
     }
     else {
@@ -1003,7 +1007,7 @@ fuku_asm_ret_type _test_dw(fuku_assambler_ctx& ctx, const fuku_register& dst, co
 }
 fuku_asm_ret_type _test_dw(fuku_assambler_ctx& ctx, const fuku_register& dst, const fuku_immediate& src) {
     gencleanerdata   
-    if (is_used_short_eax() && dst.get_index() == FUKU_REG_EAX) {
+    if (is_used_short_eax() && dst.get_reg() == FUKU_REG_EAX) {
         gen_pattern32_1em_immdw(0xA9, src)
     }
     else {
@@ -1028,7 +1032,7 @@ fuku_asm_ret_type _test_qw(fuku_assambler_ctx& ctx, const fuku_register& dst, co
 }
 fuku_asm_ret_type _test_qw(fuku_assambler_ctx& ctx, const fuku_register& dst, const fuku_immediate& src) {
     gencleanerdata
-    if (is_used_short_eax() && dst.get_index() == FUKU_REG_EAX) {
+    if (is_used_short_eax() && dst.get_reg() == FUKU_REG_RAX) {
         emit_rex_64(ctx, dst);
         gen_pattern64_1em_immdw(0xA9, src)
     }
@@ -1255,20 +1259,22 @@ fuku_asm_ret_type _nop(fuku_assambler_ctx& ctx, uint8_t n) {
         switch (n) {
         case 2:
             emit_b(ctx, 0x66);
+
+        default:
         case 1:
             emit_b(ctx, 0x90);
-            gen_func_return(X86_INS_NOP, 0)
+            break;
         case 3:
             emit_b(ctx, 0x0F);
             emit_b(ctx, 0x1F);
             emit_b(ctx, 0x00);
-            gen_func_return(X86_INS_NOP, 0)
+            break;
         case 4:
             emit_b(ctx, 0x0F);
             emit_b(ctx, 0x1F);
             emit_b(ctx, 0x40);
             emit_b(ctx, 0x00);
-            gen_func_return(X86_INS_NOP, 0)
+            break;
         case 6:
             emit_b(ctx, 0x66);
         case 5:
@@ -1277,7 +1283,7 @@ fuku_asm_ret_type _nop(fuku_assambler_ctx& ctx, uint8_t n) {
             emit_b(ctx, 0x44);
             emit_b(ctx, 0x00);
             emit_b(ctx, 0x00);
-            gen_func_return(X86_INS_NOP, 0)
+            break;
         case 7:
             emit_b(ctx, 0x0F);
             emit_b(ctx, 0x1F);
@@ -1286,8 +1292,7 @@ fuku_asm_ret_type _nop(fuku_assambler_ctx& ctx, uint8_t n) {
             emit_b(ctx, 0x00);
             emit_b(ctx, 0x00);
             emit_b(ctx, 0x00);
-            gen_func_return(X86_INS_NOP, 0)
-        default:
+            break;
         case 11:
             emit_b(ctx, 0x66);
             n--;
@@ -1307,6 +1312,7 @@ fuku_asm_ret_type _nop(fuku_assambler_ctx& ctx, uint8_t n) {
             emit_b(ctx, 0x00);
             emit_b(ctx, 0x00);
             n -= 8;
+            break;
         }
     }
     gen_func_return(X86_INS_NOP, 0)

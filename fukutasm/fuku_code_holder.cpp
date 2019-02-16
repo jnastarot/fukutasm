@@ -725,7 +725,7 @@ bool fuku_code_holder::merge_code(const fuku_code_holder& code_holder) {
             std::vector<fuku_instruction* > labels_cache;
             labels_cache.resize(code_holder.get_labels_count());
 
-            for (; src_iter != src_lines.end(); src_iter++) { //fix new items label idxs
+            for (; src_iter != src_lines.end(); ++src_iter) { //fix new items label idxs
 
                 if (src_iter->get_label_idx() != -1) {
 

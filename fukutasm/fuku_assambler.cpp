@@ -92,7 +92,7 @@ void fuku_assambler::on_emit() {
                 }
                 else {
                     this->context.inst = &(*position);
-                    position++;
+                    ++position;
                 }
 
                 first_emit = false;
@@ -113,7 +113,7 @@ void fuku_assambler::on_emit() {
             }
             else {
                 this->context.inst = &(*position);
-                position++;
+                ++position;
             }
             break;
         }
@@ -123,8 +123,6 @@ void fuku_assambler::on_emit() {
 
 fuku_assambler_ctx& fuku_assambler::on_new_chain_item() {
     
-    if (!code_holder) { return context; }
-
     return context;
 }
 
