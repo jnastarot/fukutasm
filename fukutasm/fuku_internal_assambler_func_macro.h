@@ -124,7 +124,7 @@ static uint64_t di_fl_jcc[] = {
     } \
     fuku_asm_ret_type  fuku_asm_gen_name(_,name,_b) (fuku_assambler_ctx& ctx, const fuku_register& dst,const fuku_immediate& src) { \
         gencleanerdata\
-        if(is_used_short_eax() && dst.get_index() == FUKU_REG_AL) {\
+        if(is_used_short_eax() && dst.get_index() == FUKU_REG_INDEX_AX) {\
             gen_pattern32_1em_immb(0x04 + 8*type, src)\
         } else {\
             gen_pattern32_1em_rm_idx_immb(0x80, dst, type, src)\
@@ -154,7 +154,7 @@ static uint64_t di_fl_jcc[] = {
     } \
     fuku_asm_ret_type  fuku_asm_gen_name(_,name,_w) (fuku_assambler_ctx& ctx, const fuku_register& dst,const fuku_immediate& src) { \
         gencleanerdata\
-        if(is_used_short_eax() && dst.get_index() == FUKU_REG_AX) {\
+        if(is_used_short_eax() && dst.get_index() == FUKU_REG_INDEX_AX) {\
             gen_pattern32_1em_immw_word(0x05 + 8*type, src)\
         } else {\
             if (is_used_short_imm() && src.is_8()) {\
@@ -192,7 +192,7 @@ static uint64_t di_fl_jcc[] = {
     } \
     fuku_asm_ret_type  fuku_asm_gen_name(_,name,_dw) (fuku_assambler_ctx& ctx, const fuku_register& dst,const fuku_immediate& src) { \
         gencleanerdata\
-         if(is_used_short_eax() && dst.get_index() == FUKU_REG_EAX) {\
+         if(is_used_short_eax() && dst.get_index() == FUKU_REG_INDEX_AX) {\
             gen_pattern32_1em_immdw(0x05 + 8*type, src)\
         } else {\
             if (is_used_short_imm() && src.is_8()) {\
@@ -230,7 +230,7 @@ static uint64_t di_fl_jcc[] = {
     } \
     fuku_asm_ret_type  fuku_asm_gen_name(_,name,_qw) (fuku_assambler_ctx& ctx, const fuku_register& dst,const fuku_immediate& src) { \
         gencleanerdata\
-       if(is_used_short_eax() && dst.get_index() == FUKU_REG_EAX) {\
+       if(is_used_short_eax() && dst.get_index() == FUKU_REG_INDEX_AX) {\
             gen_pattern64_1em_immdw(0x05 + 8*type, src)\
         } else {\
             if (is_used_short_imm() && src.is_8()) {\
