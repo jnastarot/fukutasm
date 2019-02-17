@@ -1265,66 +1265,62 @@ gen_func_body_threebyte_no_arg(lfence, 0x0F, 0xAE, 0xE8, X86_INS_LFENCE, 0)
 fuku_asm_ret_type _nop(fuku_assambler_ctx& ctx, uint8_t n) {
 
     clear_space(ctx);
-    while (n > 0) {
-        switch (n) {
-        case 2:
-            emit_b(ctx, 0x66);
 
-        default:
-        case 1:
-            emit_b(ctx, 0x90);
-            break;
-        case 3:
-            emit_b(ctx, 0x0F);
-            emit_b(ctx, 0x1F);
-            emit_b(ctx, 0x00);
-            break;
-        case 4:
-            emit_b(ctx, 0x0F);
-            emit_b(ctx, 0x1F);
-            emit_b(ctx, 0x40);
-            emit_b(ctx, 0x00);
-            break;
-        case 6:
-            emit_b(ctx, 0x66);
-        case 5:
-            emit_b(ctx, 0x0F);
-            emit_b(ctx, 0x1F);
-            emit_b(ctx, 0x44);
-            emit_b(ctx, 0x00);
-            emit_b(ctx, 0x00);
-            break;
-        case 7:
-            emit_b(ctx, 0x0F);
-            emit_b(ctx, 0x1F);
-            emit_b(ctx, 0x80);
-            emit_b(ctx, 0x00);
-            emit_b(ctx, 0x00);
-            emit_b(ctx, 0x00);
-            emit_b(ctx, 0x00);
-            break;
-        case 11:
-            emit_b(ctx, 0x66);
-            n--;
-        case 10:
-            emit_b(ctx, 0x66);
-            n--;
-        case 9:
-            emit_b(ctx, 0x66);
-            n--;
-        case 8:
-            emit_b(ctx, 0x0F);
-            emit_b(ctx, 0x1F);
-            emit_b(ctx, 0x84);
-            emit_b(ctx, 0x00);
-            emit_b(ctx, 0x00);
-            emit_b(ctx, 0x00);
-            emit_b(ctx, 0x00);
-            emit_b(ctx, 0x00);
-            n -= 8;
-            break;
-        }
+    switch (n) {
+    case 2:
+        emit_b(ctx, 0x66);
+
+    default:
+    case 1:
+        emit_b(ctx, 0x90);
+        break;
+    case 3:
+        emit_b(ctx, 0x0F);
+        emit_b(ctx, 0x1F);
+        emit_b(ctx, 0x00);
+        break;
+    case 4:
+        emit_b(ctx, 0x0F);
+        emit_b(ctx, 0x1F);
+        emit_b(ctx, 0x40);
+        emit_b(ctx, 0x00);
+        break;
+    case 6:
+        emit_b(ctx, 0x66);
+    case 5:
+        emit_b(ctx, 0x0F);
+        emit_b(ctx, 0x1F);
+        emit_b(ctx, 0x44);
+        emit_b(ctx, 0x00);
+        emit_b(ctx, 0x00);
+        break;
+    case 7:
+        emit_b(ctx, 0x0F);
+        emit_b(ctx, 0x1F);
+        emit_b(ctx, 0x80);
+        emit_b(ctx, 0x00);
+        emit_b(ctx, 0x00);
+        emit_b(ctx, 0x00);
+        emit_b(ctx, 0x00);
+        break;
+    case 11:
+        emit_b(ctx, 0x66);
+    case 10:
+        emit_b(ctx, 0x66);
+    case 9:
+        emit_b(ctx, 0x66);
+    case 8:
+        emit_b(ctx, 0x0F);
+        emit_b(ctx, 0x1F);
+        emit_b(ctx, 0x84);
+        emit_b(ctx, 0x00);
+        emit_b(ctx, 0x00);
+        emit_b(ctx, 0x00);
+        emit_b(ctx, 0x00);
+        emit_b(ctx, 0x00);
+        break;
     }
+
     gen_func_return(X86_INS_NOP, 0)
 }
 };

@@ -1252,6 +1252,24 @@ fuku_assambler_ctx& fuku_assambler::btc(const fuku_type& dst, const fuku_type& s
     return on_new_chain_item();
 }
 fuku_assambler_ctx& fuku_assambler::setcc(fuku_condition cond, const fuku_type& dst) {
+    on_emit();
+    fuku_assambler_command_1op_graph(dst,
+        _setcc(context, cond, dst.get_register());,
+        _setcc(context, cond, dst.get_operand()); ,
+        UNUSUAL_DATASET,
+
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET
+    )
     return on_new_chain_item();
 }
 fuku_assambler_ctx& fuku_assambler::test(const fuku_type& dst, const fuku_type& src) {
