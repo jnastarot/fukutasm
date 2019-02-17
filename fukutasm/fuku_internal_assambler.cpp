@@ -951,13 +951,13 @@ gen_func_body_bit_ex(bsr, fuku_internal_assambler_bittest_bsr, X86_INS_BSR, X86_
 fuku_asm_ret_type _setcc(fuku_assambler_ctx& ctx, fuku_condition cond, const fuku_register& dst) {
     gencleanerdata
     FUKU_ASSERT(cond >= 0 && cond < fuku_condition::FUKU_CONDITION_MAX);
-    gen_pattern32_2em_rm_idx(0x0F, 0x80 | cond, dst, 0);
+    gen_pattern32_2em_rm_idx(0x0F, 0x90 | cond, dst, 0);
     gen_func_return(fuku_to_capstone_cc(cond, CONVERT_TYPE_SETCC), di_fl_jcc[cond])
 }
 fuku_asm_ret_type _setcc(fuku_assambler_ctx& ctx, fuku_condition cond, const fuku_operand& dst) {
     gencleanerdata
     FUKU_ASSERT(cond >= 0 && cond < fuku_condition::FUKU_CONDITION_MAX);
-    gen_pattern32_2em_op_idx(0x0F, 0x80 | cond, dst, 0);
+    gen_pattern32_2em_op_idx(0x0F, 0x90 | cond, dst, 0);
     gen_func_return(fuku_to_capstone_cc(cond, CONVERT_TYPE_SETCC), di_fl_jcc[cond])
 }
 fuku_asm_ret_type _test_b(fuku_assambler_ctx& ctx, const fuku_register& dst, const fuku_register& src) {
