@@ -104,7 +104,7 @@ static uint64_t di_fl_jcc[] = {
 #define gen_func_body_ff_offset(name ,type, cap_id, cap_eflags) \
     fuku_asm_ret_type  fuku_asm_gen_name(_,name,) (fuku_assambler_ctx& ctx, const fuku_immediate& src) { \
         gencleanerdata\
-        gen_pattern32_1em_immdw(type, src)\
+        gen_pattern32_1em_immdw(type, fuku_register(FUKU_REG_NONE),  src)\
         gen_func_return(cap_id, cap_eflags)\
     } 
 
@@ -125,7 +125,7 @@ static uint64_t di_fl_jcc[] = {
     fuku_asm_ret_type  fuku_asm_gen_name(_,name,_b) (fuku_assambler_ctx& ctx, const fuku_register& dst,const fuku_immediate& src) { \
         gencleanerdata\
         if(is_used_short_eax() && dst.get_reg() == FUKU_REG_AL) {\
-            gen_pattern32_1em_immb(0x04 + 8*type, src)\
+            gen_pattern32_1em_immb(0x04 + 8*type, dst, src)\
         } else {\
             gen_pattern32_1em_rm_idx_immb(0x80, dst, type, src)\
         }\
@@ -155,7 +155,7 @@ static uint64_t di_fl_jcc[] = {
     fuku_asm_ret_type  fuku_asm_gen_name(_,name,_w) (fuku_assambler_ctx& ctx, const fuku_register& dst,const fuku_immediate& src) { \
         gencleanerdata\
         if(is_used_short_eax() && dst.get_reg() == FUKU_REG_AX) {\
-            gen_pattern32_1em_immw_word(0x05 + 8*type, src)\
+            gen_pattern32_1em_immw_word(0x05 + 8*type, dst, src)\
         } else {\
             if (is_used_short_imm() && src.is_8()) {\
                 gen_pattern32_1em_rm_idx_immb_word(0x83, dst, type, src)\
@@ -193,7 +193,7 @@ static uint64_t di_fl_jcc[] = {
     fuku_asm_ret_type  fuku_asm_gen_name(_,name,_dw) (fuku_assambler_ctx& ctx, const fuku_register& dst,const fuku_immediate& src) { \
         gencleanerdata\
          if(is_used_short_eax() && dst.get_reg() == FUKU_REG_EAX) {\
-            gen_pattern32_1em_immdw(0x05 + 8*type, src)\
+            gen_pattern32_1em_immdw(0x05 + 8*type, dst, src)\
         } else {\
             if (is_used_short_imm() && src.is_8()) {\
                 gen_pattern32_1em_rm_idx_immb(0x83, dst, type, src)\
@@ -231,7 +231,7 @@ static uint64_t di_fl_jcc[] = {
     fuku_asm_ret_type  fuku_asm_gen_name(_,name,_qw) (fuku_assambler_ctx& ctx, const fuku_register& dst,const fuku_immediate& src) { \
         gencleanerdata\
        if(is_used_short_eax() && dst.get_reg() == FUKU_REG_RAX) {\
-            gen_pattern64_1em_immdw(0x05 + 8*type, src)\
+            gen_pattern64_1em_immdw(0x05 + 8*type, dst, src)\
         } else {\
             if (is_used_short_imm() && src.is_8()) {\
                 gen_pattern64_1em_rm_idx_immb(0x83, dst, type, src)\

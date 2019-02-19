@@ -298,6 +298,9 @@ int main() {
   //  fasm.xchg(op, FUKU_REG_CX); test_2_arg(inst, op, FUKU_REG_CX, FUKU_OPERAND_SIZE_16);
    // test_2_arg(inst, op , reg1, FUKU_OPERAND_SIZE_32);
 
+    for (fuku_register_enum i = FUKU_REG_NONE; i < FUKU_REG_MAX; i = fuku_register_enum(i + 1) ) {
+        test_asm_def_r_op_one_op(not, op, reg_((fuku_register_enum)i));
+    }
    // return 0;z
     uint64_t vall = 0x1000000;
     //operand test

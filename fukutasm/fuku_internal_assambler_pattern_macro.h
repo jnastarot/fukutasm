@@ -54,61 +54,67 @@
             emit_modrm(ctx, rm_reg, reg);
 
 //emit 1 byte , emit imm b
-#define gen_pattern32_1em_immb(byte1, imm)\
+#define gen_pattern32_1em_immb(byte1, rm_reg, imm)\
+            emit_optional_rex_32(ctx, rm_reg);\
             emit_b(ctx, byte1);\
             emit_immediate_b(ctx, imm);
-#define gen_pattern64_1em_immb(byte1, imm)\
-            emit_rex_64(ctx);\
+#define gen_pattern64_1em_immb(byte1, rm_reg, imm)\
+            emit_rex_64(ctx, rm_reg);\
             emit_b(ctx, byte1);\
             emit_immediate_b(ctx, imm);
 
 //emit 1 byte , emit imm w
-#define gen_pattern32_1em_immw(byte1, imm)\
+#define gen_pattern32_1em_immw(byte1, rm_reg, imm)\
+            emit_optional_rex_32(ctx, rm_reg);\
             emit_b(ctx, byte1);\
             emit_immediate_w(ctx, imm);
-#define gen_pattern64_1em_immw(byte1, imm)\
-            emit_rex_64(ctx);\
+#define gen_pattern64_1em_immw(byte1, rm_reg, imm)\
+            emit_rex_64(ctx, rm_reg);\
             emit_b(ctx, byte1);\
             emit_immediate_w(ctx, imm);
 
 //emit 1 byte , emit imm dw
-#define gen_pattern32_1em_immdw(byte1, imm)\
+#define gen_pattern32_1em_immdw(byte1, rm_reg, imm)\
+            emit_optional_rex_32(ctx, rm_reg);\
             emit_b(ctx, byte1);\
             emit_immediate_dw(ctx, imm);
-#define gen_pattern64_1em_immdw(byte1, imm)\
-            emit_rex_64(ctx);\
+#define gen_pattern64_1em_immdw(byte1, rm_reg, imm)\
+            emit_rex_64(ctx, rm_reg);\
             emit_b(ctx, byte1);\
             emit_immediate_dw(ctx, imm);
 
 //emit 2 byte , emit imm b
-#define gen_pattern32_2em_immb(byte1,byte2, imm)\
+#define gen_pattern32_2em_immb(byte1,byte2 , rm_reg, imm)\
+            emit_optional_rex_32(ctx, rm_reg);\
             emit_b(ctx, byte1);\
             emit_b(ctx, byte2);\
             emit_immediate_b(ctx, imm);
-#define gen_pattern64_2em_immb(byte1,byte2, imm)\
-            emit_rex_64(ctx);\
+#define gen_pattern64_2em_immb(byte1,byte2 , rm_reg, imm)\
+            emit_rex_64(ctx, rm_reg);\
             emit_b(ctx, byte1);\
             emit_b(ctx, byte2);\
             emit_immediate_b(ctx, imm);
 
 //emit 2 byte , emit imm w
-#define gen_pattern32_2em_immw(byte1,byte2, imm)\
+#define gen_pattern32_2em_immw(byte1,byte2,rm_reg, imm)\
+            emit_optional_rex_32(ctx, rm_reg);\
             emit_b(ctx, byte1);\
             emit_b(ctx, byte2);\
             emit_immediate_w(ctx, imm);
-#define gen_pattern64_2em_immw(byte1,byte2, imm)\
-            emit_rex_64(ctx);\
+#define gen_pattern64_2em_immw(byte1,byte2,rm_reg, imm)\
+            emit_rex_64(ctx, rm_reg);\
             emit_b(ctx, byte1);\
             emit_b(ctx, byte2);\
             emit_immediate_w(ctx, imm);
 
 //emit 2 byte , emit imm dw
-#define gen_pattern32_2em_immdw(byte1,byte2, imm)\
+#define gen_pattern32_2em_immdw(byte1,byte2,rm_reg, imm)\
+            emit_optional_rex_32(ctx, rm_reg);\
             emit_b(ctx, byte1);\
             emit_b(ctx, byte2);\
             emit_immediate_dw(ctx, imm);
-#define gen_pattern64_2em_immdw(byte1,byte2, imm)\
-            emit_rex_64(ctx);\
+#define gen_pattern64_2em_immdw(byte1,byte2,rm_reg, imm)\
+            emit_rex_64(ctx, rm_reg);\
             emit_b(ctx, byte1);\
             emit_b(ctx, byte2);\
             emit_immediate_dw(ctx, imm);
@@ -284,23 +290,23 @@
         gen_pattern64_2em_rm_idx(byte1, byte2, rm_reg_idx, reg)
 
 
-#define gen_pattern32_1em_immb_word(byte1, imm)\
+#define gen_pattern32_1em_immb_word(byte1, rm_reg, imm)\
             emit_b(ctx, FUKU_PREFIX_OVERRIDE_DATA);\
-            gen_pattern32_1em_immb(byte1, imm)
-#define gen_pattern64_1em_immb_word(byte1, imm)\
+            gen_pattern32_1em_immb(byte1, rm_reg, imm)
+#define gen_pattern64_1em_immb_word(byte1, rm_reg, imm)\
             emit_b(ctx, FUKU_PREFIX_OVERRIDE_DATA);\
-            gen_pattern64_1em_immb(byte1, imm)
-#define gen_pattern32_1em_immw_word(byte1, imm)\
+            gen_pattern64_1em_immb(byte1, rm_reg, imm)
+#define gen_pattern32_1em_immw_word(byte1, rm_reg, imm)\
             emit_b(ctx, FUKU_PREFIX_OVERRIDE_DATA);\
-            gen_pattern32_1em_immw(byte1, imm)
-#define gen_pattern64_1em_immw_word(byte1, imm)\
-            gen_pattern64_1em_immw(byte1, imm)
-#define gen_pattern32_1em_immdw_word(byte1, imm)\
+            gen_pattern32_1em_immw(byte1, rm_reg, imm)
+#define gen_pattern64_1em_immw_word(byte1,rm_reg,  imm)\
+            gen_pattern64_1em_immw(byte1,rm_reg,  imm)
+#define gen_pattern32_1em_immdw_word(byte1,rm_reg, imm)\
             emit_b(ctx, FUKU_PREFIX_OVERRIDE_DATA);\
-            gen_pattern32_1em_immdw(byte1, imm)
-#define gen_pattern64_1em_immdw_word(byte1, imm)\
+            gen_pattern32_1em_immdw(byte1, rm_reg, imm)
+#define gen_pattern64_1em_immdw_word(byte1, rm_reg, imm)\
             emit_b(ctx, FUKU_PREFIX_OVERRIDE_DATA);\
-            gen_pattern64_1em_immdw(byte1, imm)
+            gen_pattern64_1em_immdw(byte1, rm_reg, imm)
 
 #define gen_pattern32_2em_immb_word(byte1,byte2, imm)\
             emit_b(ctx, FUKU_PREFIX_OVERRIDE_DATA);\
