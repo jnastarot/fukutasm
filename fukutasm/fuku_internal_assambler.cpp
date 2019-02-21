@@ -133,7 +133,13 @@ inline void emit_optional_rex_32(fuku_assambler_ctx& ctx, const fuku_operand& rm
 
 inline void emit_optional_rex_32(fuku_assambler_ctx& ctx, const fuku_register& rm_reg) {
     if (ctx.arch == FUKU_ASSAMBLER_ARCH_X86) { return; }
-    if (rm_reg.is_ext64() || rm_reg.is_arch64()) { emit_b(ctx, 0x41); }
+
+    if (rm_reg.is_ext64() ) { 
+        emit_b(ctx, 0x41); 
+    }
+    else if (rm_reg.is_arch64()) {
+        emit_b(ctx, 0x40);
+    }
 }
 
 inline void emit_optional_rex_32(fuku_assambler_ctx& ctx, const fuku_operand& rm_reg) {
