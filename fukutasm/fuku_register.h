@@ -114,6 +114,7 @@ class fuku_register {
     fuku_operand_size size;
 
     bool ext64;
+    bool arch64;
 public:
     fuku_register();
     fuku_register(const fuku_register& reg);
@@ -129,6 +130,7 @@ public:
     fuku_register_index get_index() const;
     fuku_operand_size get_size() const;
     bool is_ext64() const;
+    bool is_arch64() const;
 };
 
 #pragma pack(pop)

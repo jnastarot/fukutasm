@@ -122,18 +122,18 @@ inline void emit_rex_64(fuku_assambler_ctx& ctx, const fuku_operand& op) {
 inline void emit_optional_rex_32(fuku_assambler_ctx& ctx, const fuku_register& rm_reg, const fuku_register& reg) {
     if (ctx.arch == FUKU_ASSAMBLER_ARCH_X86) { return; }
     uint8_t rex_bits = (reg.is_ext64() ? 1 : 0) << 2 | (rm_reg.is_ext64() ? 1 : 0);
-    if (rex_bits != 0) { emit_b(ctx, 0x40 | rex_bits); }
+    if (rex_bits != 0 || rm_reg.is_arch64() || reg.is_arch64()) { emit_b(ctx, 0x40 | rex_bits); }
 }
 
 inline void emit_optional_rex_32(fuku_assambler_ctx& ctx, const fuku_operand& rm_reg, const fuku_register& reg) {
     if (ctx.arch == FUKU_ASSAMBLER_ARCH_X86) { return; }
     uint8_t rex_bits = (reg.is_ext64() ? 1 : 0) << 2 | rm_reg.get_low_rex();
-    if (rex_bits != 0) { emit_b(ctx, 0x40 | rex_bits); }
+    if (rex_bits != 0 || reg.is_arch64()) { emit_b(ctx, 0x40 | rex_bits); }
 }
 
 inline void emit_optional_rex_32(fuku_assambler_ctx& ctx, const fuku_register& rm_reg) {
     if (ctx.arch == FUKU_ASSAMBLER_ARCH_X86) { return; }
-    if (rm_reg.is_ext64()) { emit_b(ctx, 0x41); }
+    if (rm_reg.is_ext64() || rm_reg.is_arch64()) { emit_b(ctx, 0x41); }
 }
 
 inline void emit_optional_rex_32(fuku_assambler_ctx& ctx, const fuku_operand& rm_reg) {

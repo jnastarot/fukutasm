@@ -278,6 +278,7 @@ fuku_register& fuku_register::operator=(const fuku_register& reg) {
     this->size = reg.size;
     this->index = reg.index;
     this->ext64 = reg.ext64;
+    this->arch64 = reg.arch64;
 
     return *this;
 }
@@ -293,6 +294,7 @@ void fuku_register::set_reg(fuku_register_enum reg) {
     this->size = fuku_get_register_size(reg);
     this->index = fuku_get_index_by_register(reg);
     this->ext64 = fuku_is_x64arch_ext_reg(reg);
+    this->arch64 = fuku_is_x64arch_reg(reg);
 }
 
 fuku_register_enum fuku_register::get_reg() const {
@@ -307,7 +309,9 @@ fuku_operand_size fuku_register::get_size() const {
 bool fuku_register::is_ext64() const {
     return this->ext64;
 }
-
+bool fuku_register::is_arch64() const {
+    return this->arch64;
+}
 
 fuku_immediate::fuku_immediate()
     :immediate_value(0), relocate(false){}
