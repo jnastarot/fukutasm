@@ -712,6 +712,7 @@ bool fuku_code_holder::merge_code(const fuku_code_holder& code_holder) {
         );
 
 
+
         auto src_iter = src_lines.begin();
         std::advance(src_iter, src_size);
 
@@ -823,6 +824,140 @@ bool fuku_code_holder::merge_code(const fuku_code_holder& code_holder) {
 
         update_origin_idxs();
         merge_labels();
+    }
+
+    return true;
+}
+
+bool fuku_code_holder::splice_code(fuku_code_holder& code_holder) {
+
+    if (!code_holder.get_lines().size()) { return true; }
+
+    if (lines.size()) {
+
+        linestorage& src_lines = lines;
+        size_t src_size = src_lines.size();
+
+        src_lines.splice( src_lines.end(), code_holder.get_lines() );
+
+        auto src_iter = src_lines.begin();
+        std::advance(src_iter, src_size);
+
+        size_t label_count = labels.size();
+        size_t reloc_count = relocations.size();
+        size_t rip_reloc_count = rip_relocations.size();
+
+
+        if (code_holder.get_labels_count()) {
+
+            std::vector<fuku_instruction* > labels_cache;
+            labels_cache.resize(code_holder.get_labels_count());
+
+            for (; src_iter != src_lines.end(); ++src_iter) { //fix new items label idxs
+
+                if (src_iter->get_label_idx() != -1) {
+
+                    labels_cache[src_iter->get_label_idx()] = (&(*src_iter));
+
+                    if (label_count) {
+                        src_iter->set_label_idx(label_count + src_iter->get_label_idx());
+                    }
+                }
+
+                if (label_count) {
+
+                    if (src_iter->get_relocation_first_idx() != -1) {
+                        src_iter->set_relocation_first_idx(reloc_count + src_iter->get_relocation_first_idx());
+                    }
+
+                    if (src_iter->get_relocation_second_idx() != -1) {
+                        src_iter->set_relocation_second_idx(reloc_count + src_iter->get_relocation_second_idx());
+                    }
+
+                    if (src_iter->get_rip_relocation_idx() != -1) {
+                        src_iter->set_rip_relocation_idx(rip_reloc_count + src_iter->get_rip_relocation_idx());
+                    }
+                }
+            }
+
+            if (label_count || code_holder.get_labels().size()) { //fix new items label idxs
+
+                auto& src_relocs = code_holder.get_relocations();
+                auto& src_rip_relocs = code_holder.get_rip_relocations();
+
+                if (src_relocs.size()) {
+                    size_t current_idx = relocations.size();
+                    relocations.insert(relocations.end(), src_relocs.begin(), src_relocs.end());
+
+                    for (; current_idx < relocations.size(); current_idx++) {
+                        relocations[current_idx].label_idx += label_count;
+                    }
+                }
+
+                if (src_rip_relocs.size()) {
+                    size_t current_idx = rip_relocations.size();
+
+                    rip_relocations.insert(rip_relocations.end(), src_rip_relocs.begin(), src_rip_relocs.end());
+
+                    for (; current_idx < rip_relocations.size(); current_idx++) {
+                        rip_relocations[current_idx].label_idx += label_count;
+                    }
+                }
+            }
+
+            { //cache update
+
+                auto& src_cache_relocs = code_holder.get_available_relocations();
+                auto& src_cache_rip_relocs = code_holder.get_available_rip_relocations();
+
+                if (src_cache_relocs.size()) {
+                    size_t delta_idx = available_relocations.size();
+
+                    available_relocations.insert(available_relocations.end(), src_cache_relocs.begin(), src_cache_relocs.end());
+
+                    for (size_t current_idx = delta_idx; current_idx < available_relocations.size(); current_idx++) {
+                        available_relocations[current_idx] += delta_idx;
+                    }
+                }
+
+                if (src_cache_rip_relocs.size()) {
+                    size_t delta_idx = available_rip_relocations.size();
+
+                    available_rip_relocations.insert(available_rip_relocations.end(), src_cache_rip_relocs.begin(), src_cache_rip_relocs.end());
+
+                    for (size_t current_idx = delta_idx; current_idx < available_rip_relocations.size(); current_idx++) {
+                        available_rip_relocations[current_idx] += delta_idx;
+                    }
+                }
+            }
+
+            auto& src_labels = code_holder.get_labels();
+
+            labels.insert(labels.end(), src_labels.begin(), src_labels.end());
+
+            for (size_t label_idx = label_count; label_idx < labels.size(); label_idx++) {
+
+                if (labels[label_idx].has_linked_instruction) {
+                    labels[label_idx].instruction = labels_cache[label_idx - label_count];
+                }
+            }
+        }
+
+        update_origin_idxs();
+        merge_labels();
+
+        code_holder.clear();
+    }
+    else {
+        clear();
+        this->arch = code_holder.arch;
+        this->labels.swap(code_holder.labels);
+        this->relocations.swap(code_holder.relocations);
+        this->rip_relocations.swap(code_holder.rip_relocations);
+        this->available_relocations.swap(code_holder.available_relocations);
+        this->available_rip_relocations.swap(code_holder.available_rip_relocations);
+        this->original_lines.swap(code_holder.original_lines);
+        this->lines.swap(code_holder.lines);
     }
 
     return true;

@@ -59,6 +59,7 @@ public:
     fuku_code_holder& operator=(const fuku_code_holder& code_holder);
 
     bool merge_code(const fuku_code_holder& code_holder);
+    bool splice_code(fuku_code_holder& code_holder);
     bool merge_labels();
 public:
     void   update_virtual_address(uint64_t destination_virtual_address);
