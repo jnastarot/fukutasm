@@ -7,28 +7,54 @@ using namespace fukutasm;
 fuku_type::fuku_type()
     :ptr(0), type(FUKU_T0_NONE) {}
 fuku_type::fuku_type(const fuku_register& reg)
-    :reg(&reg), type(FUKU_T0_REGISTER){}
+    :reg(new fuku_register(reg)), type(FUKU_T0_REGISTER){}
 fuku_type::fuku_type(const fuku_operand& op)
-    : op(&op), type(FUKU_T0_OPERAND) {}
+    : op(new fuku_operand(op)), type(FUKU_T0_OPERAND) {}
 fuku_type::fuku_type(const fuku_immediate& imm)
-    : imm(&imm), type(FUKU_T0_IMMEDIATE) {}
-fuku_type::~fuku_type(){}
+    : imm(new fuku_immediate(imm)), type(FUKU_T0_IMMEDIATE) {}
+fuku_type::~fuku_type() { free(); }
 
 
 fuku_type& fuku_type::operator=(const fuku_register& _reg) {
+    free();
     type = FUKU_T0_REGISTER;
-    reg = &_reg;
+    reg = new fuku_register(_reg);
     return *this;
 }
 fuku_type& fuku_type::operator=(const fuku_operand& _op) {
+    free();
     type = FUKU_T0_OPERAND;
-    op = &_op;
+    op = new fuku_operand(_op);
     return *this;
 }
 fuku_type& fuku_type::operator=(const fuku_immediate& _imm) {
+    free();
     type = FUKU_T0_IMMEDIATE;
-    imm = &_imm;
+    imm = new fuku_immediate(_imm);
     return *this;
+}
+
+void fuku_type::free() {
+
+    if (ptr) {
+        switch (type) {
+        case FUKU_T0_REGISTER: {
+            delete reg;
+            break;
+        }
+        case FUKU_T0_OPERAND: {
+            delete op;
+            break;
+        }
+        case FUKU_T0_IMMEDIATE: {
+            delete imm;
+            break;
+        }
+        }
+
+        ptr = 0;
+        type = FUKU_T0_NONE;
+    }
 }
 
 const fuku_t0_types fuku_type::get_type() const {

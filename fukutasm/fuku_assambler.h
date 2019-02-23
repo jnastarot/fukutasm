@@ -18,6 +18,7 @@ class fuku_type {
         const fuku_operand *op;
         const fuku_immediate *imm;
     };
+    void free();
 public:
     fuku_type();
     fuku_type(const fuku_register& reg);
