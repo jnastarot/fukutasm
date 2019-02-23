@@ -14,6 +14,20 @@ fuku_type::fuku_type(const fuku_immediate& imm)
     : imm(&imm), type(FUKU_T0_IMMEDIATE) {}
 fuku_type::~fuku_type(){}
 
+
+fuku_type& fuku_type::operator=(const fuku_register& _reg) {
+    reg = &_reg;
+    return *this;
+}
+fuku_type& fuku_type::operator=(const fuku_operand& _op) {
+    op = &_op;
+    return *this;
+}
+fuku_type& fuku_type::operator=(const fuku_immediate& _imm) {
+    imm = &_imm;
+    return *this;
+}
+
 const fuku_t0_types fuku_type::get_type() const {
     return this->type;
 }
@@ -1121,7 +1135,7 @@ fuku_assambler_ctx& fuku_assambler::shrd(const fuku_type& dst, const fuku_type& 
         UNUSUAL_DATASET,
         (shift_reg ? _shrd_cl_qw(context, dst.get_operand(), src.get_register()) :
             _shrd_qw(context, dst.get_operand(), src.get_register(), shift.get_immediate()));,
-        UNUSUAL_DATASET,
+        UNUSUAL_DATASET
     )
         return on_new_chain_item();
 }
@@ -1164,7 +1178,7 @@ fuku_assambler_ctx& fuku_assambler::shld(const fuku_type& dst, const fuku_type& 
         UNUSUAL_DATASET,
         (shift_reg ? _shld_cl_qw(context, dst.get_operand(), src.get_register()) :
             _shld_qw(context, dst.get_operand(), src.get_register(), shift.get_immediate())); ,
-        UNUSUAL_DATASET,
+        UNUSUAL_DATASET
         )
         return on_new_chain_item();
 }
