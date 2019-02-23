@@ -16,14 +16,17 @@ fuku_type::~fuku_type(){}
 
 
 fuku_type& fuku_type::operator=(const fuku_register& _reg) {
+    type = FUKU_T0_REGISTER;
     reg = &_reg;
     return *this;
 }
 fuku_type& fuku_type::operator=(const fuku_operand& _op) {
+    type = FUKU_T0_OPERAND;
     op = &_op;
     return *this;
 }
 fuku_type& fuku_type::operator=(const fuku_immediate& _imm) {
+    type = FUKU_T0_IMMEDIATE;
     imm = &_imm;
     return *this;
 }
