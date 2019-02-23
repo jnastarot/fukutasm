@@ -803,22 +803,33 @@ gen_func_body_twobyte_no_arg(cdqe, 0x48, 0x98, X86_INS_CDQE, 0)
 
 gen_func_body_movxx(movzx, 0xB6, X86_INS_MOVZX)
 gen_func_body_movxx(movsx, 0xBE, X86_INS_MOVSX)
-fuku_asm_ret_type _movsx_dword_dw(fuku_assambler_ctx& ctx, const fuku_register& dst, const fuku_register& src) {
+
+fuku_asm_ret_type _movsxd_word_w(fuku_assambler_ctx& ctx, const fuku_register& dst, const fuku_register& src) {
+    gencleanerdata
+    gen_pattern32_1em_rm_r_word(0x63, src, dst);
+    gen_func_return(X86_INS_MOVSXD, 0)
+}
+fuku_asm_ret_type _movsxd_word_w(fuku_assambler_ctx& ctx, const fuku_register& src, const fuku_operand& dst) {
+    gencleanerdata
+    gen_pattern32_1em_op_r_word(0x63, dst, src);
+    gen_func_return(X86_INS_MOVSXD, 0)
+}
+fuku_asm_ret_type _movsxd_dword_dw(fuku_assambler_ctx& ctx, const fuku_register& dst, const fuku_register& src) {
     gencleanerdata
     gen_pattern32_1em_rm_r(0x63, src, dst);
     gen_func_return(X86_INS_MOVSXD, 0)
 }
-fuku_asm_ret_type _movsx_dword_dw(fuku_assambler_ctx& ctx, const fuku_register& src, const fuku_operand& dst) {
+fuku_asm_ret_type _movsxd_dword_dw(fuku_assambler_ctx& ctx, const fuku_register& src, const fuku_operand& dst) {
     gencleanerdata
     gen_pattern32_1em_op_r(0x63, dst, src);
     gen_func_return(X86_INS_MOVSXD, 0)
 }
-fuku_asm_ret_type _movsx_dword_qw(fuku_assambler_ctx& ctx, const fuku_register& dst, const fuku_register& src) {
+fuku_asm_ret_type _movsxd_dword_qw(fuku_assambler_ctx& ctx, const fuku_register& dst, const fuku_register& src) {
     gencleanerdata
     gen_pattern64_1em_rm_r(0x63, src, dst);
     gen_func_return(X86_INS_MOVSXD, 0)
 }
-fuku_asm_ret_type _movsx_dword_qw(fuku_assambler_ctx& ctx, const fuku_register& src, const fuku_operand& dst) {
+fuku_asm_ret_type _movsxd_dword_qw(fuku_assambler_ctx& ctx, const fuku_register& src, const fuku_operand& dst) {
     gencleanerdata
     gen_pattern64_1em_op_r(0x63, dst, src);
     gen_func_return(X86_INS_MOVSXD, 0)
@@ -940,8 +951,10 @@ gen_func_body_arith_ex_one_op(not,  fuku_internal_assambler_arith_ex_not,  X86_I
 gen_func_body_shift(sar, fuku_internal_assambler_shift_sar, X86_INS_SAR, X86_EFLAGS_MODIFY_OF | X86_EFLAGS_MODIFY_SF | X86_EFLAGS_MODIFY_ZF | X86_EFLAGS_UNDEFINED_AF | X86_EFLAGS_MODIFY_PF | X86_EFLAGS_MODIFY_CF)
 gen_func_body_shift(shr, fuku_internal_assambler_shift_shr, X86_INS_SHR, X86_EFLAGS_MODIFY_OF | X86_EFLAGS_MODIFY_SF | X86_EFLAGS_MODIFY_ZF | X86_EFLAGS_UNDEFINED_AF | X86_EFLAGS_MODIFY_PF | X86_EFLAGS_MODIFY_CF)
 gen_func_body_shift(shl, fuku_internal_assambler_shift_shl, X86_INS_SHL, X86_EFLAGS_MODIFY_OF    | X86_EFLAGS_MODIFY_SF | X86_EFLAGS_MODIFY_ZF | X86_EFLAGS_UNDEFINED_AF | X86_EFLAGS_MODIFY_PF | X86_EFLAGS_MODIFY_CF)
-//SHRD
-//SHLD
+
+gen_func_body_shxd(shrd, fuku_internal_assambler_shift_shrd, X86_INS_SHRD, X86_EFLAGS_UNDEFINED_OF | X86_EFLAGS_MODIFY_SF | X86_EFLAGS_MODIFY_ZF | X86_EFLAGS_UNDEFINED_AF | X86_EFLAGS_MODIFY_PF | X86_EFLAGS_MODIFY_CF)
+gen_func_body_shxd(shld, fuku_internal_assambler_shift_shld, X86_INS_SHLD, X86_EFLAGS_UNDEFINED_OF | X86_EFLAGS_MODIFY_SF | X86_EFLAGS_MODIFY_ZF | X86_EFLAGS_UNDEFINED_AF | X86_EFLAGS_MODIFY_PF | X86_EFLAGS_MODIFY_CF)
+
 gen_func_body_shift(ror, fuku_internal_assambler_shift_ror, X86_INS_ROR, X86_EFLAGS_UNDEFINED_OF | X86_EFLAGS_MODIFY_CF)
 gen_func_body_shift(rol, fuku_internal_assambler_shift_rol, X86_INS_ROL, X86_EFLAGS_UNDEFINED_OF | X86_EFLAGS_MODIFY_CF)
 gen_func_body_shift(rcr, fuku_internal_assambler_shift_rcr, X86_INS_RCR, X86_EFLAGS_UNDEFINED_OF | X86_EFLAGS_MODIFY_CF)

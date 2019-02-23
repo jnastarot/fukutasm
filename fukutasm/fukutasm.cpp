@@ -263,7 +263,7 @@ bool fuku_is_x32arch_reg(fuku_register_enum reg) {
 }
 
 fuku_register::fuku_register() 
- :reg(FUKU_REG_NONE), index(FUKU_REG_INDEX_INVALID), size(FUKU_OPERAND_SIZE_0), ext64(0){}
+ :reg(FUKU_REG_NONE), index(FUKU_REG_INDEX_INVALID), size(FUKU_OPERAND_SIZE_0), ext64(0), arch64(0){}
 
 fuku_register::fuku_register(const fuku_register& reg) {
     operator=(reg);

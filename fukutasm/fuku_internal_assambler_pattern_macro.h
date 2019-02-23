@@ -393,41 +393,41 @@
         emit_b(ctx, FUKU_PREFIX_OVERRIDE_DATA);\
         gen_pattern64_2em_op_idx_immdw(byte1, byte2, operand, idx, imm)
 
-#define gen_pattern32_1em_rm_idx_immb_word(byte1, re_reg, idx, imm)\
+#define gen_pattern32_1em_rm_idx_immb_word(byte1, rm_reg, idx, imm)\
         emit_b(ctx, FUKU_PREFIX_OVERRIDE_DATA);\
-        gen_pattern32_1em_rm_idx_immb(byte1, re_reg, idx, imm)
-#define gen_pattern64_1em_rm_idx_immb_word(byte1, re_reg, idx, imm)\
+        gen_pattern32_1em_rm_idx_immb(byte1, rm_reg, idx, imm)
+#define gen_pattern64_1em_rm_idx_immb_word(byte1, rm_reg, idx, imm)\
         emit_b(ctx, FUKU_PREFIX_OVERRIDE_DATA);\
-        gen_pattern64_1em_rm_idx_immb(byte1, re_reg, idx, imm)
-#define gen_pattern32_2em_rm_idx_immb_word(byte1, byte2, re_reg, idx, imm)\
+        gen_pattern64_1em_rm_idx_immb(byte1, rm_reg, idx, imm)
+#define gen_pattern32_2em_rm_idx_immb_word(byte1, byte2, rm_reg, idx, imm)\
         emit_b(ctx, FUKU_PREFIX_OVERRIDE_DATA);\
-        gen_pattern32_2em_rm_idx_immb(byte1, byte2, re_reg, idx, imm)
-#define gen_pattern64_2em_rm_idx_immb_word(byte1, byte2, re_reg, idx, imm)\
+        gen_pattern32_2em_rm_idx_immb(byte1, byte2, rm_reg, idx, imm)
+#define gen_pattern64_2em_rm_idx_immb_word(byte1, byte2, rm_reg, idx, imm)\
         emit_b(ctx, FUKU_PREFIX_OVERRIDE_DATA);\
-        gen_pattern64_2em_rm_idx_immb(byte1, byte2, re_reg, idx, imm)
+        gen_pattern64_2em_rm_idx_immb(byte1, byte2, rm_reg, idx, imm)
 
-#define gen_pattern32_1em_rm_idx_immw_word(byte1, re_reg, idx, imm)\
+#define gen_pattern32_1em_rm_idx_immw_word(byte1, rm_reg, idx, imm)\
         emit_b(ctx, FUKU_PREFIX_OVERRIDE_DATA);\
-        gen_pattern32_1em_rm_idx_immw(byte1, re_reg, idx, imm)
-#define gen_pattern64_1em_rm_idx_immw_word(byte1, re_reg, idx, imm)\
+        gen_pattern32_1em_rm_idx_immw(byte1, rm_reg, idx, imm)
+#define gen_pattern64_1em_rm_idx_immw_word(byte1, rm_reg, idx, imm)\
         emit_b(ctx, FUKU_PREFIX_OVERRIDE_DATA);\
-        gen_pattern64_1em_rm_idx_immw(byte1, re_reg, idx, imm)
-#define gen_pattern32_2em_rm_idx_immw_word(byte1, byte2, re_reg, idx, imm)\
+        gen_pattern64_1em_rm_idx_immw(byte1, rm_reg, idx, imm)
+#define gen_pattern32_2em_rm_idx_immw_word(byte1, byte2, rm_reg, idx, imm)\
         emit_b(ctx, FUKU_PREFIX_OVERRIDE_DATA);\
-        gen_pattern32_2em_rm_idx_immw(byte1, byte2, re_reg, idx, imm)
-#define gen_pattern64_2em_rm_idx_immw_word(byte1, byte2, re_reg, idx, imm)\
+        gen_pattern32_2em_rm_idx_immw(byte1, byte2, rm_reg, idx, imm)
+#define gen_pattern64_2em_rm_idx_immw_word(byte1, byte2, rm_reg, idx, imm)\
         emit_b(ctx, FUKU_PREFIX_OVERRIDE_DATA);\
-        gen_pattern64_2em_rm_idx_immw(byte1, byte2, re_reg, idx, imm)
+        gen_pattern64_2em_rm_idx_immw(byte1, byte2, rm_reg, idx, imm)
 
-#define gen_pattern32_1em_rm_idx_immdw_word(byte1, re_reg, idx, imm)\
+#define gen_pattern32_1em_rm_idx_immdw_word(byte1, rm_reg, idx, imm)\
         emit_b(ctx, FUKU_PREFIX_OVERRIDE_DATA);\
-        gen_pattern32_1em_rm_idx_immdw(byte1, re_reg, idx, imm)
-#define gen_pattern64_1em_rm_idx_immdw_word(byte1, re_reg, idx, imm)\
+        gen_pattern32_1em_rm_idx_immdw(byte1, rm_reg, idx, imm)
+#define gen_pattern64_1em_rm_idx_immdw_word(byte1, rm_reg, idx, imm)\
         emit_b(ctx, FUKU_PREFIX_OVERRIDE_DATA);\
-        gen_pattern64_1em_rm_idx_immdw(byte1, re_reg, idx, imm)
-#define gen_pattern32_2em_rm_idx_immdw_word(byte1, byte2, re_reg, idx, imm)\
+        gen_pattern64_1em_rm_idx_immdw(byte1, rm_reg, idx, imm)
+#define gen_pattern32_2em_rm_idx_immdw_word(byte1, byte2, rm_reg, idx, imm)\
         emit_b(ctx, FUKU_PREFIX_OVERRIDE_DATA);\
-        gen_pattern32_2em_rm_idx_immdw(byte1, byte2, re_reg, idx, imm)
-#define gen_pattern64_2em_rm_idx_immdw_word(byte1, byte2, re_reg, idx, imm)\
+        gen_pattern32_2em_rm_idx_immdw(byte1, byte2, rm_reg, idx, imm)
+#define gen_pattern64_2em_rm_idx_immdw_word(byte1, byte2, rm_reg, idx, imm)\
         emit_b(ctx, FUKU_PREFIX_OVERRIDE_DATA);\
-        gen_pattern64_2em_rm_idx_immdw(byte1, byte2, re_reg, idx, imm)
+        gen_pattern64_2em_rm_idx_immdw(byte1, byte2, rm_reg, idx, imm)

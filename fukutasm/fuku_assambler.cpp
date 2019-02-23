@@ -378,38 +378,126 @@ fuku_assambler_ctx& fuku_assambler::pop(const fuku_type& dst) {
     return on_new_chain_item();
 }
 fuku_assambler_ctx& fuku_assambler::cwd() {
-    on_emit();
-    _cwd(context); return on_new_chain_item();
+    on_emit(); _cwd(context); return on_new_chain_item();
 }
 fuku_assambler_ctx& fuku_assambler::cdq() {
-    on_emit();
-    _cdq(context); return on_new_chain_item();
+    on_emit(); _cdq(context); return on_new_chain_item();
 }
 fuku_assambler_ctx& fuku_assambler::cqo() {
-    on_emit();
-    _cqo(context); return on_new_chain_item();
+    on_emit(); _cqo(context); return on_new_chain_item();
 }
 fuku_assambler_ctx& fuku_assambler::cbw() {
-    on_emit();
-    _cbw(context); return on_new_chain_item();
+    on_emit(); _cbw(context); return on_new_chain_item();
 }
 fuku_assambler_ctx& fuku_assambler::cwde() {
-    on_emit();
-    _cwde(context); return on_new_chain_item();
+    on_emit(); _cwde(context); return on_new_chain_item();
 }
 fuku_assambler_ctx& fuku_assambler::cdqe() {
-    on_emit();
-    _cdqe(context); return on_new_chain_item();
+    on_emit(); _cdqe(context); return on_new_chain_item();
 }
 
 fuku_assambler_ctx& fuku_assambler::movzx(const fuku_type& dst, const fuku_type& src) {
     on_emit();
+    fuku_assambler_command_2op_graph(
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
 
+        _movzx_byte_w(context, dst.get_register(), src.get_register()); ,
+        _movzx_byte_w(context, dst.get_register(), src.get_operand()); ,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+
+        (src.get_register().get_size() == 1 ? 
+            _movzx_byte_dw(context, dst.get_register(), src.get_register()) : 
+            _movzx_word_dw(context, dst.get_register(), src.get_register())); ,
+        (src.get_operand().get_size() == 1 ?
+            _movzx_byte_dw(context, dst.get_register(), src.get_operand()) :
+            _movzx_word_dw(context, dst.get_register(), src.get_operand()));,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+
+        (src.get_register().get_size() == 1 ? 
+            _movzx_byte_qw(context, dst.get_register(), src.get_register()) : 
+            _movzx_word_qw(context, dst.get_register(), src.get_register())); ,
+        (src.get_operand().get_size() == 1 ?
+            _movzx_byte_qw(context, dst.get_register(), src.get_operand()) :
+            _movzx_word_qw(context, dst.get_register(), src.get_operand()));,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET
+    )
     return on_new_chain_item();
 }
 fuku_assambler_ctx& fuku_assambler::movsx(const fuku_type& dst, const fuku_type& src) {
     on_emit();
+    fuku_assambler_command_2op_graph(
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
 
+        _movsx_byte_w(context, dst.get_register(), src.get_register());,
+        _movsx_byte_w(context, dst.get_register(), src.get_operand());,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+
+        (src.get_register().get_size() == 1 ?
+            _movsx_byte_dw(context, dst.get_register(), src.get_register()) :
+            _movsx_word_dw(context, dst.get_register(), src.get_register()));,
+        (src.get_operand().get_size() == 1 ?
+            _movsx_byte_dw(context, dst.get_register(), src.get_operand()) :
+            _movsx_word_dw(context, dst.get_register(), src.get_operand())); ,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+
+        (src.get_register().get_size() == 1 ?
+            _movsx_byte_qw(context, dst.get_register(), src.get_register()) :
+            _movsx_word_qw(context, dst.get_register(), src.get_register()));,
+        (src.get_operand().get_size() == 1 ?
+            _movsx_byte_qw(context, dst.get_register(), src.get_operand()) :
+            _movsx_word_qw(context, dst.get_register(), src.get_operand())); ,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET
+    )
+    return on_new_chain_item();
+}
+
+fuku_assambler_ctx& fuku_assambler::movsxd(const fuku_type& dst, const fuku_type& src) {
+    on_emit();
+    fuku_assambler_command_2op_graph(
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+
+        _movsxd_word_w(context, dst.get_register(), src.get_register());,
+        _movsxd_word_w(context, dst.get_register(), src.get_operand());,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+
+        _movsxd_dword_dw(context, dst.get_register(), src.get_register()); ,
+        _movsxd_dword_dw(context, dst.get_register(), src.get_operand()); ,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+
+        _movsxd_dword_qw(context, dst.get_register(), src.get_register()); ,
+        _movsxd_dword_qw(context, dst.get_register(), src.get_operand()); ,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET
+    )
     return on_new_chain_item();
 }
 
@@ -767,28 +855,22 @@ fuku_assambler_ctx& fuku_assambler::cmp(const fuku_type& dst, const fuku_type& s
 
 //Decimal Arithmetic Instructions
 fuku_assambler_ctx& fuku_assambler::daa() {
-    on_emit();
-    _daa(context); return on_new_chain_item();
+    on_emit(); _daa(context); return on_new_chain_item();
 }
 fuku_assambler_ctx& fuku_assambler::das() {
-    on_emit();
-    _das(context); return on_new_chain_item();
+    on_emit(); _das(context); return on_new_chain_item();
 }
 fuku_assambler_ctx& fuku_assambler::aaa() {
-    on_emit();
-    _aaa(context); return on_new_chain_item();
+    on_emit(); _aaa(context); return on_new_chain_item();
 }
 fuku_assambler_ctx& fuku_assambler::aas() {
-    on_emit();
-    _aas(context); return on_new_chain_item();
+    on_emit(); _aas(context); return on_new_chain_item();
 }
 fuku_assambler_ctx& fuku_assambler::aam(const fuku_type& src) {
-    on_emit();
-    _aam(context, src.get_immediate()); return on_new_chain_item();
+    on_emit(); _aam(context, src.get_immediate()); return on_new_chain_item();
 }
 fuku_assambler_ctx& fuku_assambler::aad(const fuku_type& src) {
-    on_emit();
-    _aad(context, src.get_immediate()); return on_new_chain_item();
+    on_emit(); _aad(context, src.get_immediate()); return on_new_chain_item();
 }
 
 //Logical Instructions Instructions
@@ -1000,10 +1082,90 @@ fuku_assambler_ctx& fuku_assambler::shl(const fuku_type& dst, const fuku_type& s
     return on_new_chain_item();
 }
 fuku_assambler_ctx& fuku_assambler::shrd(const fuku_type& dst, const fuku_type& src, const fuku_type& shift) {
-    return on_new_chain_item();
+    if ((shift.get_type() == FUKU_T0_REGISTER && shift.get_register().get_index() != FUKU_REG_INDEX_CX) || 
+        !(shift.get_type() == FUKU_T0_REGISTER || shift.get_type() == FUKU_T0_IMMEDIATE)) {
+
+        UNUSUAL_DATASET
+    }
+
+    bool shift_reg = shift.get_type() == FUKU_T0_REGISTER;
+
+    on_emit();
+    fuku_assambler_command_2op_graph(
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+
+        (shift_reg ? _shrd_cl_w(context, dst.get_register(), src.get_register()) :
+            _shrd_w(context, dst.get_register(), src.get_register(), shift.get_immediate()));,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+        (shift_reg ? _shrd_cl_w(context, dst.get_operand(), src.get_register()) :
+            _shrd_w(context, dst.get_operand(), src.get_register(), shift.get_immediate())); ,
+        UNUSUAL_DATASET,
+
+        (shift_reg ? _shrd_cl_dw(context, dst.get_register(), src.get_register()) :
+            _shrd_dw(context, dst.get_register(), src.get_register(), shift.get_immediate())); ,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+        (shift_reg ? _shrd_cl_dw(context, dst.get_operand(), src.get_register()) :
+            _shrd_dw(context, dst.get_operand(), src.get_register(), shift.get_immediate()));,
+        UNUSUAL_DATASET,
+
+        (shift_reg ? _shrd_cl_qw(context, dst.get_register(), src.get_register()) :
+            _shrd_qw(context, dst.get_register(), src.get_register(), shift.get_immediate())); ,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+        (shift_reg ? _shrd_cl_qw(context, dst.get_operand(), src.get_register()) :
+            _shrd_qw(context, dst.get_operand(), src.get_register(), shift.get_immediate()));,
+        UNUSUAL_DATASET,
+    )
+        return on_new_chain_item();
 }
 fuku_assambler_ctx& fuku_assambler::shld(const fuku_type& dst, const fuku_type& src, const fuku_type& shift) {
-    return on_new_chain_item();
+    if ((shift.get_type() == FUKU_T0_REGISTER && shift.get_register().get_index() != FUKU_REG_INDEX_CX) ||
+        !(shift.get_type() == FUKU_T0_REGISTER || shift.get_type() == FUKU_T0_IMMEDIATE)) {
+
+        UNUSUAL_DATASET
+    }
+
+    bool shift_reg = shift.get_type() == FUKU_T0_REGISTER;
+
+    on_emit();
+    fuku_assambler_command_2op_graph(
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+
+        (shift_reg ? _shld_cl_w(context, dst.get_register(), src.get_register()) :
+            _shld_w(context, dst.get_register(), src.get_register(), shift.get_immediate())); ,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+        (shift_reg ? _shld_cl_w(context, dst.get_operand(), src.get_register()) :
+            _shld_w(context, dst.get_operand(), src.get_register(), shift.get_immediate()));,
+        UNUSUAL_DATASET,
+
+        (shift_reg ? _shld_cl_dw(context, dst.get_register(), src.get_register()) :
+            _shld_dw(context, dst.get_register(), src.get_register(), shift.get_immediate()));,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+        (shift_reg ? _shld_cl_dw(context, dst.get_operand(), src.get_register()) :
+            _shld_dw(context, dst.get_operand(), src.get_register(), shift.get_immediate())); ,
+        UNUSUAL_DATASET,
+
+        (shift_reg ? _shld_cl_qw(context, dst.get_register(), src.get_register()) :
+            _shld_qw(context, dst.get_register(), src.get_register(), shift.get_immediate()));,
+        UNUSUAL_DATASET,
+        UNUSUAL_DATASET,
+        (shift_reg ? _shld_cl_qw(context, dst.get_operand(), src.get_register()) :
+            _shld_qw(context, dst.get_operand(), src.get_register(), shift.get_immediate())); ,
+        UNUSUAL_DATASET,
+        )
+        return on_new_chain_item();
 }
 fuku_assambler_ctx& fuku_assambler::ror(const fuku_type& dst, const fuku_type& src) {
     if (src.get_type() == FUKU_T0_REGISTER && src.get_register().get_index() != FUKU_REG_INDEX_CX) {
@@ -1417,180 +1579,147 @@ fuku_assambler_ctx& fuku_assambler::ret(const fuku_type& src) {
     return on_new_chain_item();
 }
 fuku_assambler_ctx& fuku_assambler::int3() {
-    on_emit();
-    _int3(context); return on_new_chain_item();
+    on_emit(); _int3(context); return on_new_chain_item();
 }
 fuku_assambler_ctx& fuku_assambler::enter(const fuku_type& size, const fuku_type& nestinglevel) {
     on_emit();
-    //todo
+
+    if (!(size.get_type() == FUKU_T0_IMMEDIATE) || !(nestinglevel.get_type() == FUKU_T0_IMMEDIATE)) {
+        FUKU_DEBUG; 
+        return on_new_chain_item();
+    }
+
+    _enter(context,
+        size.get_immediate(),
+        nestinglevel.get_immediate().get_immediate8());
+
     return on_new_chain_item();
 }
 fuku_assambler_ctx& fuku_assambler::leave_() {
-    on_emit();
-    _leave_(context); return on_new_chain_item();
+    on_emit(); _leave_(context); return on_new_chain_item();
 }
 
 //String Instructions
 fuku_assambler_ctx& fuku_assambler::outsb() {
-    on_emit();
-    _outsb(context); return on_new_chain_item();
+    on_emit(); _outsb(context); return on_new_chain_item();
 }
 fuku_assambler_ctx& fuku_assambler::outsw() {
-    on_emit();
-    _outsw(context); return on_new_chain_item();
+    on_emit(); _outsw(context); return on_new_chain_item();
 }
 fuku_assambler_ctx& fuku_assambler::outsd() {
-    on_emit();
-    _outsd(context); return on_new_chain_item();
+    on_emit(); _outsd(context); return on_new_chain_item();
 }
 fuku_assambler_ctx& fuku_assambler::movsb() {
-    on_emit();
-    _movsb(context); return on_new_chain_item();
+    on_emit(); _movsb(context); return on_new_chain_item();
 }
 fuku_assambler_ctx& fuku_assambler::movsw() {
-    on_emit();
-    _movsw(context); return on_new_chain_item();
+    on_emit(); _movsw(context); return on_new_chain_item();
 }
 fuku_assambler_ctx& fuku_assambler::movsd() {
-    on_emit();
-    _movsd(context); return on_new_chain_item();
+    on_emit(); _movsd(context); return on_new_chain_item();
 }
 fuku_assambler_ctx& fuku_assambler::movsq() {
-    on_emit();
-    _movsq(context); return on_new_chain_item();
+    on_emit(); _movsq(context); return on_new_chain_item();
 }
 fuku_assambler_ctx& fuku_assambler::cmpsb() {
-    on_emit();
-    _cmpsb(context); return on_new_chain_item();
+    on_emit(); _cmpsb(context); return on_new_chain_item();
 }
 fuku_assambler_ctx& fuku_assambler::cmpsw() {
-    on_emit();
-    _cmpsw(context); return on_new_chain_item();
+    on_emit(); _cmpsw(context); return on_new_chain_item();
 }
 fuku_assambler_ctx& fuku_assambler::cmpsd() {
-    on_emit();
-    _cmpsd(context); return on_new_chain_item();
+    on_emit(); _cmpsd(context); return on_new_chain_item();
 }
 fuku_assambler_ctx& fuku_assambler::cmpsq() {
-    on_emit();
-    _cmpsq(context); return on_new_chain_item();
+    on_emit(); _cmpsq(context); return on_new_chain_item();
 }
 fuku_assambler_ctx& fuku_assambler::scasb() {
-    on_emit();
-    _scasb(context); return on_new_chain_item();
+    on_emit(); _scasb(context); return on_new_chain_item();
 }
 fuku_assambler_ctx& fuku_assambler::scasw() {
-    on_emit();
-    _scasw(context); return on_new_chain_item();
+    on_emit(); _scasw(context); return on_new_chain_item();
 }
 fuku_assambler_ctx& fuku_assambler::scasd() {
-    on_emit();
-    _scasd(context); return on_new_chain_item();
+    on_emit(); _scasd(context); return on_new_chain_item();
 }
 fuku_assambler_ctx& fuku_assambler::scasq() {
-    on_emit();
-    _scasq(context); return on_new_chain_item();
+    on_emit(); _scasq(context); return on_new_chain_item();
 }
 fuku_assambler_ctx& fuku_assambler::lodsb() {
-    on_emit();
-    _lodsb(context); return on_new_chain_item();
+    on_emit(); _lodsb(context); return on_new_chain_item();
 }
 fuku_assambler_ctx& fuku_assambler::lodsw() {
-    on_emit();
-    _lodsw(context); return on_new_chain_item();
+    on_emit(); _lodsw(context); return on_new_chain_item();
 }
 fuku_assambler_ctx& fuku_assambler::lodsd() {
-    on_emit();
-    _lodsd(context); return on_new_chain_item();
+    on_emit(); _lodsd(context); return on_new_chain_item();
 }
 fuku_assambler_ctx& fuku_assambler::lodsq() {
-    on_emit();
-    _lodsq(context); return on_new_chain_item();
+    on_emit(); _lodsq(context); return on_new_chain_item();
 }
 fuku_assambler_ctx& fuku_assambler::stosb() {
-    on_emit();
-    _stosb(context); return on_new_chain_item();
+    on_emit(); _stosb(context); return on_new_chain_item();
 }
 fuku_assambler_ctx& fuku_assambler::stosw() {
-    on_emit();
-    _stosw(context); return on_new_chain_item();
+    on_emit(); _stosw(context); return on_new_chain_item();
 }
 fuku_assambler_ctx& fuku_assambler::stosd() {
-    on_emit();
-    _stosd(context); return on_new_chain_item();
+    on_emit(); _stosd(context); return on_new_chain_item();
 }
 fuku_assambler_ctx& fuku_assambler::stosq() {
-    on_emit();
-    _stosq(context); return on_new_chain_item();
+    on_emit(); _stosq(context); return on_new_chain_item();
 }
 
 fuku_assambler_ctx& fuku_assambler::stc() {
-    on_emit();
-    _stc(context); return on_new_chain_item();
+    on_emit(); _stc(context); return on_new_chain_item();
 }
 fuku_assambler_ctx& fuku_assambler::clc() {
-    on_emit();
-    _clc(context); return on_new_chain_item();
+    on_emit(); _clc(context); return on_new_chain_item();
 }
 fuku_assambler_ctx& fuku_assambler::cmc() {
-    on_emit();
-    _cmc(context); return on_new_chain_item();
+    on_emit();  _cmc(context); return on_new_chain_item();
 }
 fuku_assambler_ctx& fuku_assambler::cld() {
-    on_emit();
-    _cld(context); return on_new_chain_item();
+    on_emit(); _cld(context); return on_new_chain_item();
 }
 fuku_assambler_ctx& fuku_assambler::std() {
-    on_emit();
-    _std(context); return on_new_chain_item();
+    on_emit(); _std(context); return on_new_chain_item();
 }
 fuku_assambler_ctx& fuku_assambler::lahf() {
-    on_emit();
-    _lahf(context); return on_new_chain_item();
+    on_emit(); _lahf(context); return on_new_chain_item();
 }
 fuku_assambler_ctx& fuku_assambler::sahf() {
-    on_emit();
-    _sahf(context); return on_new_chain_item();
+    on_emit(); _sahf(context); return on_new_chain_item();
 }
 fuku_assambler_ctx& fuku_assambler::pusha() {
-    on_emit();
-    _pusha(context); return on_new_chain_item();
+    on_emit(); _pusha(context); return on_new_chain_item();
 }
 fuku_assambler_ctx& fuku_assambler::pushad() {
-    on_emit();
-    _pushad(context); return on_new_chain_item();
+    on_emit(); _pushad(context); return on_new_chain_item();
 }
 fuku_assambler_ctx& fuku_assambler::popa() {
-    on_emit();
-    _popa(context); return on_new_chain_item();
+    on_emit(); _popa(context); return on_new_chain_item();
 }
 fuku_assambler_ctx& fuku_assambler::popad() {
-    on_emit();
-    _popad(context); return on_new_chain_item();
+    on_emit(); _popad(context); return on_new_chain_item();
 }
 fuku_assambler_ctx& fuku_assambler::pushf() {
-    on_emit();
-    _pushf(context); return on_new_chain_item();
+    on_emit(); _pushf(context); return on_new_chain_item();
 }
 fuku_assambler_ctx& fuku_assambler::pushfd() {
-    on_emit();
-    _pushfd(context); return on_new_chain_item();
+    on_emit(); _pushfd(context); return on_new_chain_item();
 }
 fuku_assambler_ctx& fuku_assambler::pushfq() {
-    on_emit();
-    _pushfq(context); return on_new_chain_item();
+    on_emit(); _pushfq(context); return on_new_chain_item();
 }
 fuku_assambler_ctx& fuku_assambler::popf() {
-    on_emit();
-    _popf(context); return on_new_chain_item();
+    on_emit(); _popf(context); return on_new_chain_item();
 }
 fuku_assambler_ctx& fuku_assambler::popfd() {
-    on_emit();
-    _popfd(context); return on_new_chain_item();
+    on_emit(); _popfd(context); return on_new_chain_item();
 }
 fuku_assambler_ctx& fuku_assambler::popfq() {
-    on_emit();
-    _popfq(context); return on_new_chain_item();
+    on_emit(); _popfq(context); return on_new_chain_item();
 }
 //Miscellaneous Instructions
 fuku_assambler_ctx& fuku_assambler::lea(const fuku_type& dst, const fuku_type& src) {
@@ -1623,16 +1752,13 @@ fuku_assambler_ctx& fuku_assambler::lea(const fuku_type& dst, const fuku_type& s
     return on_new_chain_item();
 }
 fuku_assambler_ctx& fuku_assambler::nop(uint8_t size) {
-    on_emit();
-    _nop(context, size); return on_new_chain_item();
+    on_emit(); _nop(context, size); return on_new_chain_item();
 }
 fuku_assambler_ctx& fuku_assambler::ud2() {
-    on_emit();
-    _ud2(context); return on_new_chain_item();
+    on_emit(); _ud2(context); return on_new_chain_item();
 }
 fuku_assambler_ctx& fuku_assambler::cpuid() {
-    on_emit();
-    _cpuid(context); return on_new_chain_item();
+    on_emit(); _cpuid(context); return on_new_chain_item();
 }
 //Random Number Generator Instructions
 fuku_assambler_ctx& fuku_assambler::rdrand(const fuku_type& dst) {
@@ -1679,14 +1805,11 @@ fuku_assambler_ctx& fuku_assambler::rdseed(const fuku_type& dst) {
 }
 //SYSTEM INSTRUCTIONS
 fuku_assambler_ctx& fuku_assambler::hlt() {
-    on_emit();
-    _hlt(context); return on_new_chain_item();
+    on_emit(); _hlt(context); return on_new_chain_item();
 }
 fuku_assambler_ctx& fuku_assambler::rdtsc() {
-    on_emit();
-    _rdtsc(context); return on_new_chain_item();
+    on_emit(); _rdtsc(context); return on_new_chain_item();
 }
 fuku_assambler_ctx& fuku_assambler::lfence() {
-    on_emit();
-    _lfence(context); return on_new_chain_item();
+    on_emit(); _lfence(context); return on_new_chain_item();
 }

@@ -11,7 +11,7 @@
         fuku_asm_ret_type fuku_asm_gen_name(_,name,postfix)(fuku_assambler_ctx& ctx,type1 dst, type2 src);
 
 #define asm_def_3op(name, postfix, type1, type2, type3) \
-        fuku_asm_ret_type fuku_asm_gen_name(_,name,postfix)(fuku_assambler_ctx& ctx,type1 dst, type2 src1, type2 src2);
+        fuku_asm_ret_type fuku_asm_gen_name(_,name,postfix)(fuku_assambler_ctx& ctx,type1 dst, type2 src1, type3 src2);
 
 #define asm_def_cond_1op(name, postfix, type1) \
         fuku_asm_ret_type fuku_asm_gen_name(_,name,postfix)(fuku_assambler_ctx& ctx,fuku_condition cond,type1 dst);
@@ -147,10 +147,12 @@ namespace fukutasm {
         asm_def_2op(movsx, _word_dw, fuasm_reg, fuasm_op)
         asm_def_2op(movsx, _word_qw, fuasm_reg, fuasm_reg)
         asm_def_2op(movsx, _word_qw, fuasm_reg, fuasm_op)
-        asm_def_2op(movsx, _dword_dw, fuasm_reg, fuasm_reg)
-        asm_def_2op(movsx, _dword_dw, fuasm_reg, fuasm_op)
-        asm_def_2op(movsx, _dword_qw, fuasm_reg, fuasm_reg)
-        asm_def_2op(movsx, _dword_qw, fuasm_reg, fuasm_op)
+        asm_def_2op(movsxd, _word_w, fuasm_reg, fuasm_reg)
+        asm_def_2op(movsxd, _word_w, fuasm_reg, fuasm_op)
+        asm_def_2op(movsxd, _dword_dw, fuasm_reg, fuasm_reg)
+        asm_def_2op(movsxd, _dword_dw, fuasm_reg, fuasm_op)
+        asm_def_2op(movsxd, _dword_qw, fuasm_reg, fuasm_reg)
+        asm_def_2op(movsxd, _dword_qw, fuasm_reg, fuasm_op)
         //Binary Arithmetic Instructions
         asm_def_2op(adcx, _dw, fuasm_reg, fuasm_reg)
         asm_def_2op(adcx, _dw, fuasm_reg, fuasm_op)

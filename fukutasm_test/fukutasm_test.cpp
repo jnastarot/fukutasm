@@ -303,6 +303,13 @@ int main() {
     }
    // return 0;z
     uint64_t vall = 0x1000000;
+
+    fasm.shld(reg_(FUKU_REG_SP), reg_(FUKU_REG_BP), reg_(FUKU_REG_CL));
+    test_2_arg(inst, dword_ptr(FUKU_REG_EAX), reg_(FUKU_REG_ESP), FUKU_OPERAND_SIZE_32);
+
+    fasm.shld(reg_(FUKU_REG_SP), reg_(FUKU_REG_BP), imm);
+    test_2_arg(inst, dword_ptr(FUKU_REG_RAX), reg_(FUKU_REG_ESP), FUKU_OPERAND_SIZE_64);
+
     //operand test
     asm_def_2op_test(mov,_dw,  dword_ptr(FUKU_REG_EAX), reg1, FUKU_OPERAND_SIZE_32)
     asm_def_2op_test(mov, _dw, dword_ptr(FUKU_REG_ECX), reg1, FUKU_OPERAND_SIZE_32)
@@ -370,10 +377,10 @@ int main() {
     test_asm_def_movsxz(movzx, op, reg1, reg2)
     test_asm_def_movsxz(movsx, op, reg1, reg2)
 #if ( FUKU_TESTMOD_86 == 0 )
-    asm_def_2op_test(movsx,_dword_dw, reg1, reg2, FUKU_OPERAND_SIZE_32)
-    asm_def_2op_test(movsx,_dword_dw, reg1, dword_ptr(op), FUKU_OPERAND_SIZE_32)
-    asm_def_2op_test(movsx,_dword_qw, reg1, reg2, FUKU_OPERAND_SIZE_64)
-    asm_def_2op_test(movsx,_dword_qw, reg1, qword_ptr(op), FUKU_OPERAND_SIZE_64)
+   // asm_def_2op_test(movsx,_dword_dw, reg1, reg2, FUKU_OPERAND_SIZE_32)
+   // asm_def_2op_test(movsx,_dword_dw, reg1, dword_ptr(op), FUKU_OPERAND_SIZE_32)
+  //  asm_def_2op_test(movsx,_dword_qw, reg1, reg2, FUKU_OPERAND_SIZE_64)
+  //  asm_def_2op_test(movsx,_dword_qw, reg1, qword_ptr(op), FUKU_OPERAND_SIZE_64)
 #endif
 //Binary Arithmetic Instructions
     asm_def_2op_test(adcx,_dw, reg1, reg2, FUKU_OPERAND_SIZE_32)
