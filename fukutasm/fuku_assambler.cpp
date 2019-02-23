@@ -4,7 +4,8 @@
 #define UNUSUAL_DATASET FUKU_DEBUG
 
 using namespace fukutasm;
-
+fuku_type::fuku_type()
+    :ptr(0), type(FUKU_T0_NONE) {}
 fuku_type::fuku_type(const fuku_register& reg)
     :reg(&reg), type(FUKU_T0_REGISTER){}
 fuku_type::fuku_type(const fuku_operand& op)

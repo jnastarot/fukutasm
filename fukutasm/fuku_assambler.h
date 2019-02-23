@@ -3,20 +3,23 @@
 #include "fuku_internal_assambler.h"
 
 enum fuku_t0_types {
-    FUKU_T0_REGISTER = 1,
-    FUKU_T0_OPERAND  = 2,
-    FUKU_T0_IMMEDIATE = 4,
+    FUKU_T0_NONE,
+    FUKU_T0_REGISTER,
+    FUKU_T0_OPERAND,
+    FUKU_T0_IMMEDIATE,
 };
 
 
 class fuku_type {
     fuku_t0_types type;
     union {
+        void * ptr;
         const fuku_register* reg;
         const fuku_operand *op;
         const fuku_immediate *imm;
     };
 public:
+    fuku_type();
     fuku_type(const fuku_register& reg);
     fuku_type(const fuku_operand& op);
     fuku_type(const fuku_immediate& imm);
