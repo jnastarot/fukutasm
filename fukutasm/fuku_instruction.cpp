@@ -5,7 +5,7 @@ fuku_instruction::fuku_instruction()
     :id(-1), op_length(0),
     source_virtual_address(-1), virtual_address(-1),
     label_idx(-1),
-    code_relocation_1_idx(-1), code_relocation_2_idx(-1), code_rip_relocation_idx(-1),
+    code_relocation_disp_idx(-1), code_relocation_imm_idx(-1), code_rip_relocation_idx(-1),
     instruction_flags(0), eflags(0), custom_flags(0) {
 
     memset(op_code, 0, sizeof(op_code));
@@ -29,8 +29,8 @@ fuku_instruction& fuku_instruction::operator=(const fuku_instruction& line) {
     this->source_virtual_address = line.source_virtual_address;
     this->virtual_address = line.virtual_address;
     this->label_idx = line.label_idx;
-    this->code_relocation_1_idx = line.code_relocation_1_idx;
-    this->code_relocation_2_idx = line.code_relocation_2_idx;
+    this->code_relocation_disp_idx = line.code_relocation_disp_idx;
+    this->code_relocation_imm_idx = line.code_relocation_imm_idx;
     this->code_rip_relocation_idx = line.code_rip_relocation_idx;
     this->instruction_flags = line.instruction_flags;
     this->eflags = line.eflags;
@@ -96,16 +96,16 @@ fuku_instruction&  fuku_instruction::set_label_idx(size_t idx) {
     return *this;
 }
 
-fuku_instruction&  fuku_instruction::set_relocation_first_idx(size_t idx) {
+fuku_instruction&  fuku_instruction::set_relocation_disp_idx(size_t idx) {
 
-    this->code_relocation_1_idx = idx;
+    this->code_relocation_disp_idx = idx;
 
     return *this;
 }
 
-fuku_instruction&  fuku_instruction::set_relocation_second_idx(size_t idx) {
+fuku_instruction&  fuku_instruction::set_relocation_imm_idx(size_t idx) {
 
-    this->code_relocation_2_idx = idx;
+    this->code_relocation_imm_idx = idx;
 
     return *this;
 }
@@ -166,12 +166,12 @@ size_t fuku_instruction::get_label_idx() const {
     return this->label_idx;
 }
 
-size_t fuku_instruction::get_relocation_first_idx() const {
-    return this->code_relocation_1_idx;
+size_t fuku_instruction::get_relocation_disp_idx() const {
+    return this->code_relocation_disp_idx;
 }
 
-size_t fuku_instruction::get_relocation_second_idx() const {
-    return this->code_relocation_2_idx;
+size_t fuku_instruction::get_relocation_imm_idx() const {
+    return this->code_relocation_imm_idx;
 }
 
 size_t fuku_instruction::get_rip_relocation_idx() const {

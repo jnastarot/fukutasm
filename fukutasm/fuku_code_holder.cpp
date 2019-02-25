@@ -499,9 +499,9 @@ std::vector<uint8_t> finalize_code(fuku_code_holder&  code_holder,
             }
         }
 
-        if (line.get_relocation_first_idx() != -1) {
+        if (line.get_relocation_disp_idx() != -1) {
 
-            auto& reloc = relocs[line.get_relocation_first_idx()];
+            auto& reloc = relocs[line.get_relocation_disp_idx()];
             auto& reloc_label = labels[reloc.label_idx];
 
             if (arch == fuku_assambler_arch::FUKU_ASSAMBLER_ARCH_X86) {
@@ -529,9 +529,9 @@ std::vector<uint8_t> finalize_code(fuku_code_holder&  code_holder,
             }
         }
 
-        if (line.get_relocation_second_idx() != -1) {
+        if (line.get_relocation_imm_idx() != -1) {
 
-            auto& reloc = relocs[line.get_relocation_second_idx()];
+            auto& reloc = relocs[line.get_relocation_imm_idx()];
             auto& reloc_label = labels[reloc.label_idx];
 
             if (arch == fuku_assambler_arch::FUKU_ASSAMBLER_ARCH_X86) {
@@ -739,12 +739,12 @@ bool fuku_code_holder::merge_code(const fuku_code_holder& code_holder) {
 
                 if (label_count) {
 
-                    if (src_iter->get_relocation_first_idx() != -1) {
-                        src_iter->set_relocation_first_idx(reloc_count + src_iter->get_relocation_first_idx());
+                    if (src_iter->get_relocation_disp_idx() != -1) {
+                        src_iter->set_relocation_disp_idx(reloc_count + src_iter->get_relocation_disp_idx());
                     }
 
-                    if (src_iter->get_relocation_second_idx() != -1) {
-                        src_iter->set_relocation_second_idx(reloc_count + src_iter->get_relocation_second_idx());
+                    if (src_iter->get_relocation_imm_idx() != -1) {
+                        src_iter->set_relocation_imm_idx(reloc_count + src_iter->get_relocation_imm_idx());
                     }
 
                     if (src_iter->get_rip_relocation_idx() != -1) {
@@ -866,12 +866,12 @@ bool fuku_code_holder::splice_code(fuku_code_holder& code_holder) {
 
                 if (label_count) {
 
-                    if (src_iter->get_relocation_first_idx() != -1) {
-                        src_iter->set_relocation_first_idx(reloc_count + src_iter->get_relocation_first_idx());
+                    if (src_iter->get_relocation_disp_idx() != -1) {
+                        src_iter->set_relocation_disp_idx(reloc_count + src_iter->get_relocation_disp_idx());
                     }
 
-                    if (src_iter->get_relocation_second_idx() != -1) {
-                        src_iter->set_relocation_second_idx(reloc_count + src_iter->get_relocation_second_idx());
+                    if (src_iter->get_relocation_imm_idx() != -1) {
+                        src_iter->set_relocation_imm_idx(reloc_count + src_iter->get_relocation_imm_idx());
                     }
 
                     if (src_iter->get_rip_relocation_idx() != -1) {

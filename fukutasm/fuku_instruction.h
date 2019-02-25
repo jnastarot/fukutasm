@@ -15,8 +15,8 @@ class fuku_instruction {
     //relative idxs    if has index then value => 0 else -1
     size_t label_idx;
 
-    size_t code_relocation_1_idx;
-    size_t code_relocation_2_idx;
+    size_t code_relocation_disp_idx;
+    size_t code_relocation_imm_idx;
     size_t code_rip_relocation_idx;
 			   
     uint32_t instruction_flags; //combination of fuku_instuction_flags
@@ -41,8 +41,8 @@ public:
 
     fuku_instruction&  set_label_idx(size_t idx);
 
-    fuku_instruction&  set_relocation_first_idx(size_t idx);
-    fuku_instruction&  set_relocation_second_idx(size_t idx);
+    fuku_instruction&  set_relocation_disp_idx(size_t idx);
+    fuku_instruction&  set_relocation_imm_idx(size_t idx);
     
     fuku_instruction&  set_rip_relocation_idx(size_t idx);
 
@@ -62,8 +62,8 @@ public:
     
     size_t get_label_idx() const;
 
-    size_t get_relocation_first_idx() const;
-    size_t get_relocation_second_idx() const;
+    size_t get_relocation_disp_idx() const;
+    size_t get_relocation_imm_idx() const;
 
     size_t get_rip_relocation_idx() const;
 
