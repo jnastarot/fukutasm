@@ -559,8 +559,32 @@ fuku_register_enum capstone_to_fuku_reg(x86_reg reg) {
     return cap_to_fuku_table[reg];
 }
 
-fuku_operand capstone_to_fuku_op(x86_insn inst) {
-    return fuku_operand(FUKU_REG_NONE, FUKU_OPERAND_SIZE_0);
+fuku_operand capstone_to_fuku_op(cs_x86& x86, uint8_t op_idx) {
+
+    fuku_operand_size size = FUKU_OPERAND_SIZE_0;
+    fuku_register_enum base = FUKU_REG_NONE;
+    fuku_register_enum index = FUKU_REG_NONE;
+    fuku_operand_scale scale = FUKU_OPERAND_SCALE_1;
+    fuku_immediate imm = 0;
+
+    auto& op = x86.operands[op_idx];
+
+    if (op.type == X86_OP_MEM) {
+        size = (fuku_operand_size)op.size;
+
+        if (op.mem.base != X86_REG_INVALID) {
+            base = cap_to_fuku_table[op.mem.base];
+        }
+
+        if (op.mem.index != X86_REG_INVALID) {
+            index = cap_to_fuku_table[op.mem.index];
+            scale = (fuku_operand_scale)op.mem.scale;
+        }
+
+        imm = op.mem.disp;
+    }
+
+    return fuku_operand(base, index, scale, imm, size);
 }
 
 fuku_condition capstone_to_fuku_cond(x86_insn cond) {

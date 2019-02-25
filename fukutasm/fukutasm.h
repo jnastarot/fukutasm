@@ -80,7 +80,7 @@ enum fuku_to_cap_convert_type {
 
 //uint8_t fuku_to_capstone_reg(const fuku_register& reg);
 fuku_register_enum capstone_to_fuku_reg(x86_reg reg);
-fuku_operand capstone_to_fuku_op(x86_insn inst);
+fuku_operand capstone_to_fuku_op(cs_x86& x86, uint8_t op_idx);
 
 x86_insn fuku_to_capstone_cc(fuku_condition cond, fuku_to_cap_convert_type type);
 fuku_condition capstone_to_fuku_cond(x86_insn cond);
