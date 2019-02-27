@@ -3,71 +3,65 @@
 
 #define UNUSUAL_DATASET FUKU_DEBUG
 
+/*
+fuku_register base;
+    fuku_register index;
+    fuku_operand_scale scale;
+    fuku_immediate disp;
+    fuku_operand_size size;
+*/
+
 using namespace fukutasm;
 fuku_type::fuku_type()
-    :ptr(0), type(FUKU_T0_NONE) {}
+    :base(FUKU_REG_NONE), index(FUKU_REG_NONE), scale(FUKU_OPERAND_SCALE_1), disp(0), size(FUKU_OPERAND_SIZE_0), type(FUKU_T0_NONE) {}
 fuku_type::fuku_type(const fuku_register& reg)
-    :reg(new fuku_register(reg)), type(FUKU_T0_REGISTER){}
+    : base(reg.get_reg()), index(FUKU_REG_NONE), scale(FUKU_OPERAND_SCALE_1), disp(0), size(FUKU_OPERAND_SIZE_0), type(FUKU_T0_REGISTER){}
 fuku_type::fuku_type(const fuku_operand& op)
-    : op(new fuku_operand(op)), type(FUKU_T0_OPERAND) {}
+    : base(op.get_base()), index(op.get_index()), scale(op.get_scale()), disp(op.get_disp()), size(op.get_size()), type(FUKU_T0_OPERAND) {}
 fuku_type::fuku_type(const fuku_immediate& imm)
-    : imm(new fuku_immediate(imm)), type(FUKU_T0_IMMEDIATE) {}
-fuku_type::~fuku_type() { free(); }
+    : base(FUKU_REG_NONE), index(FUKU_REG_NONE), scale(FUKU_OPERAND_SCALE_1), disp(imm), size(FUKU_OPERAND_SIZE_0), type(FUKU_T0_IMMEDIATE) {}
+fuku_type::~fuku_type() { }
 
 
 fuku_type& fuku_type::operator=(const fuku_register& _reg) {
-    free();
-    type = FUKU_T0_REGISTER;
-    reg = new fuku_register(_reg);
+    this->base  = _reg.get_reg();
+    this->index = FUKU_REG_NONE;
+    this->scale = FUKU_OPERAND_SCALE_1;
+    this->disp  =  0; 
+    this->size  = FUKU_OPERAND_SIZE_0;
+    this->type  = FUKU_T0_REGISTER;
     return *this;
 }
 fuku_type& fuku_type::operator=(const fuku_operand& _op) {
-    free();
-    type = FUKU_T0_OPERAND;
-    op = new fuku_operand(_op);
+    this->base  = _op.get_base();
+    this->index = _op.get_index();
+    this->scale = _op.get_scale();
+    this->disp  = _op.get_disp();
+    this->size  = _op.get_size();
+    this->type  = FUKU_T0_OPERAND;
     return *this;
 }
 fuku_type& fuku_type::operator=(const fuku_immediate& _imm) {
-    free();
-    type = FUKU_T0_IMMEDIATE;
-    imm = new fuku_immediate(_imm);
+    this->base  = FUKU_REG_NONE;
+    this->index = FUKU_REG_NONE;
+    this->scale = FUKU_OPERAND_SCALE_1;
+    this->disp  = _imm;
+    this->size  = FUKU_OPERAND_SIZE_0;
+    this->type  = FUKU_T0_IMMEDIATE;
     return *this;
-}
-
-void fuku_type::free() {
-
-    if (ptr) {
-        switch (type) {
-        case FUKU_T0_REGISTER: {
-            delete reg;
-            break;
-        }
-        case FUKU_T0_OPERAND: {
-            delete op;
-            break;
-        }
-        case FUKU_T0_IMMEDIATE: {
-            delete imm;
-            break;
-        }
-        }
-
-        ptr = 0;
-        type = FUKU_T0_NONE;
-    }
 }
 
 const fuku_t0_types fuku_type::get_type() const {
     return this->type;
 }
 const fuku_register &fuku_type::get_register() const {
-    return *this->reg;
+    return fuku_register(this->base);
 }
 const fuku_operand  &fuku_type::get_operand() const {
-    return *this->op;
+    return fuku_operand(this->base, this->index, this->scale, this->disp, this->size);
 }
 const fuku_immediate &fuku_type::get_immediate() const {
-    return *this->imm;
+    return fuku_immediate(this->disp);
 }
 
 #include "fuku_assambler_misc.h"

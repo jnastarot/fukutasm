@@ -12,13 +12,13 @@ enum fuku_t0_types {
 
 class fuku_type {
     fuku_t0_types type;
-    union {
-        void * ptr;
-        const fuku_register* reg;
-        const fuku_operand *op;
-        const fuku_immediate *imm;
-    };
-    void free();
+    
+    fuku_register base;
+    fuku_register index;
+    fuku_operand_scale scale;
+    fuku_immediate disp;
+    fuku_operand_size size;
+
 public:
     fuku_type();
     fuku_type(const fuku_register& reg);
