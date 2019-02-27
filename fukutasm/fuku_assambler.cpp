@@ -54,14 +54,14 @@ fuku_type& fuku_type::operator=(const fuku_immediate& _imm) {
 const fuku_t0_types fuku_type::get_type() const {
     return this->type;
 }
-const fuku_register &fuku_type::get_register() const {
-    return fuku_register(this->base);
+fuku_register fuku_type::get_register() const {
+    return this->base;
 }
-const fuku_operand  &fuku_type::get_operand() const {
+fuku_operand fuku_type::get_operand() const {
     return fuku_operand(this->base, this->index, this->scale, this->disp, this->size);
 }
-const fuku_immediate &fuku_type::get_immediate() const {
-    return fuku_immediate(this->disp);
+fuku_immediate fuku_type::get_immediate() const {
+    return this->disp;
 }
 
 #include "fuku_assambler_misc.h"

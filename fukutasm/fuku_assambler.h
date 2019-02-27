@@ -31,9 +31,9 @@ public:
     fuku_type& operator=(const fuku_immediate& _imm);
 public:
     const fuku_t0_types get_type() const;
-    const fuku_register &get_register() const;
-    const fuku_operand  &get_operand() const;
-    const fuku_immediate &get_immediate() const;
+    fuku_register get_register() const;
+    fuku_operand  get_operand() const;
+    fuku_immediate get_immediate() const;
 };
 
 enum fuku_assambler_hold_type {
