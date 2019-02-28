@@ -528,7 +528,7 @@ fuku_mem_opernad_type fuku_operand::get_type() const {
             return fuku_mem_opernad_type::FUKU_MEM_OPERAND_INDEX_DISP;
         }
         else {
-            return fuku_mem_opernad_type::FUKU_MEM_OPERAND_BASE_DISP;
+            return fuku_mem_opernad_type::FUKU_MEM_OPERAND_DISP_ONLY;
         }
     }
 }
