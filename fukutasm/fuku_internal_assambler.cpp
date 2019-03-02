@@ -455,7 +455,7 @@ fuku_asm_ret_type _mov_dw(fuku_assambler_ctx& ctx, const fuku_register& dst, con
     if (is_used_short_eax() && dst.get_reg() == FUKU_REG_EAX &&
         src.get_type() == fuku_mem_opernad_type::FUKU_MEM_OPERAND_DISP_ONLY) {
         emit_optional_rex_32(ctx, dst);
-        emit_b(ctx, 0xA3);
+        emit_b(ctx, 0xA1);
         emit_dw(ctx, src.get_disp().get_immediate32());
         ctx.displacment_offset = ctx.length;//todo
     }
@@ -500,7 +500,7 @@ fuku_asm_ret_type _mov_qw(fuku_assambler_ctx& ctx, const fuku_register& dst, con
     if (is_used_short_eax() && dst.get_reg() == FUKU_REG_RAX &&
         src.get_type() == fuku_mem_opernad_type::FUKU_MEM_OPERAND_DISP_ONLY) {
         emit_rex_64(ctx, dst);
-        emit_b(ctx, 0xA3);
+        emit_b(ctx, 0xA1);
         emit_dw(ctx, src.get_disp().get_immediate32());
         ctx.displacment_offset = ctx.length;//todo
     }
