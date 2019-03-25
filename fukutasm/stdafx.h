@@ -23,6 +23,6 @@ using namespace std;
 #define FUKU_ASSERT_EQ(lhs, rhs) if( ((lhs) == (rhs)) ){FUKU_DEBUG}
 #define FUKU_ASSERT_GT(lhs, rhs) if( ((lhs) >  (rhs)) ){FUKU_DEBUG}
 
-#include "capstone\include\capstone\capstone.h"
+#include "..\capstone\include\capstone\capstone.h"
 #include "fukutasm.h"
 
