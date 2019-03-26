@@ -8,7 +8,7 @@ using namespace fukutasm;
 fuku_type::fuku_type()
     :segment(FUKU_PREFIX_NONE), base(FUKU_REG_NONE), index(FUKU_REG_NONE), scale(FUKU_OPERAND_SCALE_1), disp(0), size(FUKU_OPERAND_SIZE_0), type(FUKU_T0_NONE) {}
 fuku_type::fuku_type(const fuku_register& reg)
-    : segment(FUKU_PREFIX_NONE), base(reg.get_reg()), index(FUKU_REG_NONE), scale(FUKU_OPERAND_SCALE_1), disp(0), size(FUKU_OPERAND_SIZE_0), type(FUKU_T0_REGISTER){}
+    : segment(FUKU_PREFIX_NONE), base(reg.get_reg()), index(FUKU_REG_NONE), scale(FUKU_OPERAND_SCALE_1), disp(0), size(reg.get_size()), type(FUKU_T0_REGISTER){}
 fuku_type::fuku_type(const fuku_operand& op)
     : segment(op.get_segment()), base(op.get_base()), index(op.get_index()), scale(op.get_scale()), disp(op.get_disp()), size(op.get_size()), type(FUKU_T0_OPERAND) {}
 fuku_type::fuku_type(const fuku_immediate& imm)
