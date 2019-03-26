@@ -21,8 +21,8 @@ class fuku_instruction {
 			   
     uint32_t instruction_flags; //combination of fuku_instuction_flags
 
-    uint64_t eflags;
-    uint64_t custom_flags;
+    uint64_t used_eflags;
+    uint64_t used_regs;
 
     uint8_t get_prefixes_number() const;
 public:
@@ -48,8 +48,8 @@ public:
 
     fuku_instruction&  set_instruction_flags(uint32_t instruction_flags);
     
-    fuku_instruction&  set_eflags(uint64_t eflags);
-    fuku_instruction&  set_custom_flags(uint64_t custom_flags);
+    fuku_instruction&  set_used_eflags(uint64_t eflags);
+    fuku_instruction&  set_used_regs(uint64_t regs);
 public:
     uint16_t get_id() const;
 
@@ -68,8 +68,8 @@ public:
     size_t get_rip_relocation_idx() const;
 
     uint32_t get_instruction_flags() const;
-    uint64_t get_eflags() const;
-    uint64_t get_custom_flags() const;
+    uint64_t get_used_eflags() const;
+    uint64_t get_used_regs() const;
 };
 
 #pragma pack(pop)

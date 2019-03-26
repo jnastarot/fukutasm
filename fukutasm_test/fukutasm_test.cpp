@@ -23,7 +23,7 @@ void test_no_arg(fuku_instruction inst, fuku_operand_size size) {
     if (inst.get_id() != instruction[0].id) {
         printf("type error  "); 
     }
-    if (inst.get_eflags() != instruction[0].detail->x86.eflags) { 
+    if (inst.get_used_eflags() != instruction[0].detail->x86.eflags) {
         printf("eflags error  "); 
     }
 
@@ -50,7 +50,7 @@ void test_1_arg(fuku_instruction inst, fuku_operand op, fuku_operand_size size) 
     if (inst.get_id() != instruction[0].id) { 
         printf("type error  ");
     }
-    if (inst.get_eflags() != instruction[0].detail->x86.eflags) { 
+    if (inst.get_used_eflags() != instruction[0].detail->x86.eflags) {
         printf("eflags error  ");
     }
 
@@ -79,7 +79,7 @@ void test_1_arg(fuku_instruction inst, fuku_register reg, fuku_operand_size size
     if (inst.get_id() != instruction[0].id) { 
         printf("type error  ");
     }
-    if (inst.get_eflags() != instruction[0].detail->x86.eflags) { 
+    if (inst.get_used_eflags() != instruction[0].detail->x86.eflags) {
         printf("eflags error  ");
     }
 
@@ -107,7 +107,7 @@ void test_1_arg(fuku_instruction inst, fuku_immediate imm, fuku_operand_size siz
     if (inst.get_id() != instruction[0].id) {
         printf("type error  "); 
     }
-    if (inst.get_eflags() != instruction[0].detail->x86.eflags) {
+    if (inst.get_used_eflags() != instruction[0].detail->x86.eflags) {
         printf("eflags error  "); 
     }
 
@@ -136,7 +136,7 @@ void test_2_arg(fuku_instruction inst, fuku_operand op, fuku_register reg, fuku_
     if (inst.get_id() != instruction[0].id) { 
         printf("type error  "); 
     }
-    if (inst.get_eflags() != instruction[0].detail->x86.eflags) { 
+    if (inst.get_used_eflags() != instruction[0].detail->x86.eflags) {
         printf("eflags error  "); 
     }
 
@@ -165,7 +165,7 @@ void test_2_arg(fuku_instruction inst, fuku_register reg1, fuku_register reg2, f
     if (inst.get_id() != instruction[0].id) { 
         printf("type error  ");
     }
-    if (inst.get_eflags() != instruction[0].detail->x86.eflags) { 
+    if (inst.get_used_eflags() != instruction[0].detail->x86.eflags) {
         printf("eflags error  "); 
     }
 
@@ -194,7 +194,7 @@ void test_2_arg(fuku_instruction inst, fuku_register reg, fuku_operand op, fuku_
     if (inst.get_id() != instruction[0].id) { 
         printf("type error  "); 
     }
-    if (inst.get_eflags() != instruction[0].detail->x86.eflags) {
+    if (inst.get_used_eflags() != instruction[0].detail->x86.eflags) {
         printf("eflags error  "); 
     }
 
@@ -223,7 +223,7 @@ void test_2_arg(fuku_instruction inst, fuku_register reg, fuku_immediate imm, fu
     if (inst.get_id() != instruction[0].id) { 
         printf("type error  "); 
     }
-    if (inst.get_eflags() != instruction[0].detail->x86.eflags) { 
+    if (inst.get_used_eflags() != instruction[0].detail->x86.eflags) {
         printf("eflags error  ");
     }
 
@@ -252,7 +252,7 @@ void test_2_arg(fuku_instruction inst,fuku_operand op, fuku_immediate imm, fuku_
     if (inst.get_id() != instruction[0].id) { 
         printf("type error  ");
     }
-    if (inst.get_eflags() != instruction[0].detail->x86.eflags) {
+    if (inst.get_used_eflags() != instruction[0].detail->x86.eflags) {
         printf("eflags error  ");
     }
 

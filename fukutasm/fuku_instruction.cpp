@@ -6,7 +6,7 @@ fuku_instruction::fuku_instruction()
     source_virtual_address(-1), virtual_address(-1),
     label_idx(-1),
     code_relocation_disp_idx(-1), code_relocation_imm_idx(-1), code_rip_relocation_idx(-1),
-    instruction_flags(0), eflags(0), custom_flags(0) {
+    instruction_flags(0), used_eflags(0), used_regs(0) {
 
     memset(op_code, 0, sizeof(op_code));
 }
@@ -33,8 +33,8 @@ fuku_instruction& fuku_instruction::operator=(const fuku_instruction& line) {
     this->code_relocation_imm_idx = line.code_relocation_imm_idx;
     this->code_rip_relocation_idx = line.code_rip_relocation_idx;
     this->instruction_flags = line.instruction_flags;
-    this->eflags = line.eflags;
-    this->custom_flags = line.custom_flags;
+    this->used_eflags = line.used_eflags;
+    this->used_regs = line.used_regs;
 
     return *this;
 }
@@ -124,16 +124,16 @@ fuku_instruction&  fuku_instruction::set_instruction_flags(uint32_t flags) {
     return *this;
 }
 
-fuku_instruction&  fuku_instruction::set_eflags(uint64_t eflags) {
+fuku_instruction&  fuku_instruction::set_used_eflags(uint64_t eflags) {
 
-    this->eflags = eflags;
+    this->used_eflags = eflags;
 
     return *this;
 }
 
-fuku_instruction&  fuku_instruction::set_custom_flags(uint64_t custom_flags) {
+fuku_instruction&  fuku_instruction::set_used_regs(uint64_t regs) {
 
-    this->custom_flags = custom_flags;
+    this->used_regs = regs;
 
     return *this;
 }
@@ -182,10 +182,10 @@ uint32_t fuku_instruction::get_instruction_flags() const {
     return this->instruction_flags;
 }
 
-uint64_t fuku_instruction::get_eflags() const {
-    return this->eflags;
+uint64_t fuku_instruction::get_used_eflags() const {
+    return this->used_eflags;
 }
 
-uint64_t fuku_instruction::get_custom_flags() const {
-    return this->custom_flags;
+uint64_t fuku_instruction::get_used_regs() const {
+    return this->used_regs;
 }

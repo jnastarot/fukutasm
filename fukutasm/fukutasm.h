@@ -23,7 +23,8 @@ enum fuku_condition {
     FUKU_CONDITION_MAX
 };
 
-enum fukU_prefix {
+enum fuku_prefix {
+    FUKU_PREFIX_NONE             = 0,
     FUKU_PREFIX_LOCK             = 0xF0,
     FUKU_PREFIX_REPE             = 0xF3,
     FUKU_PREFIX_REPNE            = 0xF2,

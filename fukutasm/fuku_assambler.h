@@ -18,6 +18,7 @@ class fuku_type {
     fuku_operand_scale scale;
     fuku_immediate disp;
     fuku_operand_size size;
+    fuku_prefix segment;
 
 public:
     fuku_type();
@@ -34,6 +35,14 @@ public:
     fuku_register get_register() const;
     fuku_operand  get_operand() const;
     fuku_immediate get_immediate() const;
+
+public:
+    const fuku_register& get_base() const;
+    const fuku_register& get_index() const;
+    fuku_operand_scale get_scale() const;
+    const fuku_immediate& get_disp() const;
+    fuku_operand_size get_size() const;
+    fuku_prefix get_segment() const;
 };
 
 enum fuku_assambler_hold_type {
@@ -49,9 +58,15 @@ class fuku_assambler {
     fuku_assambler_hold_type hold_type;
     fuku_code_holder * code_holder;
     linestorage::iterator position;
+
     bool first_emit;
 
+    std::vector<fuku_prefix> prefixes;
+
+    void on_emit(const fuku_type& dst, const fuku_type& src);
+    void on_emit(const fuku_type& src);
     void on_emit();
+
     fukutasm::fuku_assambler_ctx& on_new_chain_item();
 public:
     fuku_assambler();
@@ -63,6 +78,9 @@ public:
     fuku_assambler& set_holder(fuku_code_holder * code_holder, fuku_assambler_hold_type hold_type);
     fuku_assambler& set_position(linestorage::iterator& position);
     fuku_assambler& set_first_emit(bool first_emit);
+    
+    fuku_assambler& add_pref(fuku_prefix prefix);
+    fuku_assambler& clear_prefixes();
 public:
 //Data Transfer Instructions
     fukutasm::fuku_assambler_ctx& mov(const fuku_type& dst, const fuku_type& src);

@@ -25,6 +25,7 @@
     _op_qw_op_r, \
     _op_qw_op_imm \
 ) \
+    on_emit(dst, src);\
     fuku_operand_size size = get_minimal_op_size(context, dst, src);\
     switch (size) {\
     case fuku_operand_size::FUKU_OPERAND_SIZE_8: {\
@@ -180,6 +181,7 @@
     _op_qw_op, \
     _op_qw_imm \
 )\
+    on_emit(opname);\
     fuku_operand_size size = get_minimal_op_size(context, opname);\
     switch (size) {\
     case fuku_operand_size::FUKU_OPERAND_SIZE_8: {\
@@ -252,13 +254,13 @@ fuku_operand_size get_minimal_op_size(fuku_assambler_ctx& ctx, const fuku_type& 
     case FUKU_T0_REGISTER: {
         switch (src.get_type()) {
         case FUKU_T0_REGISTER: {
-            return dst.get_register().get_size();
+            return dst.get_size();
         }
         case FUKU_T0_OPERAND: {
-            return src.get_operand().get_size();
+            return src.get_size();
         }
         case FUKU_T0_IMMEDIATE: {
-            return dst.get_register().get_size();
+            return dst.get_size();
         }
         }
         break;
@@ -267,13 +269,13 @@ fuku_operand_size get_minimal_op_size(fuku_assambler_ctx& ctx, const fuku_type& 
         switch (src.get_type()) {
 
         case FUKU_T0_REGISTER: {
-            return dst.get_operand().get_size();
+            return dst.get_size();
         }
         case FUKU_T0_OPERAND: {
             break;
         }
         case FUKU_T0_IMMEDIATE: {
-            return dst.get_operand().get_size();
+            return dst.get_size();
         }
         }
         break;
@@ -294,10 +296,10 @@ fuku_operand_size get_minimal_op_size(fuku_assambler_ctx& ctx, const fuku_type& 
 
     switch (dst.get_type()) {
     case FUKU_T0_REGISTER: {
-        return dst.get_register().get_size();
+        return dst.get_size();
     }
     case FUKU_T0_OPERAND: {
-        return dst.get_operand().get_size();
+        return dst.get_size();
     }
     case FUKU_T0_IMMEDIATE: {
         return ctx.arch == FUKU_ASSAMBLER_ARCH_X86 ? FUKU_OPERAND_SIZE_32 : FUKU_OPERAND_SIZE_64;

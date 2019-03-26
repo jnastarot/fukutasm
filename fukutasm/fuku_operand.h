@@ -22,17 +22,29 @@ class fuku_operand {
     fuku_operand_scale scale;
     fuku_immediate disp;
     fuku_operand_size size;
+    fuku_prefix segment;
 public:
-    explicit fuku_operand(const fuku_register& base, fuku_operand_size size);   // [base]
+    explicit fuku_operand(const fuku_register& base, fuku_operand_size size); // [base]
     explicit fuku_operand(fuku_register_enum base, fuku_operand_size size);   // [base]
     explicit fuku_operand(const fuku_immediate& disp, fuku_operand_size size);    // [disp/r]
     explicit fuku_operand(uint32_t disp, fuku_operand_size size);                 // [disp/r]
-    explicit fuku_operand(const fuku_register& base, const fuku_immediate& disp, fuku_operand_size size);  // [base + disp/r]
+    explicit fuku_operand(const fuku_register& base, const fuku_immediate& disp, fuku_operand_size size);// [base + disp/r]
     explicit fuku_operand(fuku_register_enum base, const fuku_immediate& disp, fuku_operand_size size);  // [base + disp/r]
     explicit fuku_operand(const fuku_register& base, const fuku_register& index, fuku_operand_scale scale, const fuku_immediate& disp, fuku_operand_size size);// [base + index*scale + disp/r]
     explicit fuku_operand(fuku_register_enum base, fuku_register_enum index, fuku_operand_scale scale, const fuku_immediate& disp, fuku_operand_size size);// [base + index*scale + disp/r]
     explicit fuku_operand(const fuku_register& index, fuku_operand_scale scale, const fuku_immediate& disp, fuku_operand_size size);// [index*scale + disp/r]
     explicit fuku_operand(fuku_register_enum index, fuku_operand_scale scale, const fuku_immediate& disp, fuku_operand_size size);// [index*scale + disp/r]
+
+    explicit fuku_operand(fuku_prefix segment, const fuku_register& base, fuku_operand_size size); // segment:[base]
+    explicit fuku_operand(fuku_prefix segment, fuku_register_enum base, fuku_operand_size size);   // segment:[base]
+    explicit fuku_operand(fuku_prefix segment, const fuku_immediate& disp, fuku_operand_size size);    // segment:[disp/r]
+    explicit fuku_operand(fuku_prefix segment, uint32_t disp, fuku_operand_size size);                 // segment:[disp/r]
+    explicit fuku_operand(fuku_prefix segment, const fuku_register& base, const fuku_immediate& disp, fuku_operand_size size);  // segment:[base + disp/r]
+    explicit fuku_operand(fuku_prefix segment, fuku_register_enum base, const fuku_immediate& disp, fuku_operand_size size);  // segment:[base + disp/r]
+    explicit fuku_operand(fuku_prefix segment, const fuku_register& base, const fuku_register& index, fuku_operand_scale scale, const fuku_immediate& disp, fuku_operand_size size);// segment:[base + index*scale + disp/r]
+    explicit fuku_operand(fuku_prefix segment, fuku_register_enum base, fuku_register_enum index, fuku_operand_scale scale, const fuku_immediate& disp, fuku_operand_size size);// segment:[base + index*scale + disp/r]
+    explicit fuku_operand(fuku_prefix segment, const fuku_register& index, fuku_operand_scale scale, const fuku_immediate& disp, fuku_operand_size size);// segment:[index*scale + disp/r]
+    explicit fuku_operand(fuku_prefix segment, fuku_register_enum index, fuku_operand_scale scale, const fuku_immediate& disp, fuku_operand_size size);// segment:[index*scale + disp/r]
 
     fuku_operand(const fuku_operand& op);
 
@@ -44,11 +56,13 @@ public:
     void set_index(const fuku_register& index);
     void set_scale(fuku_operand_scale scale);
     void set_disp(const fuku_immediate& disp);
+    void set_segment(fuku_prefix segment);
     void set_size(fuku_operand_size size);
 public:
     const fuku_register& get_base() const;
     const fuku_register& get_index() const;
     fuku_operand_scale get_scale() const;
+    fuku_prefix get_segment() const;
     const fuku_immediate& get_disp() const;
     fuku_operand_size get_size() const;
 
@@ -88,6 +102,37 @@ public:
     }\
     inline fuku_operand name(fuku_register_enum index, fuku_operand_scale scale, const fuku_immediate& disp) {\
         return fuku_operand(index, scale, disp,  size);\
+    }\
+\
+    inline fuku_operand name(fuku_prefix segment, const fuku_register& base) {\
+        return fuku_operand(segment, base, size);\
+    }\
+    inline fuku_operand name(fuku_prefix segment, fuku_register_enum base) {\
+        return fuku_operand(segment, base, size);\
+    }\
+    inline fuku_operand name(fuku_prefix segment, const fuku_immediate& disp) {\
+        return fuku_operand(segment, disp, size);\
+    }\
+    inline fuku_operand name(fuku_prefix segment, uint32_t disp) {\
+        return fuku_operand(segment, disp, size);\
+    }\
+    inline fuku_operand name(fuku_prefix segment, const fuku_register& base, const fuku_immediate& disp) {\
+        return fuku_operand(segment, base, disp, size);\
+    }\
+    inline fuku_operand name(fuku_prefix segment, fuku_register_enum base, const fuku_immediate& disp) {\
+        return fuku_operand(segment, base, disp, size);\
+    }\
+    inline fuku_operand name(fuku_prefix segment, const fuku_register& base, const fuku_register& index, fuku_operand_scale scale, const fuku_immediate& disp) {\
+        return fuku_operand(segment, base, index, scale, disp, size);\
+    }\
+    inline fuku_operand name(fuku_prefix segment, fuku_register_enum base, fuku_register_enum index, fuku_operand_scale scale, const fuku_immediate& disp) {\
+        return fuku_operand(segment, base, index, scale, disp, size);\
+    }\
+    inline fuku_operand name(fuku_prefix segment, const fuku_register& index, fuku_operand_scale scale, const fuku_immediate& disp) {\
+        return fuku_operand(segment, index, scale, disp, size);\
+    }\
+    inline fuku_operand name(fuku_prefix segment, fuku_register_enum index, fuku_operand_scale scale, const fuku_immediate& disp) {\
+        return fuku_operand(segment, index, scale, disp,  size);\
     }\
     }
     
