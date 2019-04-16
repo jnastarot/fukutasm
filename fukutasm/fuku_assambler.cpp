@@ -86,26 +86,22 @@ fuku_prefix fuku_type::get_segment() const {
 
 #include "fuku_assambler_misc.h"
 
-fuku_assambler::fuku_assambler() {
+fuku_assambler::fuku_assambler() 
+    :code_holder(0), first_emit(true), hold_type(ASSAMBLER_HOLD_TYPE_NOOVERWRITE), has_label_to_set(false), label(-1) {
+    
     memset(&context, 0, sizeof(context));
     context.arch = FUKU_ASSAMBLER_ARCH_X86;
     context.short_cfg = 0xFF;
     context.inst = &inst;
-
-    hold_type = ASSAMBLER_HOLD_TYPE_NOOVERWRITE;
-    code_holder = 0;
-    first_emit = true;
 }
 
-fuku_assambler::fuku_assambler(fuku_assambler_arch arch) {
+fuku_assambler::fuku_assambler(fuku_assambler_arch arch)
+    :code_holder(0), first_emit(true), hold_type(ASSAMBLER_HOLD_TYPE_NOOVERWRITE), has_label_to_set(false), label(-1) {
+    
     memset(&context, 0, sizeof(context));
     context.arch = arch;
     context.short_cfg = 0xFF;
     context.inst = &inst;
-
-    hold_type = ASSAMBLER_HOLD_TYPE_NOOVERWRITE;
-    code_holder = 0;
-    first_emit = true;
 }
 
 
@@ -147,6 +143,16 @@ fuku_assambler& fuku_assambler::clear_prefixes() {
     prefixes.clear();
 
     return *this;
+}
+
+void fuku_assambler::set_label(size_t label) {
+    this->has_label_to_set = true;
+    this->label = label;
+}
+
+void fuku_assambler::unset_label() {
+    this->has_label_to_set = false;
+    this->label = -1;
 }
 
 void fuku_assambler::on_emit() {
@@ -239,6 +245,17 @@ fuku_assambler_ctx& fuku_assambler::on_new_chain_item() {
         context.inst->set_op_code(inst_, uint8_t(prefixes.size() + context.inst->get_op_length()) );
 
         prefixes.clear();
+    }
+
+    if (has_label_to_set) {
+        has_label_to_set = false;
+        context.inst->set_label_idx(label);
+        if (code_holder) {
+            auto& ch_label = code_holder->get_labels()[label];
+            ch_label.has_linked_instruction = true;
+            ch_label.instruction = context.inst;
+        }
+        label = -1;
     }
 
     return context;

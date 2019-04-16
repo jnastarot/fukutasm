@@ -60,6 +60,9 @@ class fuku_assambler {
     linestorage::iterator position;
 
     bool first_emit;
+    bool has_label_to_set;
+
+    size_t label;
 
     std::vector<fuku_prefix> prefixes;
 
@@ -81,6 +84,9 @@ public:
     
     fuku_assambler& add_pref(fuku_prefix prefix);
     fuku_assambler& clear_prefixes();
+
+    void set_label(size_t label);
+    void unset_label();
 public:
 //Data Transfer Instructions
     fukutasm::fuku_assambler_ctx& mov(const fuku_type& dst, const fuku_type& src);
