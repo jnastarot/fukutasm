@@ -607,6 +607,8 @@ bool fuku_code_holder::merge_labels() {
     std::vector<label_item> new_labels_chain;
     new_labels_chain.resize(labels.size());
 
+    bool has_incorrect = false;
+
     for (size_t label_idx = 0; label_idx < labels.size(); label_idx++) { //associate labels
 
         auto& label = labels[label_idx];
@@ -619,6 +621,7 @@ bool fuku_code_holder::merge_labels() {
             fuku_instruction * line = get_direct_line_by_source_va(label.dst_address);
 
             if (line) {
+                has_incorrect = true;
 
                 if (line->get_label_idx() == -1) {
                     line->set_label_idx(label_idx);
@@ -641,7 +644,6 @@ bool fuku_code_holder::merge_labels() {
         new_labels.reserve(new_labels_chain.size());
         label_new_map.resize(labels.size());
 
-        bool has_incorrect = false;
 
         for (size_t label_idx = 0; label_idx < new_labels_chain.size(); label_idx++) {
 
