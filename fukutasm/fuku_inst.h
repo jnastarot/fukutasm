@@ -46,6 +46,10 @@ struct fuku_rip_relocation {
     uint8_t offset;
 
     fuku_code_label* label;
+
+    fuku_rip_relocation();
+    fuku_rip_relocation& set_label(fuku_code_label* label);
+    fuku_rip_relocation& set_offset(uint8_t  offset);
 };
 
 class fuku_inst {

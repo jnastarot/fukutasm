@@ -46,6 +46,21 @@ fuku_relocation& fuku_relocation::set_id(uint32_t reloc_id) {
     return *this;
 }
 
+fuku_rip_relocation::fuku_rip_relocation()
+    : offset(0), label(0) {}
+
+fuku_rip_relocation& fuku_rip_relocation::set_label(fuku_code_label* label) {
+    this->label = label;
+
+    return *this;
+}
+
+fuku_rip_relocation& fuku_rip_relocation::set_offset(uint8_t  offset) {
+    this->offset = offset;
+
+    return *this;
+}
+
 
 fuku_inst::fuku_inst()
     :id(-1), oplength(0),
