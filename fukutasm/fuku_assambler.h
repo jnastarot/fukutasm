@@ -52,17 +52,17 @@ enum fuku_assambler_hold_type {
 };
 
 class fuku_assambler {
-    fuku_instruction inst;
+    fuku_inst inst;
     fukutasm::fuku_assambler_ctx context;
 
     fuku_assambler_hold_type hold_type;
     fuku_code_holder * code_holder;
-    linestorage::iterator position;
+    inststorage::iterator position;
 
     bool first_emit;
     bool has_label_to_set;
 
-    size_t label;
+    fuku_code_label* label;
 
     std::vector<fuku_prefix> prefixes;
 
@@ -79,13 +79,13 @@ public:
     fukutasm::fuku_assambler_ctx& get_context();
 
     fuku_assambler& set_holder(fuku_code_holder * code_holder, fuku_assambler_hold_type hold_type);
-    fuku_assambler& set_position(linestorage::iterator& position);
+    fuku_assambler& set_position(inststorage::iterator& position);
     fuku_assambler& set_first_emit(bool first_emit);
     
     fuku_assambler& add_pref(fuku_prefix prefix);
     fuku_assambler& clear_prefixes();
 
-    void set_label(size_t label);
+    void set_label(fuku_code_label* label);
     void unset_label();
 public:
 //Data Transfer Instructions

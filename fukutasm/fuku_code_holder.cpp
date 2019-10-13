@@ -18,680 +18,602 @@ fuku_code_holder::~fuku_code_holder() {
 
 
 fuku_code_holder& fuku_code_holder::operator=(const fuku_code_holder& code_holder) {
+
     this->arch = code_holder.arch;
     this->labels = code_holder.labels;
     this->relocations = code_holder.relocations;
     this->rip_relocations = code_holder.rip_relocations;
-    this->lines = code_holder.lines;
+    this->available_relocations = code_holder.available_relocations;
+    this->available_rip_relocations = code_holder.available_rip_relocations;
+    this->insts = code_holder.insts;
 
     if (labels.size()) {
      
-        std::vector<fuku_instruction* > labels_cache;
-        labels_cache.resize(labels.size());
+        std::vector<fuku_code_label*> label_map;
+        std::map<const fuku_relocation*, fuku_relocation*> reloc_map;
+        std::map<const fuku_rip_relocation*, fuku_rip_relocation*> rip_reloc_map;
 
-        for (auto& line : lines) {
 
-            if (line.get_label_idx() != -1) {
-                labels_cache[line.get_label_idx()] = &line;
-            }
+        create_relation_map(
+            code_holder.labels.begin(), this->labels.begin(),
+            code_holder.labels.end(), this->labels.end(),
+
+            code_holder.relocations.begin(), this->relocations.begin(),
+            code_holder.relocations.end(), this->relocations.end(),
+
+            code_holder.rip_relocations.begin(), this->rip_relocations.begin(),
+            code_holder.rip_relocations.end(), this->rip_relocations.end(),
+
+            label_map, 
+            reloc_map, 
+            rip_reloc_map
+        );
+
+        for (size_t idx = 0; idx < this->available_relocations.size(); idx++) {
+
+            this->available_relocations[idx] = reloc_map[this->available_relocations[idx]];
+        }
+
+        for (size_t idx = 0; idx < this->available_rip_relocations.size(); idx++) {
+
+            this->available_rip_relocations[idx] = rip_reloc_map[this->available_rip_relocations[idx]];
         }
 
 
+        for (auto& inst : this->insts) {
 
-        for (size_t label_idx = 0; label_idx < labels.size(); label_idx++) {
+            if (inst.get_label()) {
+                auto label = label_map[inst.get_label()->label_id];
 
-            if (labels[label_idx].has_linked_instruction) {
-                labels[label_idx].instruction = labels_cache[label_idx];
+                inst.set_label(label);
+                label->set_inst(&inst);
+            }
+
+            if (inst.get_imm_reloc()) {
+
+                auto prev_imm_reloc = inst.get_imm_reloc();
+
+                if (!prev_imm_reloc->label) {
+                    continue;
+                }
+
+                auto new_imm_reloc = reloc_map[prev_imm_reloc];
+
+                new_imm_reloc->label = label_map[prev_imm_reloc->label->label_id];
+
+                inst.set_imm_reloc(new_imm_reloc);
+            }
+
+            if (inst.get_disp_reloc()) {
+
+                if (inst.is_used_disp_reloc()) {
+
+                    auto prev_disp_reloc = inst.get_disp_reloc();
+
+                    if (!prev_disp_reloc->label) {
+                        continue;
+                    }
+
+                    auto new_disp_reloc  = reloc_map[prev_disp_reloc];
+
+                    new_disp_reloc->label = label_map[prev_disp_reloc->label->label_id];
+
+                    inst.set_disp_reloc(new_disp_reloc);
+                }
+                else { //else rip reloc
+
+                    auto prev_rip_reloc = inst.get_rip_reloc();
+
+                    if (!prev_rip_reloc->label) {
+                        continue;
+                    }
+
+                    auto new_rip_reloc = rip_reloc_map[prev_rip_reloc];
+
+                    new_rip_reloc->label = label_map[prev_rip_reloc->label->label_id];
+
+                    inst.set_rip_reloc(new_rip_reloc);
+                }
             }
         }
-
     }
 
 
     return *this;
 }
 
-void   fuku_code_holder::update_virtual_address(uint64_t destination_virtual_address) {
 
-    uint64_t _virtual_address = destination_virtual_address;
+void fuku_code_holder::create_relation_map(
+    std::list<fuku_code_label>::const_iterator prev_labels, std::list<fuku_code_label>::iterator new_labels,
+    std::list<fuku_code_label>::const_iterator prev_labels_end, std::list<fuku_code_label>::iterator new_labels_end,
 
-    for (auto& line : lines) {
+    std::list<fuku_relocation>::const_iterator prev_relocs, std::list<fuku_relocation>::iterator new_relocs,
+    std::list<fuku_relocation>::const_iterator prev_relocs_end, std::list<fuku_relocation>::iterator new_relocs_end,
 
-        line.set_virtual_address(_virtual_address);
-        _virtual_address += line.get_op_length();
+    std::list<fuku_rip_relocation>::const_iterator prev_rip_relocs, std::list<fuku_rip_relocation>::iterator new_rip_relocs,
+    std::list<fuku_rip_relocation>::const_iterator prev_rip_relocs_end, std::list<fuku_rip_relocation>::iterator new_rip_relocs_end,
+
+    std::vector<fuku_code_label*>& label_map,
+    std::map<const fuku_relocation*, fuku_relocation*>& reloc_map,
+    std::map<const fuku_rip_relocation*, fuku_rip_relocation*>& rip_reloc_map
+) const {
+
+    label_map.clear();
+    reloc_map.clear();
+    rip_reloc_map.clear();
+
+
+    for (; prev_labels != prev_labels_end && new_labels != new_labels_end;
+        prev_labels++, new_labels++) {
+
+        // vec by idx of orig label to current label
+
+        ((fuku_code_label*)&(*prev_labels))->label_id = 
+            label_map.size();
+
+        label_map.push_back(&(*new_labels));
+    }
+
+    for (; prev_relocs != prev_relocs_end && new_relocs != new_relocs_end;
+        prev_relocs++, new_relocs++) {
+
+        reloc_map[&(*prev_relocs)] = &(*new_relocs);
+    }
+
+    for (; prev_rip_relocs != prev_rip_relocs_end && new_rip_relocs != new_rip_relocs_end;
+        prev_rip_relocs++, new_rip_relocs++) {
+
+        rip_reloc_map[&(*prev_rip_relocs)] = &(*new_rip_relocs);
     }
 }
 
-void   fuku_code_holder::update_origin_idxs() {
+void fuku_code_holder::update_current_address(uint64_t virtual_address) {
 
-    original_lines.clear();
+    uint64_t _virtual_address = virtual_address;
 
-    for (auto& line : lines) {     
-        if (line.get_source_virtual_address() != -1) {
-            original_lines.push_back(&line);
+    for (auto& inst : this->insts) {
+
+        inst.set_current_address(_virtual_address);
+        _virtual_address += inst.get_oplength();
+    }
+}
+
+void   fuku_code_holder::update_source_insts() {
+
+    source_insts.clear();
+
+    for (auto& inst : insts) {     
+        if (inst.has_source_address()) {
+            source_insts.push_back(&inst);
         }
     }
 
-    std::sort(original_lines.begin(), original_lines.end(), [&, this](const fuku_instruction * l_line, const fuku_instruction * r_line) {
-        return l_line->get_source_virtual_address() < r_line->get_source_virtual_address();
+    std::sort(source_insts.begin(), source_insts.end(), [&, this](const fuku_inst * l_line, const fuku_inst * r_line) {
+        return l_line->get_source_address() < r_line->get_source_address();
     });
 }
 
-size_t fuku_code_holder::create_label(fuku_instruction* line) {
 
-    if (line->get_label_idx() == -1) {
+fuku_code_label* fuku_code_holder::create_label(const fuku_code_label& label) {
 
-        line->set_label_idx(labels.size());
-        
-        fuku_code_label label;
-        label.has_linked_instruction = 1;
-        label.instruction = line;
-        label.refs_count = 0;
+    if (label.has_linked_instruction &&
+        label.inst->get_label()) {
 
-        labels.push_back(label);
+        return label.inst->get_label();
     }
 
-    return line->get_label_idx();
+    this->labels.push_back(label);
+
+    return &this->labels.back();
 }
 
-size_t fuku_code_holder::create_label(uint64_t dst_address) {
+fuku_relocation* fuku_code_holder::create_relocation(const fuku_relocation& reloc) {
 
-    fuku_code_label label;
-    label.has_linked_instruction = 0;
-    label.dst_address = dst_address;
-    label.refs_count = 0;
+    if (this->available_relocations.size()) {
 
-    labels.push_back(label);
+        auto aval_reloc = this->available_relocations[this->available_relocations.size() - 1];
 
-    return labels.size() - 1;
-}
+        this->available_relocations.erase(
+            this->available_relocations.begin() + 
+            this->available_relocations.size() - 1
+        );
 
-size_t fuku_code_holder::create_relocation(uint8_t offset, uint64_t dst_address, uint32_t relocation_id) {
-
-    if (available_relocations.size()) {
-        size_t idx = available_relocations[0];
-        available_relocations.erase(available_relocations.begin());
-
-        relocations[idx] = { relocation_id , offset , create_label(dst_address) };
-
-        labels[relocations[idx].label_idx].refs_count++;
-        return idx;
+        *aval_reloc = reloc;
+        return aval_reloc;
     }
     else {
-        relocations.push_back({ relocation_id , offset , create_label(dst_address) });
+     
+        this->relocations.push_back(reloc);
 
-        labels[relocations[relocations.size()-1].label_idx].refs_count++;
-        return relocations.size() - 1;
+        return &this->relocations.back();
     }
 }
 
-size_t fuku_code_holder::create_relocation(uint8_t offset, fuku_instruction* line, uint32_t relocation_id) {
+fuku_rip_relocation* fuku_code_holder::create_rip_relocation(const fuku_rip_relocation& rip_reloc) {
 
-    if (available_relocations.size()) {
-        size_t idx = available_relocations[0];
-        available_relocations.erase(available_relocations.begin());
 
-        relocations[idx] = { relocation_id , offset , create_label(line) };
+    if (this->available_rip_relocations.size()) {
 
-        labels[relocations[idx].label_idx].refs_count++;
-        return idx;
+        auto aval_reloc = this->available_rip_relocations[this->available_rip_relocations.size() - 1];
+
+        this->available_rip_relocations.erase(
+            this->available_rip_relocations.begin() +
+            this->available_rip_relocations.size() - 1
+        );
+
+        *aval_reloc = rip_reloc;
+        return aval_reloc;
     }
     else {
-        relocations.push_back({ relocation_id , offset , create_label(line) });
 
-        labels[relocations[relocations.size() - 1].label_idx].refs_count++;
-        return relocations.size() - 1;
+        this->rip_relocations.push_back(rip_reloc);
+
+        return &this->rip_relocations.back();
     }
 }
 
-size_t fuku_code_holder::create_relocation_lb(uint8_t offset, size_t label_idx, uint32_t relocation_id) {
-
-    if (available_relocations.size()) {
-        size_t idx = available_relocations[0];
-        available_relocations.erase(available_relocations.begin());
-
-        relocations[idx] = { relocation_id , offset , label_idx };
-
-        labels[label_idx].refs_count++;
-        return idx;
-    }
-    else {
-        relocations.push_back({ relocation_id , offset , label_idx });
-
-        labels[label_idx].refs_count++;
-        return relocations.size() - 1;
-    }
+void  fuku_code_holder::release_relocation(fuku_relocation* reloc) {
+   
+    reloc->label = 0;
+    available_relocations.push_back(reloc);
 }
 
-size_t fuku_code_holder::create_relocation(const fuku_code_relocation& reloc) {
+void  fuku_code_holder::release_rip_relocation(fuku_rip_relocation* reloc) {
 
-    if (available_relocations.size()) {
-        size_t idx = available_relocations[0];
-        available_relocations.erase(available_relocations.begin());
-
-        relocations[idx] = reloc;
-
-        labels[relocations[idx].label_idx].refs_count++;
-        return idx;
-    }
-    else {
-        relocations.push_back(reloc);
-
-        labels[relocations[relocations.size() - 1].label_idx].refs_count++;
-        return relocations.size() - 1;
-    }
+    reloc->label = 0;
+    available_rip_relocations.push_back(reloc);
 }
 
-size_t fuku_code_holder::create_rip_relocation(uint8_t offset, uint64_t dst_address) {
+fuku_inst& fuku_code_holder::add_inst() {
 
-    if (available_rip_relocations.size()) {
-        size_t idx = available_rip_relocations[0];
-        available_rip_relocations.erase(available_rip_relocations.begin());
+    insts.push_back(fuku_inst());
 
-        rip_relocations[idx] = { offset , create_label(dst_address) };
-
-        labels[rip_relocations[idx].label_idx].refs_count++;
-        return idx;
-    }
-    else {
-        rip_relocations.push_back({ offset , create_label(dst_address) });
-
-        labels[rip_relocations[rip_relocations.size() - 1].label_idx].refs_count++;
-        return rip_relocations.size() - 1;
-    }
+    return insts.back();
 }
 
-size_t fuku_code_holder::create_rip_relocation(uint8_t offset, fuku_instruction* line) {
+fuku_code_holder& fuku_code_holder::add_inst(const fuku_inst& inst) {
 
-    if (available_rip_relocations.size()) {
-        size_t idx = available_rip_relocations[0];
-        available_rip_relocations.erase(available_rip_relocations.begin());
+    insts.push_back(inst);
 
-        rip_relocations[idx] = { offset , create_label(line) };
-
-        labels[rip_relocations[idx].label_idx].refs_count++;
-        return idx;
-    }
-    else {
-        rip_relocations.push_back({ offset , create_label(line) });
-
-        labels[rip_relocations[rip_relocations.size() - 1].label_idx].refs_count++;
-        return rip_relocations.size() - 1;
-    }
+    return *this;
 }
-
-size_t fuku_code_holder::create_rip_relocation_lb(uint8_t offset, size_t label_idx) {
-
-    if (available_rip_relocations.size()) {
-        size_t idx = available_rip_relocations[0];
-        available_rip_relocations.erase(available_rip_relocations.begin());
-
-        rip_relocations[idx] = { offset , label_idx };
-
-        labels[label_idx].refs_count++;
-        return idx;
-    }
-    else {
-        rip_relocations.push_back({ offset , label_idx });
-
-        labels[label_idx].refs_count++;
-        return rip_relocations.size() - 1;
-    }
-}
-
-size_t fuku_code_holder::create_rip_relocation(const fuku_code_rip_relocation& rip_reloc) {
-
-    if (available_rip_relocations.size()) {
-        size_t idx = available_rip_relocations[0];
-        available_rip_relocations.erase(available_rip_relocations.begin());
-
-        rip_relocations[idx] = rip_reloc;
-
-        labels[rip_relocations[idx].label_idx].refs_count++;
-        return idx;
-    }
-    else {
-        rip_relocations.push_back(rip_reloc);
-
-        labels[rip_relocations[rip_relocations.size() - 1].label_idx].refs_count++;
-        return rip_relocations.size() - 1;
-    }
-}
-
-void  fuku_code_holder::delete_relocation(size_t idx) {
-    
-    if (idx < relocations.size() ) {
-
-        if (relocations.size() - 1 == idx) {
-            labels[relocations[idx].label_idx].refs_count--;
-            relocations.erase(relocations.begin() + idx);
-        }
-        else {
-            labels[relocations[idx].label_idx].refs_count--;
-
-            memset(&relocations[idx], 0 , sizeof(fuku_code_relocation));
-            available_relocations.push_back(idx);
-        }
-    }
-}
-
-void  fuku_code_holder::delete_rip_relocation(size_t idx) {
-
-    if (idx < rip_relocations.size()) {
-
-        if (rip_relocations.size() - 1 == idx) {
-            labels[rip_relocations[idx].label_idx].refs_count--;
-            rip_relocations.erase(rip_relocations.begin() + idx);
-        }
-        else {
-            labels[rip_relocations[idx].label_idx].refs_count--;
-
-            memset(&rip_relocations[idx], 0, sizeof(fuku_code_rip_relocation));
-            available_rip_relocations.push_back(idx);
-        }
-    }
-}
-
-fuku_instruction& fuku_code_holder::add_line() {
-    lines.push_back(fuku_instruction());
-
-    return lines.back();
-}
-
 
 void fuku_code_holder::clear() {
     this->labels.clear();
     this->relocations.clear();
     this->rip_relocations.clear();
-    this->original_lines.clear();
-    this->lines.clear();
+    this->source_insts.clear();
+    this->insts.clear();
+    this->available_relocations.clear();
+    this->available_rip_relocations.clear();
 }
 
-fuku_instruction * fuku_code_holder::get_range_line_by_source_va(uint64_t virtual_address) {
-
-
-    if (original_lines.size()) {
-
-        if (original_lines[0]->get_source_virtual_address() <= virtual_address &&
-
-           (original_lines[original_lines.size() - 1]->get_source_virtual_address() + 
-               original_lines[original_lines.size() - 1]->get_op_length()) >= virtual_address) {
-
-            size_t left = 0;
-            size_t right = original_lines.size();
-            size_t mid = 0;
-
-            while (left < right) {
-                mid = left + (right - left) / 2;
-
-                if (original_lines[mid]->get_source_virtual_address() <= virtual_address &&
-                    original_lines[mid]->get_source_virtual_address() + original_lines[mid]->get_op_length() > virtual_address) {
-
-                    return original_lines[mid];
-                }
-                else if (original_lines[mid]->get_source_virtual_address() > virtual_address) {
-                    right = mid;
-                }
-                else {
-                    left = mid + 1;
-                }
-            }
-    
-        }
-    }
-
-    return 0;
-}
-
-fuku_instruction * fuku_code_holder::get_direct_line_by_source_va(uint64_t virtual_address) {
-
-    if (original_lines.size()) {
-
-        if (original_lines[0]->get_source_virtual_address() <= virtual_address &&
-            original_lines[original_lines.size() - 1]->get_source_virtual_address() >= virtual_address) {
-
-            size_t left = 0;
-            size_t right = original_lines.size();
-            size_t mid = 0;
-
-            while (left < right) {
-                mid = left + (right - left) / 2;
-
-                if (original_lines[mid]->get_source_virtual_address() == virtual_address) {
-                    return original_lines[mid];
-                }
-                else if (original_lines[mid]->get_source_virtual_address() > virtual_address) {
-                    right = mid;
-                }
-                else {
-                    left = mid + 1;
-                }
-            }
-
-        }
-    }
-
-    return 0;
-}
 
 
 void fuku_code_holder::set_arch(fuku_assambler_arch arch) {
     this->arch = arch;
 }
 
-
-void fuku_code_holder::set_labels(const std::vector<fuku_code_label>& labels) {
-    this->labels = labels;
-}
-
-void fuku_code_holder::set_relocations(const std::vector<fuku_code_relocation>& relocs) {
-    this->relocations = relocs;
-}
-
-void fuku_code_holder::set_rip_relocations(const std::vector<fuku_code_rip_relocation>& rip_relocs) {
-    this->rip_relocations = rip_relocs;
-}
-
-void fuku_code_holder::set_available_relocations(const std::vector<size_t>& relocs) {
-    this->available_relocations = relocs;
-}
-
-void fuku_code_holder::set_available_rip_relocations(const std::vector<size_t>& rip_relocs) {
-    this->available_rip_relocations = rip_relocs;
-}
-
-void fuku_code_holder::set_original_lines_idxs(const std::vector<fuku_instruction *>& original_lines) {
-    this->original_lines = original_lines;
-}
-
-void fuku_code_holder::set_lines(const linestorage& lines) {
-    this->lines = lines;
-}
-
-std::vector<fuku_code_label>& fuku_code_holder::get_labels() {
-    return this->labels;
-}
-
-std::vector<fuku_code_relocation>& fuku_code_holder::get_relocations() {
-    return this->relocations;
-}
-
-std::vector<fuku_code_rip_relocation>& fuku_code_holder::get_rip_relocations() {
-    return this->rip_relocations;
-}
-
-std::vector<size_t>& fuku_code_holder::get_available_relocations() {
-    return this->available_relocations;
-}
-
-std::vector<size_t>& fuku_code_holder::get_available_rip_relocations() {
-    return this->available_rip_relocations;
-}
-
-std::vector<fuku_instruction *>& fuku_code_holder::get_original_lines() {
-    return this->original_lines;
-}
-
-linestorage&  fuku_code_holder::get_lines() {
-    return this->lines;
-}
-
-
 fuku_assambler_arch fuku_code_holder::get_arch() const {
     return this->arch;
 }
+
 
 size_t fuku_code_holder::get_labels_count() const {
     return labels.size();
 }
 
-const std::vector<fuku_code_label>& fuku_code_holder::get_labels() const {
+size_t fuku_code_holder::get_relocations_count() const {
+    return this->relocations.size();
+}
+
+size_t fuku_code_holder::get_rip_relocations_count() const {
+    return this->rip_relocations.size();
+}
+
+const std::list<fuku_code_label>& fuku_code_holder::get_labels() const {
     return this->labels;
 }
 
-const std::vector<fuku_code_relocation>& fuku_code_holder::get_relocations() const {
+std::list<fuku_code_label>& fuku_code_holder::get_labels() {
+    return this->labels;
+}
+
+std::list<fuku_relocation>& fuku_code_holder::get_relocations() {
     return this->relocations;
 }
 
-const std::vector<fuku_code_rip_relocation>& fuku_code_holder::get_rip_relocations() const {
+const std::list<fuku_relocation>& fuku_code_holder::get_relocations() const {
+    return this->relocations;
+}
+
+std::list<fuku_rip_relocation>& fuku_code_holder::get_rip_relocations() {
     return this->rip_relocations;
 }
 
-const std::vector<size_t>& fuku_code_holder::get_available_relocations() const {
-    return this->available_relocations;
+const std::list<fuku_rip_relocation>& fuku_code_holder::get_rip_relocations() const {
+    return this->rip_relocations;
 }
 
-const std::vector<size_t>& fuku_code_holder::get_available_rip_relocations() const {
-    return this->available_rip_relocations;
+inststorage& fuku_code_holder::get_insts() {
+    return this->insts;
 }
 
-const std::vector<fuku_instruction *>& fuku_code_holder::get_original_lines() const {
-    return this->original_lines;
+const inststorage& fuku_code_holder::get_insts() const {
+    return this->insts;
 }
 
-const linestorage&  fuku_code_holder::get_lines() const {
-    return this->lines;
+const std::vector<fuku_inst*>& fuku_code_holder::get_source_insts() const {
+    return this->source_insts;
 }
 
-std::vector<uint8_t> finalize_code(fuku_code_holder&  code_holder,
-    std::vector<fuku_code_association>* associations,
+
+
+fuku_inst* fuku_code_holder::get_source_inst_range(uint64_t virtual_address) {
+
+
+    if (source_insts.size()) {
+
+        if (source_insts[0]->get_source_address() <= virtual_address &&
+
+            (source_insts[source_insts.size() - 1]->get_source_address() +
+                source_insts[source_insts.size() - 1]->get_oplength()) >= virtual_address) {
+
+            size_t left = 0;
+            size_t right = source_insts.size();
+            size_t mid = 0;
+
+            while (left < right) {
+                mid = left + (right - left) / 2;
+
+                if (source_insts[mid]->get_source_address() <= virtual_address &&
+                    source_insts[mid]->get_source_address() + source_insts[mid]->get_oplength() > virtual_address) {
+
+                    return source_insts[mid];
+                }
+                else if (source_insts[mid]->get_source_address() > virtual_address) {
+                    right = mid;
+                }
+                else {
+                    left = mid + 1;
+                }
+            }
+
+        }
+    }
+
+    return 0;
+}
+
+fuku_inst* fuku_code_holder::get_source_inst_direct(uint64_t virtual_address) {
+
+    if (source_insts.size()) {
+
+        if (source_insts[0]->get_source_address() <= virtual_address &&
+            source_insts[source_insts.size() - 1]->get_source_address() >= virtual_address) {
+
+            size_t left = 0;
+            size_t right = source_insts.size();
+            size_t mid = 0;
+
+            while (left < right) {
+                mid = left + (right - left) / 2;
+
+                if (source_insts[mid]->get_source_address() == virtual_address) {
+                    return source_insts[mid];
+                }
+                else if (source_insts[mid]->get_source_address() > virtual_address) {
+                    right = mid;
+                }
+                else {
+                    left = mid + 1;
+                }
+            }
+
+        }
+    }
+
+    return 0;
+}
+
+bool fuku_code_holder::finalize_code(
+    std::map<uint64_t, uint64_t>* associations,
     std::vector<fuku_image_relocation>* relocations) {
 
 
     if (associations) { associations->clear(); }
     if (relocations) { relocations->clear(); }
 
-    fuku_assambler_arch arch = code_holder.get_arch();
 
-    auto& labels = code_holder.get_labels();
-    auto& relocs = code_holder.get_relocations();
-    auto& rip_relocs = code_holder.get_rip_relocations();
-
-    std::vector<uint8_t> lines_raw;
-    size_t raw_caret_pos = 0;
-
-    for (auto &line : code_holder.get_lines()) {
+    for (auto &inst : this->insts) {
 
 
         if (associations) {
-            if (line.get_source_virtual_address() != -1) {
-                associations->push_back({ line.get_source_virtual_address(), line.get_virtual_address() });
+
+            if (inst.has_source_address()) {
+                (*associations)[inst.get_source_address()] = inst.get_current_address();
             }
         }
+        
 
-        if (line.get_relocation_disp_idx() != -1) {
+        if (inst.get_disp_reloc()) {
 
-            auto& reloc = relocs[line.get_relocation_disp_idx()];
-            auto& reloc_label = labels[reloc.label_idx];
 
-            if (arch == fuku_assambler_arch::FUKU_ASSAMBLER_ARCH_X86) {
+            if (inst.is_used_disp_reloc()) {
 
-                if (reloc_label.has_linked_instruction) {
-                    *(uint32_t*)(&line.get_op_code()[reloc.offset]) = (uint32_t)reloc_label.instruction->get_virtual_address();
+                if (this->arch == fuku_assambler_arch::FUKU_ASSAMBLER_ARCH_X86) {
+
+                    if (inst.get_disp_reloc()->label->has_linked_instruction) {
+
+                        *(uint32_t*)(&inst.get_opcode()[inst.get_disp_reloc()->offset]) =
+                            (uint32_t)inst.get_disp_reloc()->label->inst->get_current_address();
+                    }
+                    else {
+
+                        *(uint32_t*)(&inst.get_opcode()[inst.get_disp_reloc()->offset]) =
+                            (uint32_t)inst.get_disp_reloc()->label->address;
+                    }
                 }
                 else {
-                    *(uint32_t*)(&line.get_op_code()[reloc.offset]) = (uint32_t)reloc_label.dst_address;
+
+                    if (inst.get_disp_reloc()->label->has_linked_instruction) {
+
+                        *(uint64_t*)(&inst.get_opcode()[inst.get_disp_reloc()->offset]) =
+                            inst.get_disp_reloc()->label->inst->get_current_address();
+                    }
+                    else {
+
+                        *(uint64_t*)(&inst.get_opcode()[inst.get_disp_reloc()->offset]) =
+                            inst.get_disp_reloc()->label->address;
+                    }
+                }
+
+
+                if (relocations) {
+
+                    relocations->push_back({ 
+                        inst.get_disp_reloc()->reloc_id,
+                        (inst.get_current_address() + inst.get_disp_reloc()->offset)
+                    });
                 }
             }
             else {
 
-                if (reloc_label.has_linked_instruction) {
-                    *(uint64_t*)(&line.get_op_code()[reloc.offset]) = reloc_label.instruction->get_virtual_address();
+                if (inst.get_rip_reloc()->label->has_linked_instruction) {
+
+                    *(uint32_t*)(&inst.get_opcode()[inst.get_rip_reloc()->offset]) =
+                        uint32_t(inst.get_rip_reloc()->label->inst->get_current_address() - inst.get_current_address() - inst.get_oplength());
                 }
                 else {
-                    *(uint64_t*)(&line.get_op_code()[reloc.offset]) = reloc_label.dst_address;
+
+                    *(uint32_t*)(&inst.get_opcode()[inst.get_rip_reloc()->offset]) =
+                        uint32_t(inst.get_rip_reloc()->label->address - inst.get_current_address() - inst.get_oplength());
+                }
+            }
+        }
+
+        if (inst.get_imm_reloc()) {
+
+            if (this->arch == fuku_assambler_arch::FUKU_ASSAMBLER_ARCH_X86) {
+
+                if (inst.get_imm_reloc()->label->has_linked_instruction) {
+
+                    *(uint32_t*)(&inst.get_opcode()[inst.get_imm_reloc()->offset]) =
+                        (uint32_t)inst.get_imm_reloc()->label->inst->get_current_address();
+                }
+                else {
+
+                    *(uint32_t*)(&inst.get_opcode()[inst.get_imm_reloc()->offset]) =
+                        (uint32_t)inst.get_imm_reloc()->label->address;
+                }
+            }
+            else {
+
+                if (inst.get_imm_reloc()->label->has_linked_instruction) {
+
+                    *(uint64_t*)(&inst.get_opcode()[inst.get_imm_reloc()->offset]) =
+                        inst.get_imm_reloc()->label->inst->get_current_address();
+                }
+                else {
+
+                    *(uint64_t*)(&inst.get_opcode()[inst.get_imm_reloc()->offset]) =
+                        inst.get_imm_reloc()->label->address;
                 }
             }
 
 
             if (relocations) {
-                relocations->push_back({ reloc.relocation_id, (line.get_virtual_address() + reloc.offset) });
+
+                relocations->push_back({ 
+                    inst.get_imm_reloc()->reloc_id, 
+                    (inst.get_current_address() + inst.get_imm_reloc()->offset) 
+                });
             }
         }
-
-        if (line.get_relocation_imm_idx() != -1) {
-
-            auto& reloc = relocs[line.get_relocation_imm_idx()];
-            auto& reloc_label = labels[reloc.label_idx];
-
-            if (arch == fuku_assambler_arch::FUKU_ASSAMBLER_ARCH_X86) {
-
-                if (reloc_label.has_linked_instruction) {
-                    *(uint32_t*)(&line.get_op_code()[reloc.offset]) = (uint32_t)reloc_label.instruction->get_virtual_address();
-                }
-                else {
-                    *(uint32_t*)(&line.get_op_code()[reloc.offset]) = (uint32_t)reloc_label.dst_address;
-                }
-            }
-            else {
-
-                if (reloc_label.has_linked_instruction) {
-                    *(uint64_t*)(&line.get_op_code()[reloc.offset]) = reloc_label.instruction->get_virtual_address();
-                }
-                else {
-                    *(uint64_t*)(&line.get_op_code()[reloc.offset]) = reloc_label.dst_address;
-                }
-            }
-
-
-            if (relocations) {
-                relocations->push_back({ reloc.relocation_id, (line.get_virtual_address() + reloc.offset) });
-            }
-        }
-
-        if (line.get_rip_relocation_idx() != -1) {
-
-            auto& reloc = rip_relocs[line.get_rip_relocation_idx()];
-            auto& reloc_label = labels[reloc.label_idx];
-            
-
-            if (reloc_label.has_linked_instruction) {
-                *(uint32_t*)(&line.get_op_code()[reloc.offset]) =
-                    uint32_t(reloc_label.instruction->get_virtual_address() - line.get_virtual_address() - line.get_op_length());
-            }
-            else {
-                *(uint32_t*)(&line.get_op_code()[reloc.offset]) =
-                    uint32_t(reloc_label.dst_address - line.get_virtual_address() - line.get_op_length());
-            }
-        }
-
-        raw_caret_pos += line.get_op_length();
     }
 
-    {
-        lines_raw.resize(raw_caret_pos); raw_caret_pos = 0;
-
-        for (auto &line : code_holder.get_lines()) {
-
-            memcpy(&lines_raw.data()[raw_caret_pos], line.get_op_code(), line.get_op_length());
-            raw_caret_pos += line.get_op_length();
-        }
-    }
-    
-    if (associations) {
-        std::sort(associations->begin(), associations->end(), [](const fuku_code_association& l_assoc, const fuku_code_association& r_assoc) {
-            return l_assoc.original_virtual_address < r_assoc.original_virtual_address;
-        });
-    }
-
-    return lines_raw;
+    return true;
 }
 
-bool fuku_code_holder::merge_labels() {
+std::vector<uint8_t> fuku_code_holder::dump_code() {
 
-    struct label_item {
-        size_t new_label_idx;
-        fuku_code_label label;
-    };
+    std::vector<uint8_t> code_raw;
+    size_t raw_caret_pos = 0;
 
-    std::vector<label_item> new_labels_chain;
-    new_labels_chain.resize(labels.size());
+    for (auto& inst : this->insts) {
+        raw_caret_pos += inst.get_oplength();
+    }
 
-    bool has_incorrect = false;
+    {
+        code_raw.resize(raw_caret_pos); raw_caret_pos = 0;
 
-    for (size_t label_idx = 0; label_idx < labels.size(); label_idx++) { //associate labels
+        for (auto& inst : this->insts) {
 
-        auto& label = labels[label_idx];
-
-        if (label.has_linked_instruction) {
-            new_labels_chain[label_idx] = { label_idx, label.has_linked_instruction, label.refs_count, label.dst_address };
+            memcpy(&code_raw[raw_caret_pos], inst.get_opcode(), inst.get_oplength());
+            raw_caret_pos += inst.get_oplength();
         }
-        else {
+    }
 
-            fuku_instruction * line = get_direct_line_by_source_va(label.dst_address);
+    return code_raw;
+}
 
-            if (line) {
-                has_incorrect = true;
+bool fuku_code_holder::resolve_labels() {
 
-                if (line->get_label_idx() == -1) {
-                    line->set_label_idx(label_idx);
+    std::vector<std::list<fuku_code_label>::iterator> delete_labels;
+    std::map<fuku_code_label*, fuku_code_label*> remap_labels;
+
+    for (auto label_iter = labels.begin(); 
+        label_iter != labels.end(); label_iter++) { //re associate external labels
+
+        if (!label_iter->has_linked_instruction) {
+
+            fuku_inst* inst_dst = get_source_inst_direct(label_iter->address);
+
+            if (inst_dst) {
+
+                if (inst_dst->get_label()) {
+               
+                    delete_labels.push_back(label_iter);
+                    remap_labels[&(*label_iter)] = inst_dst->get_label();
                 }
+                else {
 
-                new_labels_chain[label_idx] = { line->get_label_idx(), 1, label.refs_count, (uint64_t)line };
-            }
-            else {
-
-                new_labels_chain[label_idx] = { label_idx, label.has_linked_instruction, label.refs_count, label.dst_address };
+                    label_iter->set_inst(inst_dst);
+                    inst_dst->set_label(&(*label_iter));
+                }
             }
         }
     }
 
 
-    {
-        std::vector<fuku_code_label> new_labels;
-        std::vector<size_t> label_new_map;
+    if (remap_labels.size()) {
 
-        new_labels.reserve(new_labels_chain.size());
-        label_new_map.resize(labels.size());
+        for (auto& reloc : relocations) {
 
+            if (reloc.label) {
 
-        for (size_t label_idx = 0; label_idx < new_labels_chain.size(); label_idx++) {
+                auto reloc_map_label = remap_labels.find(reloc.label);
 
-            auto& label_chain = new_labels_chain[label_idx];
-
-            if (label_chain.new_label_idx == label_idx) {
-
-                label_new_map[label_idx] = new_labels.size();
-                new_labels.push_back(label_chain.label);
+                if (reloc_map_label != remap_labels.end()) {
+                    reloc.label = reloc_map_label->second;
+                }
             }
-            else {
-                has_incorrect = true;
+        }
+        for (auto& reloc : rip_relocations) {
+
+            if (reloc.label) {
+
+                auto reloc_map_label = remap_labels.find(reloc.label);
+
+                if (reloc_map_label != remap_labels.end()) {
+                    reloc.label = reloc_map_label->second;
+                }
             }
         }
 
-        if (has_incorrect) {
-
-            {   //associate old labels map with new labels map
-
-                for (size_t label_idx = 0; label_idx < new_labels_chain.size(); label_idx++) {
-
-                    auto& label_chain = new_labels_chain[label_idx];
-
-                    if (label_chain.new_label_idx != label_idx) {
-                        label_new_map[label_idx] = label_new_map[label_chain.new_label_idx];
-                        new_labels[label_new_map[label_idx]].refs_count++;
-                    }
-                }
-            }
-
-            {   //reset labels idx to new vector idxs
-
-                for (auto& line : lines) {
-
-                    if (line.get_label_idx() != -1) {
-                        line.set_label_idx(label_new_map[line.get_label_idx()]);
-                    }
-                }
-
-                for (auto& reloc : relocations) {
-                    reloc.label_idx = label_new_map[reloc.label_idx];
-                }
-                for (auto& rip_reloc : rip_relocations) {
-                    rip_reloc.label_idx = label_new_map[rip_reloc.label_idx];
-                }
-            }
-            
-            this->labels = std::move(new_labels);
+        while(delete_labels.size()) {
+            this->labels.erase(delete_labels[delete_labels.size() - 1]);
+            delete_labels.erase(delete_labels.begin() + (delete_labels.size() - 1));
         }
     }
 
@@ -700,132 +622,150 @@ bool fuku_code_holder::merge_labels() {
 
 bool fuku_code_holder::merge_code(const fuku_code_holder& code_holder) {
 
-    if (!code_holder.get_lines().size()) { return true; }
+    if (!code_holder.insts.size()) { return true; }
 
-    if (lines.size()) {
+    if (this->insts.size()) {
 
-        linestorage& src_lines = lines;
-        size_t src_size = src_lines.size();
-
-
-        src_lines.insert(
-            src_lines.end(),
-            code_holder.get_lines().begin(), code_holder.get_lines().end()
-        );
-
-
-
-        auto src_iter = src_lines.begin();
-        std::advance(src_iter, src_size);
-
+        size_t inst_count = insts.size();
         size_t label_count = labels.size();
         size_t reloc_count = relocations.size();
         size_t rip_reloc_count = rip_relocations.size();
+        size_t cache_reloc_count = available_relocations.size();
+        size_t cache_rip_reloc_count = available_rip_relocations.size();
+
+        insts.insert(
+            insts.end(),
+            code_holder.insts.begin(), code_holder.insts.end()
+        );
+
+        labels.insert(
+            labels.end(),
+            code_holder.labels.begin(), code_holder.labels.end()
+        );
+
+        relocations.insert(
+            relocations.end(),
+            code_holder.relocations.begin(), code_holder.relocations.end()
+        );
+
+        rip_relocations.insert(
+            rip_relocations.end(),
+            code_holder.rip_relocations.begin(), code_holder.rip_relocations.end()
+        );
+
+        auto inst_iter = insts.begin();
+        std::advance(inst_iter, inst_count);
+
+        auto label_iter = labels.begin();
+        std::advance(label_iter, label_count);
+
+        auto reloc_iter = relocations.begin();
+        std::advance(reloc_iter, reloc_count);
+
+        auto rip_reloc_iter = rip_relocations.begin();
+        std::advance(rip_reloc_iter, rip_reloc_count);
 
 
         if (code_holder.get_labels_count()) {
 
-            std::vector<fuku_instruction* > labels_cache;
-            labels_cache.resize(code_holder.get_labels_count());
+            std::vector<fuku_code_label*> label_map;
+            std::map<const fuku_relocation*, fuku_relocation*> reloc_map;
+            std::map<const fuku_rip_relocation*, fuku_rip_relocation*> rip_reloc_map;
 
-            for (; src_iter != src_lines.end(); ++src_iter) { //fix new items label idxs
+            create_relation_map(
+                code_holder.labels.begin(), label_iter,
+                code_holder.labels.end(),   this->labels.end(),
 
-                if (src_iter->get_label_idx() != -1) {
+                code_holder.relocations.begin(), reloc_iter,
+                code_holder.relocations.end(), this->relocations.end(),
 
-                    labels_cache[src_iter->get_label_idx()] = (&(*src_iter));
+                code_holder.rip_relocations.begin(), rip_reloc_iter,
+                code_holder.rip_relocations.end(), this->rip_relocations.end(),
 
-                    if (label_count) {
-                        src_iter->set_label_idx(label_count + src_iter->get_label_idx());
-                    }
+                label_map,
+                reloc_map,
+                rip_reloc_map
+            );
+
+            for (; inst_iter != insts.end(); ++inst_iter) { //fix new items label idxs
+
+                auto& inst = *inst_iter;
+
+                if (inst.get_label()) {
+                    auto label = label_map[inst.get_label()->label_id];
+
+                    inst.set_label(label);
+                    label->set_inst(&inst);
                 }
 
-                if (label_count) {
+                if (inst.get_imm_reloc()) {
 
-                    if (src_iter->get_relocation_disp_idx() != -1) {
-                        src_iter->set_relocation_disp_idx(reloc_count + src_iter->get_relocation_disp_idx());
+                    auto prev_imm_reloc = inst.get_imm_reloc();
+
+                    if (!prev_imm_reloc->label) {
+                        continue;
                     }
 
-                    if (src_iter->get_relocation_imm_idx() != -1) {
-                        src_iter->set_relocation_imm_idx(reloc_count + src_iter->get_relocation_imm_idx());
-                    }
+                    auto new_imm_reloc = reloc_map[prev_imm_reloc];
 
-                    if (src_iter->get_rip_relocation_idx() != -1) {
-                        src_iter->set_rip_relocation_idx(rip_reloc_count + src_iter->get_rip_relocation_idx());
-                    }
-                }
-            }
+                    new_imm_reloc->label = label_map[prev_imm_reloc->label->label_id];
 
-            if (label_count || code_holder.get_labels().size()) { //fix new items label idxs
-
-                auto& src_relocs = code_holder.get_relocations();
-                auto& src_rip_relocs = code_holder.get_rip_relocations();
-
-                if (src_relocs.size()) {
-                    size_t current_idx = relocations.size();
-                    relocations.insert(relocations.end(), src_relocs.begin(), src_relocs.end());
-
-                    for (; current_idx < relocations.size(); current_idx++) {
-                        relocations[current_idx].label_idx += label_count;
-                    }
+                    inst.set_imm_reloc(new_imm_reloc);
                 }
 
-                if (src_rip_relocs.size()) {
-                    size_t current_idx = rip_relocations.size();
+                if (inst.get_disp_reloc()) {
 
-                    rip_relocations.insert(rip_relocations.end(), src_rip_relocs.begin(), src_rip_relocs.end());
+                    if (inst.is_used_disp_reloc()) {
 
-                    for (; current_idx < rip_relocations.size(); current_idx++) {
-                        rip_relocations[current_idx].label_idx += label_count;
+                        auto prev_disp_reloc = inst.get_disp_reloc();
+
+                        if (!prev_disp_reloc->label) {
+                            continue;
+                        }
+
+                        auto new_disp_reloc = reloc_map[prev_disp_reloc];
+
+                        new_disp_reloc->label = label_map[prev_disp_reloc->label->label_id];
+
+                        inst.set_disp_reloc(new_disp_reloc);
+                    }
+                    else { //else rip reloc
+
+                        auto prev_rip_reloc = inst.get_rip_reloc();
+
+                        if (!prev_rip_reloc->label) {
+                            continue;
+                        }
+
+                        auto new_rip_reloc = rip_reloc_map[prev_rip_reloc];
+
+                        new_rip_reloc->label = label_map[prev_rip_reloc->label->label_id];
+
+                        inst.set_rip_reloc(new_rip_reloc);
                     }
                 }
             }
 
             { //cache update
 
-                auto& src_cache_relocs = code_holder.get_available_relocations();
-                auto& src_cache_rip_relocs = code_holder.get_available_rip_relocations();
+                for (size_t idx = cache_reloc_count; idx < this->available_relocations.size(); idx++) {
 
-                if (src_cache_relocs.size()) {
-                    size_t delta_idx = available_relocations.size();
-
-                    available_relocations.insert(available_relocations.end(), src_cache_relocs.begin(), src_cache_relocs.end());
-
-                    for (size_t current_idx = delta_idx; current_idx < available_relocations.size(); current_idx++) {
-                        available_relocations[current_idx] += delta_idx;
-                    }
+                    this->available_relocations[idx] = reloc_map[this->available_relocations[idx]];
                 }
 
-                if (src_cache_rip_relocs.size()) {
-                    size_t delta_idx = available_rip_relocations.size();
+                for (size_t idx = cache_rip_reloc_count; idx < this->available_rip_relocations.size(); idx++) {
 
-                    available_rip_relocations.insert(available_rip_relocations.end(), src_cache_rip_relocs.begin(), src_cache_rip_relocs.end());
-
-                    for (size_t current_idx = delta_idx; current_idx < available_rip_relocations.size(); current_idx++) {
-                        available_rip_relocations[current_idx] += delta_idx;
-                    }
+                    this->available_rip_relocations[idx] = rip_reloc_map[this->available_rip_relocations[idx]];
                 }
             }
 
-            auto& src_labels = code_holder.get_labels();
-
-            labels.insert(labels.end(), src_labels.begin(), src_labels.end());
-
-            for (size_t label_idx = label_count; label_idx < labels.size(); label_idx++) {
-
-                if (labels[label_idx].has_linked_instruction) {
-                    labels[label_idx].instruction = labels_cache[label_idx - label_count];
-                }
-            }
         }
 
-        update_origin_idxs();
-        merge_labels();
+        update_source_insts();
+        resolve_labels();
     }
     else {
         this->operator=(code_holder);
-
-        update_origin_idxs();
-        merge_labels();
     }
 
     return true;
@@ -833,133 +773,39 @@ bool fuku_code_holder::merge_code(const fuku_code_holder& code_holder) {
 
 bool fuku_code_holder::splice_code(fuku_code_holder& code_holder) {
 
-    if (!code_holder.get_lines().size()) { return true; }
+    if (!code_holder.insts.size()) { return true; }
 
-    if (lines.size()) {
+    if (insts.size()) {
 
-        linestorage& src_lines = lines;
-        size_t src_size = src_lines.size();
+        this->labels.splice(this->labels.end(), code_holder.labels);
+        this->relocations.splice(this->relocations.end(), code_holder.relocations);
+        this->rip_relocations.splice(this->rip_relocations.end(), code_holder.rip_relocations);
+        this->insts.splice(this->insts.end(), code_holder.insts);
 
-        src_lines.splice( src_lines.end(), code_holder.get_lines() );
+        this->available_relocations.insert(this->available_relocations.end(), 
+            code_holder.available_relocations.begin(), code_holder.available_relocations.end());
 
-        auto src_iter = src_lines.begin();
-        std::advance(src_iter, src_size);
+        this->available_rip_relocations.insert(this->available_rip_relocations.end(),
+            code_holder.available_rip_relocations.begin(), code_holder.available_rip_relocations.end());
 
-        size_t label_count = labels.size();
-        size_t reloc_count = relocations.size();
-        size_t rip_reloc_count = rip_relocations.size();
-
-
-        if (code_holder.get_labels_count()) {
-
-            std::vector<fuku_instruction* > labels_cache;
-            labels_cache.resize(code_holder.get_labels_count());
-
-            for (; src_iter != src_lines.end(); ++src_iter) { //fix new items label idxs
-
-                if (src_iter->get_label_idx() != -1) {
-
-                    labels_cache[src_iter->get_label_idx()] = (&(*src_iter));
-
-                    if (label_count) {
-                        src_iter->set_label_idx(label_count + src_iter->get_label_idx());
-                    }
-                }
-
-                if (label_count) {
-
-                    if (src_iter->get_relocation_disp_idx() != -1) {
-                        src_iter->set_relocation_disp_idx(reloc_count + src_iter->get_relocation_disp_idx());
-                    }
-
-                    if (src_iter->get_relocation_imm_idx() != -1) {
-                        src_iter->set_relocation_imm_idx(reloc_count + src_iter->get_relocation_imm_idx());
-                    }
-
-                    if (src_iter->get_rip_relocation_idx() != -1) {
-                        src_iter->set_rip_relocation_idx(rip_reloc_count + src_iter->get_rip_relocation_idx());
-                    }
-                }
-            }
-
-            if (label_count || code_holder.get_labels().size()) { //fix new items label idxs
-
-                auto& src_relocs = code_holder.get_relocations();
-                auto& src_rip_relocs = code_holder.get_rip_relocations();
-
-                if (src_relocs.size()) {
-                    size_t current_idx = relocations.size();
-                    relocations.insert(relocations.end(), src_relocs.begin(), src_relocs.end());
-
-                    for (; current_idx < relocations.size(); current_idx++) {
-                        relocations[current_idx].label_idx += label_count;
-                    }
-                }
-
-                if (src_rip_relocs.size()) {
-                    size_t current_idx = rip_relocations.size();
-
-                    rip_relocations.insert(rip_relocations.end(), src_rip_relocs.begin(), src_rip_relocs.end());
-
-                    for (; current_idx < rip_relocations.size(); current_idx++) {
-                        rip_relocations[current_idx].label_idx += label_count;
-                    }
-                }
-            }
-
-            { //cache update
-
-                auto& src_cache_relocs = code_holder.get_available_relocations();
-                auto& src_cache_rip_relocs = code_holder.get_available_rip_relocations();
-
-                if (src_cache_relocs.size()) {
-                    size_t delta_idx = available_relocations.size();
-
-                    available_relocations.insert(available_relocations.end(), src_cache_relocs.begin(), src_cache_relocs.end());
-
-                    for (size_t current_idx = delta_idx; current_idx < available_relocations.size(); current_idx++) {
-                        available_relocations[current_idx] += delta_idx;
-                    }
-                }
-
-                if (src_cache_rip_relocs.size()) {
-                    size_t delta_idx = available_rip_relocations.size();
-
-                    available_rip_relocations.insert(available_rip_relocations.end(), src_cache_rip_relocs.begin(), src_cache_rip_relocs.end());
-
-                    for (size_t current_idx = delta_idx; current_idx < available_rip_relocations.size(); current_idx++) {
-                        available_rip_relocations[current_idx] += delta_idx;
-                    }
-                }
-            }
-
-            auto& src_labels = code_holder.get_labels();
-
-            labels.insert(labels.end(), src_labels.begin(), src_labels.end());
-
-            for (size_t label_idx = label_count; label_idx < labels.size(); label_idx++) {
-
-                if (labels[label_idx].has_linked_instruction) {
-                    labels[label_idx].instruction = labels_cache[label_idx - label_count];
-                }
-            }
-        }
-
-        update_origin_idxs();
-        merge_labels();
+   
+        update_source_insts();
+        resolve_labels();
 
         code_holder.clear();
     }
     else {
-        clear();
+        
+    clear();
+
         this->arch = code_holder.arch;
         this->labels.swap(code_holder.labels);
         this->relocations.swap(code_holder.relocations);
         this->rip_relocations.swap(code_holder.rip_relocations);
         this->available_relocations.swap(code_holder.available_relocations);
         this->available_rip_relocations.swap(code_holder.available_rip_relocations);
-        this->original_lines.swap(code_holder.original_lines);
-        this->lines.swap(code_holder.lines);
+        this->source_insts.swap(code_holder.source_insts);
+        this->insts.swap(code_holder.insts);
     }
 
     return true;

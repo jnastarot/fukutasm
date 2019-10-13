@@ -4,9 +4,9 @@
      clear_space(ctx);
 
 #define gen_func_return(cap_id, cap_eflags)\
-     *ctx.inst = fuku_instruction().set_op_code(ctx.bytecode, ctx.length) \
+     *ctx.inst = fuku_inst().set_opcode(ctx.bytecode, ctx.length) \
         .set_id(cap_id) \
-        .set_used_eflags(cap_eflags);  \
+        .set_cpu_flags(cap_eflags);  \
     return;
 
 //emit 1 byte , emit modrm(regrm, idx)

@@ -1,55 +1,44 @@
 #pragma once
 
-#pragma pack(push, 1)
 
 struct fuku_image_relocation {
     uint32_t relocation_id;
     uint64_t virtual_address;
 };
 
-struct fuku_code_association {
-    uint64_t original_virtual_address;
-    uint64_t virtual_address;
-};
 
-struct fuku_code_label {
-    uint8_t has_linked_instruction;
-    uint32_t refs_count;
-
-    union {
-        uint64_t dst_address;
-        fuku_instruction * instruction;
-    };
-};
-
-struct fuku_code_relocation {
-    uint32_t relocation_id;
-    uint8_t  offset;
-    size_t label_idx;
-};
-
-struct fuku_code_rip_relocation {
-    uint8_t  offset;
-    size_t label_idx;
-};
-
-#pragma pack(pop)
 
 class fuku_code_holder {
     fuku_assambler_arch arch;
 
-    std::vector<fuku_code_label> labels;
-    std::vector<fuku_code_relocation> relocations;
-    std::vector<fuku_code_rip_relocation> rip_relocations;
+    std::list<fuku_code_label>     labels;
+    std::list<fuku_relocation>     relocations;
+    std::list<fuku_rip_relocation> rip_relocations;
 
-    std::vector<size_t> available_relocations;
-    std::vector<size_t> available_rip_relocations;
+    std::vector<fuku_relocation*> available_relocations;
+    std::vector<fuku_rip_relocation*> available_rip_relocations;
 
+    std::vector<fuku_inst*> source_insts;
 
-    std::vector<fuku_instruction *> original_lines; //sorted instructions with valid source_virtual_address
+    inststorage insts;
 
-    linestorage  lines;
+    void create_relation_map(
+        std::list<fuku_code_label>::const_iterator prev_labels, std::list<fuku_code_label>::iterator new_labels,
+        std::list<fuku_code_label>::const_iterator prev_labels_end, std::list<fuku_code_label>::iterator new_labels_end,
+
+        std::list<fuku_relocation>::const_iterator prev_relocs, std::list<fuku_relocation>::iterator new_relocs,
+        std::list<fuku_relocation>::const_iterator prev_relocs_end, std::list<fuku_relocation>::iterator new_relocs_end,
+
+        std::list<fuku_rip_relocation>::const_iterator prev_rip_relocs, std::list<fuku_rip_relocation>::iterator new_rip_relocs,
+        std::list<fuku_rip_relocation>::const_iterator prev_rip_relocs_end, std::list<fuku_rip_relocation>::iterator new_rip_relocs_end,
+
+        std::vector<fuku_code_label*>& label_map,
+        std::map<const fuku_relocation*, fuku_relocation*>& reloc_map,
+        std::map<const fuku_rip_relocation*, fuku_rip_relocation*>& rip_reloc_map
+    ) const;
+
 public:
+
     fuku_code_holder();
     fuku_code_holder(fuku_assambler_arch arch);
     fuku_code_holder(const fuku_code_holder& code_holder);
@@ -57,76 +46,63 @@ public:
 
 
     fuku_code_holder& operator=(const fuku_code_holder& code_holder);
+public:
+
+    void set_arch(fuku_assambler_arch arch);
+
+    fuku_code_label* create_label(const fuku_code_label& label);
+    fuku_relocation* create_relocation(const fuku_relocation& reloc);
+    fuku_rip_relocation* create_rip_relocation(const fuku_rip_relocation& rip_reloc);
+
+    void release_relocation(fuku_relocation* reloc);
+    void release_rip_relocation(fuku_rip_relocation* reloc);
+
+
+    fuku_inst& add_inst();
+
+    fuku_code_holder& add_inst(const fuku_inst& inst);
+
+    void clear();
+public:
+
+    bool finalize_code(std::map<uint64_t, uint64_t>* associations,
+        std::vector<fuku_image_relocation>* relocations);
+
+    std::vector<uint8_t> dump_code();
+
+public:
 
     bool merge_code(const fuku_code_holder& code_holder);
     bool splice_code(fuku_code_holder& code_holder);
-    bool merge_labels();
-public:
-    void   update_virtual_address(uint64_t destination_virtual_address);
-    void   update_origin_idxs();
 
-    size_t create_label(fuku_instruction* line);
-    size_t create_label(uint64_t dst_address);
-    size_t create_relocation(uint8_t offset, uint64_t dst_address, uint32_t relocation_id);
-    size_t create_relocation(uint8_t offset, fuku_instruction* line, uint32_t relocation_id);
-    size_t create_relocation_lb(uint8_t offset, size_t label_idx, uint32_t relocation_id);
-    size_t create_relocation(const fuku_code_relocation& reloc);
-    size_t create_rip_relocation(uint8_t offset, uint64_t dst_address);
-    size_t create_rip_relocation(uint8_t offset, fuku_instruction* line);
-    size_t create_rip_relocation_lb(uint8_t offset, size_t label_idx);
-    size_t create_rip_relocation(const fuku_code_rip_relocation& rip_reloc);
-
-    void   delete_relocation(size_t idx);
-    void   delete_rip_relocation(size_t idx);
-
-
-    fuku_instruction& add_line();
-
-    void clear();
-
-    fuku_instruction * get_range_line_by_source_va(uint64_t virtual_address);
-    fuku_instruction * get_direct_line_by_source_va(uint64_t virtual_address);
+    bool resolve_labels();
 
 public:
-    void set_arch(fuku_assambler_arch arch);
 
-    void set_labels(const std::vector<fuku_code_label>& labels);
-    void set_relocations(const std::vector<fuku_code_relocation>& relocs);
-    void set_rip_relocations(const std::vector<fuku_code_rip_relocation>& rip_relocs);
+    fuku_inst* get_source_inst_direct(uint64_t virtual_address);
+    fuku_inst* get_source_inst_range(uint64_t virtual_address);
 
-    void set_available_relocations(const std::vector<size_t>& relocs);
-    void set_available_rip_relocations(const std::vector<size_t>& rip_relocs);
-
-    void set_original_lines_idxs(const std::vector<fuku_instruction *>& original_lines);
-
-    void set_lines(const linestorage& lines);
+    void update_current_address(uint64_t virtual_address);
+    void update_source_insts();
 public:
-    std::vector<fuku_code_label>& get_labels();
-    std::vector<fuku_code_relocation>& get_relocations();
-    std::vector<fuku_code_rip_relocation>& get_rip_relocations();
 
-    std::vector<size_t>& get_available_relocations();
-    std::vector<size_t>& get_available_rip_relocations();
-
-    std::vector<fuku_instruction *>& get_original_lines();
-
-    linestorage&  get_lines();
-public:
     fuku_assambler_arch get_arch() const;
+
     size_t get_labels_count() const;
+    size_t get_relocations_count() const;
+    size_t get_rip_relocations_count() const;
 
-    const std::vector<fuku_code_label>& get_labels() const;
-    const std::vector<fuku_code_relocation>& get_relocations() const;
-    const std::vector<fuku_code_rip_relocation>& get_rip_relocations() const;
+    std::list<fuku_code_label>& get_labels();
+    const std::list<fuku_code_label>& get_labels() const;
+    std::list<fuku_relocation>& get_relocations();
+    const std::list<fuku_relocation>& get_relocations() const;
+    std::list<fuku_rip_relocation>& get_rip_relocations();
+    const std::list<fuku_rip_relocation>& get_rip_relocations() const;
 
-    const std::vector<size_t>& get_available_relocations() const;
-    const std::vector<size_t>& get_available_rip_relocations() const;
+    inststorage&  get_insts();
+    const inststorage& get_insts() const;
 
-    const std::vector<fuku_instruction *>& get_original_lines() const;
+    const std::vector<fuku_inst*>& get_source_insts() const;
 
-    const linestorage&  get_lines() const;
 };
 
-std::vector<uint8_t> finalize_code(fuku_code_holder&  code_holder, 
-    std::vector<fuku_code_association>* associations,
-    std::vector<fuku_image_relocation>* relocations);

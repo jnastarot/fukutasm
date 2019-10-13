@@ -34,11 +34,11 @@ namespace fukutasm {
 
         uint8_t short_cfg;
 
-        fuku_instruction * inst;
+        fuku_inst * inst;
     };
 
 
-    //Data Transfer Instructions
+        //Data Transfer Instructions
         asm_def_2op(mov, _b, fuasm_reg, fuasm_reg)
         asm_def_2op(mov, _b, fuasm_reg, fuasm_imm)
         asm_def_2op(mov, _b, fuasm_reg, fuasm_op)
@@ -118,6 +118,12 @@ namespace fukutasm {
         asm_def_1op(pop, _dw, fuasm_op)
         asm_def_1op(pop, _qw, fuasm_op)
 
+        asm_def_noop(pusha, )   //pusha  w  regs
+        asm_def_noop(pushad, )  //pushad dw regs
+
+        asm_def_noop(popa, )    //popa   w  regs
+        asm_def_noop(popad, )   //popad  dw regs
+
         asm_def_noop(cwd, )
         asm_def_noop(cdq, )
         asm_def_noop(cqo, )
@@ -153,6 +159,7 @@ namespace fukutasm {
         asm_def_2op(movsxd, _dword_dw, fuasm_reg, fuasm_op)
         asm_def_2op(movsxd, _dword_qw, fuasm_reg, fuasm_reg)
         asm_def_2op(movsxd, _dword_qw, fuasm_reg, fuasm_op)
+
         //Binary Arithmetic Instructions
         asm_def_2op(adcx, _dw, fuasm_reg, fuasm_reg)
         asm_def_2op(adcx, _dw, fuasm_reg, fuasm_op)
@@ -162,6 +169,8 @@ namespace fukutasm {
         asm_def_2op(adox, _dw, fuasm_reg, fuasm_op)
         asm_def_2op(adox, _qw, fuasm_reg, fuasm_reg)
         asm_def_2op(adox, _qw, fuasm_reg, fuasm_op)
+
+        //ADOX TODO:
 
         asm_def_2op(add, _b, fuasm_reg, fuasm_reg)
         asm_def_2op(add, _b, fuasm_reg, fuasm_imm)
@@ -330,15 +339,15 @@ namespace fukutasm {
         asm_def_2op(cmp, _qw, fuasm_reg, fuasm_op)
         asm_def_2op(cmp, _qw, fuasm_op, fuasm_reg)
         asm_def_2op(cmp, _qw, fuasm_op, fuasm_imm)
+
         //Decimal Arithmetic Instructions
         asm_def_noop(daa, )
         asm_def_noop(das, )
         asm_def_noop(aaa, )
         asm_def_noop(aas, )
-
         asm_def_1op(aam, , fuasm_imm)
-
         asm_def_1op(aad, , fuasm_imm)
+
         //Logical Instructions Instructions
         asm_def_2op(and, _b, fuasm_reg, fuasm_reg)
         asm_def_2op(and, _b, fuasm_reg, fuasm_imm)
@@ -411,6 +420,7 @@ namespace fukutasm {
         asm_def_1op(not, _dw, fuasm_op)
         asm_def_1op(not, _qw, fuasm_reg)
         asm_def_1op(not, _qw, fuasm_op)
+
         //Shift and Rotate Instructions
         asm_def_1op(sar_cl, _b, fuasm_reg)
         asm_def_1op(sar_cl, _b, fuasm_op)
@@ -556,6 +566,7 @@ namespace fukutasm {
         asm_def_1op(rcl_cl, _qw, fuasm_op)
         asm_def_2op(rcl, _qw, fuasm_reg, fuasm_imm)
         asm_def_2op(rcl, _qw, fuasm_op, fuasm_imm)
+
         //Bit and Byte Instructions
         asm_def_2op(bt, _w, fuasm_reg, fuasm_reg)
         asm_def_2op(bt, _w, fuasm_reg, fuasm_imm)
@@ -643,18 +654,24 @@ namespace fukutasm {
         asm_def_2op(test, _qw, fuasm_reg, fuasm_imm)
         asm_def_2op(test, _qw, fuasm_op, fuasm_imm)
 
+        //CRC32 TODO:
+
         asm_def_2op(popcnt, _w, fuasm_reg, fuasm_reg)
         asm_def_2op(popcnt, _w, fuasm_reg, fuasm_op)
         asm_def_2op(popcnt, _dw, fuasm_reg, fuasm_reg)
         asm_def_2op(popcnt, _dw, fuasm_reg, fuasm_op)
         asm_def_2op(popcnt, _qw, fuasm_reg, fuasm_reg)
         asm_def_2op(popcnt, _qw, fuasm_reg, fuasm_op)
+
         //Control Transfer Instructions
         asm_def_1op(jmp, , fuasm_reg)
         asm_def_1op(jmp, , fuasm_op)
         asm_def_1op(jmp, , fuasm_imm)
 
         asm_def_cond_1op(jcc, , fuasm_imm)
+
+        //JCXZ/JECXZ TODO:
+        //LOOP/LOOPZ/LOOPNZ TODO: 
 
         asm_def_1op(call, , fuasm_reg)
         asm_def_1op(call, , fuasm_op)
@@ -663,14 +680,16 @@ namespace fukutasm {
         asm_def_noop(ret, )
         asm_def_1op(ret, , fuasm_imm)
 
+        //IRET TODO:
+
         asm_def_noop(int3, )
+
+        //INTO/BOUND TODO:
+
         asm_def_2op(enter, , fuasm_imm, uint8_t)//enter size, nestinglevel
         asm_def_noop(, leave_)
-        //String Instructions
-        asm_def_noop(outsb, )
-        asm_def_noop(outsw, )
-        asm_def_noop(outsd, )
 
+        //String Instructions
         asm_def_noop(movs, b)
         asm_def_noop(movs, w)
         asm_def_noop(movs, d)
@@ -695,6 +714,16 @@ namespace fukutasm {
         asm_def_noop(stos, w)
         asm_def_noop(stos, d)
         asm_def_noop(stos, q)
+
+        // I/O Instructions
+        
+        //IN/OUT TODO:
+        //INS TODO:
+            
+        asm_def_noop(outsb, )
+        asm_def_noop(outsw, )
+        asm_def_noop(outsd, )
+
         //Flag Control (EFLAG) Instructions
         asm_def_noop(stc, )
         asm_def_noop(clc, )
@@ -705,12 +734,6 @@ namespace fukutasm {
         asm_def_noop(lahf, )
         asm_def_noop(sahf, )
 
-        asm_def_noop(pusha, )   //pusha  w  regs
-        asm_def_noop(pushad, )  //pushad dw regs
-
-        asm_def_noop(popa, )//popa   w  regs
-        asm_def_noop(popad, )   //popad  dw regs
-
         asm_def_noop(pushf, )   //pushf  w  flags
         asm_def_noop(pushfd, )  //pushfd dw flags
         asm_def_noop(pushfq, )  //pushfq qw flags
@@ -718,6 +741,14 @@ namespace fukutasm {
         asm_def_noop(popf, )//popf   w  flags
         asm_def_noop(popfd, )   //popfd  dw flags
         asm_def_noop(popfq, )   //popfq  qw flags
+
+        //STI/CLI TODO:
+
+        //Segment Register Instructions
+
+        //LDS/LES/LFS/LGS/LSS TODO:
+
+
         //Miscellaneous Instructions
         asm_def_2op(lea, _w, fuasm_reg, fuasm_op)
         asm_def_2op(lea, _dw, fuasm_reg, fuasm_op)
@@ -726,6 +757,7 @@ namespace fukutasm {
         asm_def_1op(nop, , uint8_t)
         asm_def_noop(ud2, )
         asm_def_noop(cpuid, )
+
         //Random Number Generator Instructions
         asm_def_1op(rdrand, _w, fuasm_reg)
         asm_def_1op(rdrand, _dw, fuasm_reg)
@@ -734,6 +766,7 @@ namespace fukutasm {
         asm_def_1op(rdseed, _w, fuasm_reg)
         asm_def_1op(rdseed, _dw, fuasm_reg)
         asm_def_1op(rdseed, _qw, fuasm_reg)
+
         //BMI1, BMI2
         /*asm_def_3op(andn, _dw, fuasm_reg, fuasm_reg, fuasm_reg)
         asm_def_3op(andn, _dw, fuasm_reg, fuasm_reg, fuasm_op)
@@ -790,11 +823,29 @@ namespace fukutasm {
         //SARX
         //SHLX
         //SHRX
+
         //SYSTEM INSTRUCTIONS
         asm_def_noop(hlt, )
         asm_def_noop(rdtsc, )
         asm_def_noop(lfence, )
 
+
+        //X87 Instructions
+
+        //SSE Instructions
+
+        //SSE2 Instructions
+
+        //SSE3 Instructions
+
+        //SSE4 Instructions
+        //SSE4.1 Instructions
+        //SSE4.2 Instructions
+
+        //AVX Instructions
+        //AVX2 Instructions
+        //TSX Instructions
+        //AVX-512 Instructions
 };
 
 #undef asm_def_noop

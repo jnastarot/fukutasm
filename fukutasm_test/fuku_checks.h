@@ -52,69 +52,72 @@ bool check_imm(uint64_t cs_imm, fuku_immediate imm, uint32_t imm_size) {
     return true;
 }
 
-void check_operand(fuku_operand& op, cs_x86_op * csop, uint32_t disp_size, fuku_operand_size size) {
+void check_operand(std::string& error, fuku_operand& op, cs_x86_op * csop, uint32_t disp_size, fuku_operand_size size) {
+
     if (csop->type != x86_op_type::X86_OP_MEM) {
-        printf("op error type  ");
+        error += ("op error type  ");
         return;
     };
 
     switch (op.get_type()) {
     case FUKU_MEM_OPERAND_BASE_ONLY: {
-        if (convert_cs_to_fuku(csop->mem.base) != op.get_base().get_index()) { printf("reg error type  "); }
+        if (convert_cs_to_fuku(csop->mem.base) != op.get_base().get_index()) { error += ("reg error type  "); }
         break;
     }
     case    FUKU_MEM_OPERAND_DISP_ONLY: {
         if (!check_imm(csop->mem.disp, op.get_disp(), disp_size)) {
-            printf("disp error  ");
+            error += ("disp error  ");
         }
         break;
     }
     case    FUKU_MEM_OPERAND_BASE_DISP: {
-        if (convert_cs_to_fuku(csop->mem.base) != op.get_base().get_index()) { printf("reg error type  "); }
+        if (convert_cs_to_fuku(csop->mem.base) != op.get_base().get_index()) { error += ("reg error type  "); }
         if (!check_imm(csop->mem.disp, op.get_disp(), disp_size)) {
-            printf("disp error  ");
+            error += ("disp error  ");
         }
         break;
     }
     case    FUKU_MEM_OPERAND_INDEX_DISP: {
-        if (convert_cs_to_fuku(csop->mem.index) != op.get_index().get_index()) { printf("idx error type  "); }
+        if (convert_cs_to_fuku(csop->mem.index) != op.get_index().get_index()) { error += ("idx error type  "); }
         if (!check_imm(csop->mem.disp, op.get_disp(), disp_size)) {
-            printf("disp error  ");
+            error += ("disp error  ");
         }
         break;
     }
     case    FUKU_MEM_OPERAND_BASE_INDEX: {
-        if (convert_cs_to_fuku(csop->mem.base) != op.get_base().get_index()) { printf("reg error type  "); }
-        if (convert_cs_to_fuku(csop->mem.index) != op.get_index().get_index()) { printf("idx error type  "); }
+        if (convert_cs_to_fuku(csop->mem.base) != op.get_base().get_index()) { error += ("reg error type  "); }
+        if (convert_cs_to_fuku(csop->mem.index) != op.get_index().get_index()) { error += ("idx error type  "); }
         break;
     }
     case    FUKU_MEM_OPERAND_BASE_INDEX_DISP: {
-        if (convert_cs_to_fuku(csop->mem.base) != op.get_base().get_index()) { printf("reg error type  "); }
-        if (convert_cs_to_fuku(csop->mem.index) != op.get_index().get_index()) { printf("idx error type  "); }
+        if (convert_cs_to_fuku(csop->mem.base) != op.get_base().get_index()) { error += ("reg error type  "); }
+        if (convert_cs_to_fuku(csop->mem.index) != op.get_index().get_index()) { error += ("idx error type  "); }
         if (!check_imm(csop->mem.disp, op.get_disp(), disp_size)) {
-            printf("disp error  ");
+            error += ("disp error  ");
         }
         break;
     }
     }
 }
 
-void check_register(fuku_register reg, cs_x86_op * csop, fuku_operand_size size) {
+void check_register(std::string& error, fuku_register reg, cs_x86_op * csop, fuku_operand_size size) {
     if (csop->type != x86_op_type::X86_OP_REG) {
-        printf("op error type  ");
+        error += ("op error type  ");
         return;
     }
 
-    if (convert_cs_to_fuku(csop->reg) != reg.get_index()) { printf("reg error type  "); }
+    if (convert_cs_to_fuku(csop->reg) != reg.get_index()) { 
+        error += ("reg error type  ");
+    }
 }
 
-void check_immediate(fuku_immediate& imm, cs_x86_op * csop, uint32_t imm_size, fuku_operand_size size) {
+void check_immediate(std::string& error, fuku_immediate& imm, cs_x86_op * csop, uint32_t imm_size, fuku_operand_size size) {
     if (csop->type != x86_op_type::X86_OP_IMM) {
-        printf("op error type  ");
+        error += ("op error type  ");
         return;
     };
 
     if (!check_imm(csop->imm, imm, imm_size)) { 
-        printf("imm error  "); 
+        error += ("imm error  ");
     }
 }

@@ -86,7 +86,7 @@ fuku_operand capstone_to_fuku_op(cs_x86& x86, uint8_t op_idx);
 x86_insn fuku_to_capstone_cc(fuku_condition cond, fuku_to_cap_convert_type type);
 fuku_condition capstone_to_fuku_cond(x86_insn cond);
 
-#include "fuku_instruction.h"
+#include "fuku_inst.h"
 #include "fuku_code_holder.h"
 
 

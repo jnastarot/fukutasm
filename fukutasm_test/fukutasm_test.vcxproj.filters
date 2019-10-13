@@ -24,6 +24,12 @@
     <ClInclude Include="fuku_macro_test.h">
       <Filter>Исходные файлы</Filter>
     </ClInclude>
+    <ClInclude Include="x32_test.h">
+      <Filter>Исходные файлы</Filter>
+    </ClInclude>
+    <ClInclude Include="x64_test.h">
+      <Filter>Исходные файлы</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">

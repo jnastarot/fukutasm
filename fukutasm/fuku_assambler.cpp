@@ -87,7 +87,7 @@ fuku_prefix fuku_type::get_segment() const {
 #include "fuku_assambler_misc.h"
 
 fuku_assambler::fuku_assambler() 
-    :code_holder(0), first_emit(true), hold_type(ASSAMBLER_HOLD_TYPE_NOOVERWRITE), has_label_to_set(false), label(-1) {
+    :code_holder(0), first_emit(true), hold_type(ASSAMBLER_HOLD_TYPE_NOOVERWRITE), has_label_to_set(false), label(0) {
     
     memset(&context, 0, sizeof(context));
     context.arch = FUKU_ASSAMBLER_ARCH_X86;
@@ -96,7 +96,7 @@ fuku_assambler::fuku_assambler()
 }
 
 fuku_assambler::fuku_assambler(fuku_assambler_arch arch)
-    :code_holder(0), first_emit(true), hold_type(ASSAMBLER_HOLD_TYPE_NOOVERWRITE), has_label_to_set(false), label(-1) {
+    :code_holder(0), first_emit(true), hold_type(ASSAMBLER_HOLD_TYPE_NOOVERWRITE), has_label_to_set(false), label(0) {
     
     memset(&context, 0, sizeof(context));
     context.arch = arch;
@@ -116,12 +116,12 @@ fuku_assambler_ctx& fuku_assambler::get_context() {
 fuku_assambler& fuku_assambler::set_holder(fuku_code_holder * code_holder, fuku_assambler_hold_type hold_type) {
     this->code_holder = code_holder;
     this->hold_type = hold_type;
-    this->position = this->code_holder->get_lines().begin();
+    this->position = this->code_holder->get_insts().begin();
 
     return *this;
 }
 
-fuku_assambler& fuku_assambler::set_position(linestorage::iterator& position) {
+fuku_assambler& fuku_assambler::set_position(inststorage::iterator& position) {
     this->position = position;
 
     return *this;
@@ -145,14 +145,14 @@ fuku_assambler& fuku_assambler::clear_prefixes() {
     return *this;
 }
 
-void fuku_assambler::set_label(size_t label) {
+void fuku_assambler::set_label(fuku_code_label* label) {
     this->has_label_to_set = true;
     this->label = label;
 }
 
 void fuku_assambler::unset_label() {
     this->has_label_to_set = false;
-    this->label = -1;
+    this->label = 0;
 }
 
 void fuku_assambler::on_emit() {
@@ -161,9 +161,9 @@ void fuku_assambler::on_emit() {
         switch (hold_type) {
         case ASSAMBLER_HOLD_TYPE_FIRST_OVERWRITE: {
             if (first_emit) {
-                if (position == code_holder->get_lines().end()) {
-                    auto _position = code_holder->get_lines().end();
-                    code_holder->get_lines().insert(_position, fuku_instruction());
+                if (position == code_holder->get_insts().end()) {
+                    auto _position = code_holder->get_insts().end();
+                    code_holder->get_insts().insert(_position, fuku_inst());
                     this->context.inst = &(*(--_position));
                 }
                 else {
@@ -177,14 +177,14 @@ void fuku_assambler::on_emit() {
         }
         case ASSAMBLER_HOLD_TYPE_NOOVERWRITE: {
             auto _position = position;
-            code_holder->get_lines().insert(_position, fuku_instruction());
+            code_holder->get_insts().insert(_position, fuku_inst());
             this->context.inst = &(*(--_position));
             break;
         }
         case ASSAMBLER_HOLD_TYPE_FULL_OVERWRITE: {
-            if (position == code_holder->get_lines().end()) {
-                auto _position = code_holder->get_lines().end();
-                code_holder->get_lines().insert(_position, fuku_instruction());
+            if (position == code_holder->get_insts().end()) {
+                auto _position = code_holder->get_insts().end();
+                code_holder->get_insts().insert(_position, fuku_inst());
                 this->context.inst = &(*(--_position));
             }
             else {
@@ -231,7 +231,7 @@ fuku_assambler_ctx& fuku_assambler::on_new_chain_item() {
 
         uint8_t inst_[16];
 
-        memcpy(&inst_[prefixes.size()], context.inst->get_op_code(), context.inst->get_op_length());
+        memcpy(&inst_[prefixes.size()], context.inst->get_opcode(), context.inst->get_oplength());
         memcpy(inst_, prefixes.data(), prefixes.size());
 
         if (context.displacment_offset) {
@@ -242,20 +242,20 @@ fuku_assambler_ctx& fuku_assambler::on_new_chain_item() {
             context.immediate_offset += uint32_t(prefixes.size());
         }
 
-        context.inst->set_op_code(inst_, uint8_t(prefixes.size() + context.inst->get_op_length()) );
+        context.inst->set_opcode(inst_, uint8_t(prefixes.size() + context.inst->get_oplength()) );
 
         prefixes.clear();
     }
 
     if (has_label_to_set) {
         has_label_to_set = false;
-        context.inst->set_label_idx(label);
+        context.inst->set_label(label);
         if (code_holder) {
-            auto& ch_label = code_holder->get_labels()[label];
-            ch_label.has_linked_instruction = true;
-            ch_label.instruction = context.inst;
+
+            label->has_linked_instruction = true;
+            label->inst = context.inst;
         }
-        label = -1;
+        label = 0;
     }
 
     return context;
