@@ -67,11 +67,11 @@ fuku_inst::fuku_inst()
     source_address(0), current_address(0),
     label(0),
     imm_reloc(0), disp_reloc(0),
-    cpu_flags(0), cpu_registers(0),
-    inst_flags(0) {
+    cpu_flags(0), cpu_registers(0) {
 
-    inst_used_disp = 0;
-    inst_has_address = 0;
+    flags.inst_flags = 0;
+    flags.inst_used_disp = 0;
+    flags.inst_has_address = 0;
 
     __stosb(opcode, 0, sizeof(opcode));
 }
@@ -100,9 +100,9 @@ fuku_inst& fuku_inst::operator=(const fuku_inst& line) {
    // this->rip_reloc = line.rip_reloc; union
     this->cpu_flags = line.cpu_flags;
     this->cpu_registers = line.cpu_registers;
-    this->inst_flags = line.inst_flags;
-    this->inst_used_disp = line.inst_used_disp;
-    this->inst_has_address = line.inst_has_address;
+    this->flags.inst_flags = line.flags.inst_flags;
+    this->flags.inst_used_disp = line.flags.inst_used_disp;
+    this->flags.inst_has_address = line.flags.inst_has_address;
 
     return *this;
 }
@@ -125,7 +125,7 @@ fuku_inst&  fuku_inst::set_opcode(const uint8_t* _opcode, uint8_t _lenght) {
 fuku_inst&  fuku_inst::set_source_address(uint64_t address) {
 
     this->source_address = address;
-    this->inst_has_address = true;
+    this->flags.inst_has_address = true;
 
     return *this;
 }
@@ -140,7 +140,10 @@ fuku_inst&  fuku_inst::set_current_address(uint64_t address) {
 fuku_inst& fuku_inst::set_label(fuku_code_label* label) {
 
     this->label = label;
-    this->label->set_inst(this);
+    
+    if (this->label) {
+        this->label->set_inst(this);
+    }
 
     return *this;
 }
@@ -148,7 +151,7 @@ fuku_inst& fuku_inst::set_label(fuku_code_label* label) {
 fuku_inst& fuku_inst::set_disp_reloc(fuku_relocation* reloc) {
 
     this->disp_reloc = reloc;
-    this->inst_used_disp = true;
+    this->flags.inst_used_disp = true;
 
     return *this;
 }
@@ -163,14 +166,14 @@ fuku_inst& fuku_inst::set_imm_reloc(fuku_relocation* reloc) {
 fuku_inst& fuku_inst::set_rip_reloc(fuku_rip_relocation* reloc) {
 
     this->rip_reloc = reloc;
-    this->inst_used_disp = false;
+    this->flags.inst_used_disp = false;
 
     return *this;
 }
 
 fuku_inst& fuku_inst::set_inst_flags(uint32_t inst_flags) {
 
-    this->inst_flags = inst_flags;
+    this->flags.inst_flags = inst_flags;
 
     return *this;
 }
@@ -191,7 +194,7 @@ fuku_inst& fuku_inst::set_cpu_registers(uint64_t regs) {
 
 fuku_inst& fuku_inst::invalidate_source_address() {
 
-    this->inst_has_address = false;
+    this->flags.inst_has_address = false;
 
     return *this;
 }
@@ -249,7 +252,7 @@ const fuku_rip_relocation* fuku_inst::get_rip_reloc() const {
 }
 
 uint16_t fuku_inst::get_inst_flags() const {
-    return this->inst_flags;
+    return this->flags.inst_flags;
 }
 
 uint64_t fuku_inst::get_cpu_flags() const {
@@ -261,11 +264,11 @@ uint64_t fuku_inst::get_cpu_registers() const {
 }
 
 bool fuku_inst::has_source_address() const {
-    return this->inst_has_address;
+    return this->flags.inst_has_address;
 }
 
 bool fuku_inst::is_used_disp_reloc() const {
-    return this->inst_used_disp;
+    return this->flags.inst_used_disp;
 }
 
 uint8_t get_inst_prefixe_count(const fuku_inst& inst) {

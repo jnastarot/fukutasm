@@ -74,11 +74,12 @@ class fuku_inst {
     uint64_t cpu_flags;
     uint64_t cpu_registers;
 
-    union {
-        uint16_t inst_flags       : 14;
+    struct flag_union {
         uint16_t inst_used_disp   : 1; //disp or rip
         uint16_t inst_has_address : 1; //source_address is used
-    };
+        uint16_t inst_flags       : 14;
+   
+    } flags;
 
 public:
     fuku_inst();
