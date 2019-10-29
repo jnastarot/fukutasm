@@ -28,6 +28,24 @@
     <Filter Include="Исходные файлы\code_holder\inst">
       <UniqueIdentifier>{e041b62c-8ef7-44e7-ac73-1a9d0e1d5db0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Исходные файлы\code_analyzer">
+      <UniqueIdentifier>{dc2b5086-9d3a-4ce3-ac7c-107a584934a2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\code_profiler">
+      <UniqueIdentifier>{c50dcf81-86a5-4332-9826-9989c6e57330}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\register_math">
+      <UniqueIdentifier>{d2663177-1613-44c9-8529-1483cd330067}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\operands_objects\register">
+      <UniqueIdentifier>{ce97adea-58ce-401f-9f4c-f77eccf3e6ad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\operands_objects\immediate">
+      <UniqueIdentifier>{972021c8-3807-4569-828e-aba81b2952e2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\operands_objects\operand">
+      <UniqueIdentifier>{9f94e5ac-94bf-49b8-a635-57bb2c0cf63b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -51,27 +69,42 @@
     <ClInclude Include="fuku_assambler_misc.h">
       <Filter>Исходные файлы\assambler</Filter>
     </ClInclude>
-    <ClInclude Include="fuku_operand.h">
-      <Filter>Исходные файлы\operands_objects</Filter>
-    </ClInclude>
-    <ClInclude Include="fuku_register.h">
-      <Filter>Исходные файлы\operands_objects</Filter>
-    </ClInclude>
-    <ClInclude Include="fuku_immediate.h">
-      <Filter>Исходные файлы\operands_objects</Filter>
-    </ClInclude>
     <ClInclude Include="fuku_code_holder.h">
       <Filter>Исходные файлы\code_holder</Filter>
     </ClInclude>
     <ClInclude Include="fuku_inst.h">
       <Filter>Исходные файлы\code_holder\inst</Filter>
     </ClInclude>
+    <ClInclude Include="fuku_code_analyzer.h">
+      <Filter>Исходные файлы\code_analyzer</Filter>
+    </ClInclude>
+    <ClInclude Include="fuku_code_profiler.h">
+      <Filter>Исходные файлы\code_profiler</Filter>
+    </ClInclude>
+    <ClInclude Include="fuku_register_math.h">
+      <Filter>Исходные файлы\register_math</Filter>
+    </ClInclude>
+    <ClInclude Include="fuku_register_math_tables.h">
+      <Filter>Исходные файлы\register_math</Filter>
+    </ClInclude>
+    <ClInclude Include="fuku_register_math_metadata.h">
+      <Filter>Исходные файлы\register_math</Filter>
+    </ClInclude>
+    <ClInclude Include="fuku_immediate.h">
+      <Filter>Исходные файлы\operands_objects\immediate</Filter>
+    </ClInclude>
+    <ClInclude Include="fuku_register.h">
+      <Filter>Исходные файлы\operands_objects\register</Filter>
+    </ClInclude>
+    <ClInclude Include="fuku_operand.h">
+      <Filter>Исходные файлы\operands_objects\operand</Filter>
+    </ClInclude>
+    <ClInclude Include="fuku_type.h">
+      <Filter>Исходные файлы\operands_objects</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="fukutasm.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="fuku_internal_assambler.cpp">
@@ -85,6 +118,27 @@
     </ClCompile>
     <ClCompile Include="fuku_inst.cpp">
       <Filter>Исходные файлы\code_holder\inst</Filter>
+    </ClCompile>
+    <ClCompile Include="fuku_code_analyzer.cpp">
+      <Filter>Исходные файлы\code_analyzer</Filter>
+    </ClCompile>
+    <ClCompile Include="fuku_code_profiler.cpp">
+      <Filter>Исходные файлы\code_profiler</Filter>
+    </ClCompile>
+    <ClCompile Include="fuku_register_math.cpp">
+      <Filter>Исходные файлы\register_math</Filter>
+    </ClCompile>
+    <ClCompile Include="fuku_register.cpp">
+      <Filter>Исходные файлы\operands_objects\register</Filter>
+    </ClCompile>
+    <ClCompile Include="fuku_operand.cpp">
+      <Filter>Исходные файлы\operands_objects\operand</Filter>
+    </ClCompile>
+    <ClCompile Include="fuku_immediate.cpp">
+      <Filter>Исходные файлы\operands_objects\immediate</Filter>
+    </ClCompile>
+    <ClCompile Include="fuku_type.cpp">
+      <Filter>Исходные файлы\operands_objects</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

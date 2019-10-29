@@ -162,7 +162,10 @@
     <ClInclude Include="fukutasm.h" />
     <ClInclude Include="fuku_assambler.h" />
     <ClInclude Include="fuku_assambler_misc.h" />
+    <ClInclude Include="fuku_code_analyzer.h" />
     <ClInclude Include="fuku_code_holder.h" />
+    <ClInclude Include="fuku_code_profiler.h" />
+    <ClInclude Include="fuku_register_math_metadata.h" />
     <ClInclude Include="fuku_immediate.h" />
     <ClInclude Include="fuku_internal_assambler.h" />
     <ClInclude Include="fuku_internal_assambler_func_macro.h" />
@@ -170,14 +173,23 @@
     <ClInclude Include="fuku_inst.h" />
     <ClInclude Include="fuku_operand.h" />
     <ClInclude Include="fuku_register.h" />
+    <ClInclude Include="fuku_register_math.h" />
+    <ClInclude Include="fuku_register_math_tables.h" />
+    <ClInclude Include="fuku_type.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="fukutasm.cpp" />
     <ClCompile Include="fuku_assambler.cpp" />
+    <ClCompile Include="fuku_code_analyzer.cpp" />
     <ClCompile Include="fuku_code_holder.cpp" />
+    <ClCompile Include="fuku_code_profiler.cpp" />
+    <ClCompile Include="fuku_immediate.cpp" />
     <ClCompile Include="fuku_internal_assambler.cpp" />
     <ClCompile Include="fuku_inst.cpp" />
+    <ClCompile Include="fuku_operand.cpp" />
+    <ClCompile Include="fuku_register.cpp" />
+    <ClCompile Include="fuku_register_math.cpp" />
+    <ClCompile Include="fuku_type.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

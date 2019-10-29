@@ -52,43 +52,11 @@ enum fuku_assambler_arch {
 };
 
 
-#include "fuku_register.h"
-#include "fuku_immediate.h"
-#include "fuku_operand.h"
-
-/*
-	EAX = 0 ECX = 1 r_EDX = 2
-	R8 = 0 R9 = 1 R10 = 2
-	and them lowest parts etc
-*/
-fuku_register_index fuku_get_index_by_register(fuku_register_enum reg);
-fuku_register_enum  fuku_get_register_by_index(fuku_register_index idx, bool x64ext, fuku_operand_size size);
-fuku_operand_size   fuku_get_register_size(fuku_register_enum reg);
-
-//  returns true for RAX - RDI,SPL - DIL, R8 - R15
-bool fuku_is_x64arch_reg(fuku_register_enum reg);
-//  returns true for R8 - R15 , return 0 - 1
-uint8_t fuku_is_x64arch_ext_reg(fuku_register_enum reg);
-//  returns true for EAX - EDI
-bool fuku_is_x32arch_reg(fuku_register_enum reg);
-
-
-enum fuku_to_cap_convert_type {
-    CONVERT_TYPE_JCC,
-    CONVERT_TYPE_SETCC,
-    CONVERT_TYPE_CMOVCC,
-};
-
-//uint8_t fuku_to_capstone_reg(const fuku_register& reg);
-fuku_register_enum capstone_to_fuku_reg(x86_reg reg);
-fuku_operand capstone_to_fuku_op(cs_x86& x86, uint8_t op_idx);
-
-x86_insn fuku_to_capstone_cc(fuku_condition cond, fuku_to_cap_convert_type type);
-fuku_condition capstone_to_fuku_cond(x86_insn cond);
-
+#include "fuku_type.h"
 #include "fuku_inst.h"
-#include "fuku_code_holder.h"
 
+#include "fuku_register_math.h"
+#include "fuku_code_holder.h"
 
 #define fuku_asm_gen_name(prefix, sname, postfix) prefix##sname##postfix
 
@@ -106,3 +74,6 @@ enum fuku_asm_short_cfg {
 
 
 #include "fuku_assambler.h"
+
+#include "fuku_code_analyzer.h"
+#include "fuku_code_profiler.h"

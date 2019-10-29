@@ -13,7 +13,7 @@ cs_insn *instruction;
 
 void test_no_arg(fuku_inst inst, fuku_operand_size size) {
 
-    size_t count = cs_disasm(cap_handle, inst.get_op_code(), inst.get_op_length(), 0, 1, &instruction);
+    size_t count = cs_disasm(cap_handle, inst.get_opcode(), inst.get_oplength(), 0, 1, &instruction);
     std::string error;
 
     if (!count) {
@@ -23,7 +23,7 @@ void test_no_arg(fuku_inst inst, fuku_operand_size size) {
     if (inst.get_id() != instruction[0].id) {
         error += ("type error  ");
     }
-    if (inst.get_used_eflags() != instruction[0].detail->x86.eflags) {
+    if (inst.get_cpu_flags() != instruction[0].detail->x86.eflags) {
         error += ("eflags error  ");
     }
 
@@ -41,7 +41,7 @@ void test_no_arg(fuku_inst inst, fuku_operand_size size) {
 
 void test_1_arg(fuku_inst inst, fuku_operand op, fuku_operand_size size) {
 
-    size_t count = cs_disasm(cap_handle, inst.get_op_code(), inst.get_op_length(), 0, 1, &instruction);
+    size_t count = cs_disasm(cap_handle, inst.get_opcode(), inst.get_oplength(), 0, 1, &instruction);
     std::string error;
 
     if (!count) {
@@ -51,7 +51,7 @@ void test_1_arg(fuku_inst inst, fuku_operand op, fuku_operand_size size) {
     if (inst.get_id() != instruction[0].id) { 
         error += ("type error  ");
     }
-    if (inst.get_used_eflags() != instruction[0].detail->x86.eflags) {
+    if (inst.get_cpu_flags() != instruction[0].detail->x86.eflags) {
         error += ("eflags error  ");
     }
 
@@ -71,7 +71,7 @@ void test_1_arg(fuku_inst inst, fuku_operand op, fuku_operand_size size) {
 
 void test_1_arg_eip(fuku_inst inst, fuku_immediate imm, fuku_operand_size size) {
 
-    size_t count = cs_disasm(cap_handle, inst.get_op_code(), inst.get_op_length(), 0, 1, &instruction);
+    size_t count = cs_disasm(cap_handle, inst.get_opcode(), inst.get_oplength(), 0, 1, &instruction);
     std::string error;
     if (!count) {
         __debugbreak();
@@ -80,7 +80,7 @@ void test_1_arg_eip(fuku_inst inst, fuku_immediate imm, fuku_operand_size size) 
     if (inst.get_id() != instruction[0].id) {
         error += ("type error  ");
     }
-    if (inst.get_used_eflags() != instruction[0].detail->x86.eflags) {
+    if (inst.get_cpu_flags() != instruction[0].detail->x86.eflags) {
         error += ("eflags error  ");
     }
 
@@ -101,7 +101,7 @@ void test_1_arg_eip(fuku_inst inst, fuku_immediate imm, fuku_operand_size size) 
 
 void test_1_arg(fuku_inst inst, fuku_register reg, fuku_operand_size size) {
 
-    size_t count = cs_disasm(cap_handle, inst.get_op_code(), inst.get_op_length(), 0, 1, &instruction);
+    size_t count = cs_disasm(cap_handle, inst.get_opcode(), inst.get_oplength(), 0, 1, &instruction);
     std::string error;
 
     if (!count) {
@@ -111,7 +111,7 @@ void test_1_arg(fuku_inst inst, fuku_register reg, fuku_operand_size size) {
     if (inst.get_id() != instruction[0].id) { 
         error += ("type error  ");
     }
-    if (inst.get_used_eflags() != instruction[0].detail->x86.eflags) {
+    if (inst.get_cpu_flags() != instruction[0].detail->x86.eflags) {
         error += ("eflags error  ");
     }
 
@@ -131,7 +131,7 @@ void test_1_arg(fuku_inst inst, fuku_register reg, fuku_operand_size size) {
 }
 void test_1_arg(fuku_inst inst, fuku_immediate imm, fuku_operand_size size) {
 
-    size_t count = cs_disasm(cap_handle, inst.get_op_code(), inst.get_op_length(), 0, 1, &instruction);
+    size_t count = cs_disasm(cap_handle, inst.get_opcode(), inst.get_oplength(), 0, 1, &instruction);
     std::string error;
     if (!count) {
         __debugbreak();
@@ -140,7 +140,7 @@ void test_1_arg(fuku_inst inst, fuku_immediate imm, fuku_operand_size size) {
     if (inst.get_id() != instruction[0].id) {
         error += ("type error  ");
     }
-    if (inst.get_used_eflags() != instruction[0].detail->x86.eflags) {
+    if (inst.get_cpu_flags() != instruction[0].detail->x86.eflags) {
         error += ("eflags error  ");
     }
 
@@ -161,7 +161,7 @@ void test_1_arg(fuku_inst inst, fuku_immediate imm, fuku_operand_size size) {
 
 void test_2_arg(fuku_inst inst, fuku_operand op, fuku_register reg, fuku_operand_size size) {
 
-    size_t count = cs_disasm(cap_handle, inst.get_op_code(), inst.get_op_length(), 0, 1, &instruction);
+    size_t count = cs_disasm(cap_handle, inst.get_opcode(), inst.get_oplength(), 0, 1, &instruction);
     std::string error;
     if (!count) {
         __debugbreak();
@@ -170,7 +170,7 @@ void test_2_arg(fuku_inst inst, fuku_operand op, fuku_register reg, fuku_operand
     if (inst.get_id() != instruction[0].id) { 
         error += ("type error  ");
     }
-    if (inst.get_used_eflags() != instruction[0].detail->x86.eflags) {
+    if (inst.get_cpu_flags() != instruction[0].detail->x86.eflags) {
         error += ("eflags error  ");
     }
 
@@ -191,7 +191,7 @@ void test_2_arg(fuku_inst inst, fuku_operand op, fuku_register reg, fuku_operand
 }
 void test_2_arg(fuku_inst inst, fuku_register reg1, fuku_register reg2, fuku_operand_size size) {
 
-    size_t count = cs_disasm(cap_handle, inst.get_op_code(), inst.get_op_length(), 0, 1, &instruction);
+    size_t count = cs_disasm(cap_handle, inst.get_opcode(), inst.get_oplength(), 0, 1, &instruction);
     std::string error;
     if (!count) {
         __debugbreak();
@@ -200,7 +200,7 @@ void test_2_arg(fuku_inst inst, fuku_register reg1, fuku_register reg2, fuku_ope
     if (inst.get_id() != instruction[0].id) { 
         error += ("type error  ");
     }
-    if (inst.get_used_eflags() != instruction[0].detail->x86.eflags) {
+    if (inst.get_cpu_flags() != instruction[0].detail->x86.eflags) {
         error += ("eflags error  ");
     }
 
@@ -221,7 +221,7 @@ void test_2_arg(fuku_inst inst, fuku_register reg1, fuku_register reg2, fuku_ope
 }
 void test_2_arg(fuku_inst inst, fuku_register reg, fuku_operand op, fuku_operand_size size) {
 
-    size_t count = cs_disasm(cap_handle, inst.get_op_code(), inst.get_op_length(), 0, 1, &instruction);
+    size_t count = cs_disasm(cap_handle, inst.get_opcode(), inst.get_oplength(), 0, 1, &instruction);
     std::string error;
     if (!count) {
         __debugbreak();
@@ -230,7 +230,7 @@ void test_2_arg(fuku_inst inst, fuku_register reg, fuku_operand op, fuku_operand
     if (inst.get_id() != instruction[0].id) { 
         error += ("type error  ");
     }
-    if (inst.get_used_eflags() != instruction[0].detail->x86.eflags) {
+    if (inst.get_cpu_flags() != instruction[0].detail->x86.eflags) {
         error += ("eflags error  ");
     }
 
@@ -251,7 +251,7 @@ void test_2_arg(fuku_inst inst, fuku_register reg, fuku_operand op, fuku_operand
 }
 void test_2_arg(fuku_inst inst, fuku_register reg, fuku_immediate imm, fuku_operand_size size) {
 
-    size_t count = cs_disasm(cap_handle, inst.get_op_code(), inst.get_op_length(), 0, 1, &instruction);
+    size_t count = cs_disasm(cap_handle, inst.get_opcode(), inst.get_oplength(), 0, 1, &instruction);
     std::string error;
     if (!count) {
         __debugbreak();
@@ -260,7 +260,7 @@ void test_2_arg(fuku_inst inst, fuku_register reg, fuku_immediate imm, fuku_oper
     if (inst.get_id() != instruction[0].id) { 
         error += ("type error  ");
     }
-    if (inst.get_used_eflags() != instruction[0].detail->x86.eflags) {
+    if (inst.get_cpu_flags() != instruction[0].detail->x86.eflags) {
         error += ("eflags error  ");
     }
 
@@ -281,7 +281,7 @@ void test_2_arg(fuku_inst inst, fuku_register reg, fuku_immediate imm, fuku_oper
 }
 void test_2_arg(fuku_inst inst,fuku_operand op, fuku_immediate imm, fuku_operand_size size) {
 
-    size_t count = cs_disasm(cap_handle, inst.get_op_code(), inst.get_op_length(), 0, 1, &instruction);
+    size_t count = cs_disasm(cap_handle, inst.get_opcode(), inst.get_oplength(), 0, 1, &instruction);
     std::string error;
     if (!count) {
         __debugbreak();
@@ -290,7 +290,7 @@ void test_2_arg(fuku_inst inst,fuku_operand op, fuku_immediate imm, fuku_operand
     if (inst.get_id() != instruction[0].id) { 
         error += ("type error  ");
     }
-    if (inst.get_used_eflags() != instruction[0].detail->x86.eflags) {
+    if (inst.get_cpu_flags() != instruction[0].detail->x86.eflags) {
         error += ("eflags error  ");
     }
 

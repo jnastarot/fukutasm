@@ -1,0 +1,445 @@
+#pragma once
+
+
+struct {
+    fuku_register_enum register_;
+    fuku_register_index register_index_;
+    fuku_operand_size register_size_;
+    bool is_x64_arch;
+    bool is_x64_arch_ext;
+
+} ext_register_info[] = {
+    {FUKU_REG_NONE, (fuku_register_index)-1, fuku_operand_size::FUKU_OPERAND_SIZE_0, 0},
+
+    {FUKU_REG_RAX, fuku_register_index::FUKU_REG_INDEX_AX, fuku_operand_size::FUKU_OPERAND_SIZE_64, true , false},
+    {FUKU_REG_EAX, fuku_register_index::FUKU_REG_INDEX_AX, fuku_operand_size::FUKU_OPERAND_SIZE_32, false, false},
+    {FUKU_REG_AX,  fuku_register_index::FUKU_REG_INDEX_AX, fuku_operand_size::FUKU_OPERAND_SIZE_16, false, false},
+    {FUKU_REG_AH,  fuku_register_index::FUKU_REG_INDEX_AX, fuku_operand_size::FUKU_OPERAND_SIZE_8,	false, false},
+    {FUKU_REG_AL,  fuku_register_index::FUKU_REG_INDEX_AX, fuku_operand_size::FUKU_OPERAND_SIZE_8,	false, false},
+
+    {FUKU_REG_RCX, fuku_register_index::FUKU_REG_INDEX_CX, fuku_operand_size::FUKU_OPERAND_SIZE_64, true, false},
+    {FUKU_REG_ECX, fuku_register_index::FUKU_REG_INDEX_CX, fuku_operand_size::FUKU_OPERAND_SIZE_32, false, false},
+    {FUKU_REG_CX,  fuku_register_index::FUKU_REG_INDEX_CX, fuku_operand_size::FUKU_OPERAND_SIZE_16, false, false},
+    {FUKU_REG_CH,  fuku_register_index::FUKU_REG_INDEX_CX, fuku_operand_size::FUKU_OPERAND_SIZE_8,	false, false},
+    {FUKU_REG_CL,  fuku_register_index::FUKU_REG_INDEX_CX, fuku_operand_size::FUKU_OPERAND_SIZE_8,	false, false},
+
+    {FUKU_REG_RDX, fuku_register_index::FUKU_REG_INDEX_DX, fuku_operand_size::FUKU_OPERAND_SIZE_64, true, false},
+    {FUKU_REG_EDX, fuku_register_index::FUKU_REG_INDEX_DX, fuku_operand_size::FUKU_OPERAND_SIZE_32, false, false},
+    {FUKU_REG_DX,  fuku_register_index::FUKU_REG_INDEX_DX, fuku_operand_size::FUKU_OPERAND_SIZE_16, false, false},
+    {FUKU_REG_DH,  fuku_register_index::FUKU_REG_INDEX_DX, fuku_operand_size::FUKU_OPERAND_SIZE_8,	false, false},
+    {FUKU_REG_DL,  fuku_register_index::FUKU_REG_INDEX_DX, fuku_operand_size::FUKU_OPERAND_SIZE_8,	false, false},
+
+    {FUKU_REG_RBX, fuku_register_index::FUKU_REG_INDEX_BX, fuku_operand_size::FUKU_OPERAND_SIZE_64, true, false},
+    {FUKU_REG_EBX, fuku_register_index::FUKU_REG_INDEX_BX, fuku_operand_size::FUKU_OPERAND_SIZE_32, false, false},
+    {FUKU_REG_BX,  fuku_register_index::FUKU_REG_INDEX_BX, fuku_operand_size::FUKU_OPERAND_SIZE_16, false, false},
+    {FUKU_REG_BH,  fuku_register_index::FUKU_REG_INDEX_BX, fuku_operand_size::FUKU_OPERAND_SIZE_8,	false, false},
+    {FUKU_REG_BL,  fuku_register_index::FUKU_REG_INDEX_BX, fuku_operand_size::FUKU_OPERAND_SIZE_8,	false, false},
+
+    {FUKU_REG_RSP, fuku_register_index::FUKU_REG_INDEX_SP, fuku_operand_size::FUKU_OPERAND_SIZE_64, true, false},
+    {FUKU_REG_ESP, fuku_register_index::FUKU_REG_INDEX_SP, fuku_operand_size::FUKU_OPERAND_SIZE_32, false, false},
+    {FUKU_REG_SP,  fuku_register_index::FUKU_REG_INDEX_SP, fuku_operand_size::FUKU_OPERAND_SIZE_16, false, false},
+    {FUKU_REG_SPL, fuku_register_index::FUKU_REG_INDEX_SP, fuku_operand_size::FUKU_OPERAND_SIZE_8,	true, false},
+
+    {FUKU_REG_RBP, fuku_register_index::FUKU_REG_INDEX_BP, fuku_operand_size::FUKU_OPERAND_SIZE_64, true, false},
+    {FUKU_REG_EBP, fuku_register_index::FUKU_REG_INDEX_BP, fuku_operand_size::FUKU_OPERAND_SIZE_32, false, false},
+    {FUKU_REG_BP,  fuku_register_index::FUKU_REG_INDEX_BP, fuku_operand_size::FUKU_OPERAND_SIZE_16, false, false},
+    {FUKU_REG_BPL, fuku_register_index::FUKU_REG_INDEX_BP, fuku_operand_size::FUKU_OPERAND_SIZE_8,	true, false},
+
+    {FUKU_REG_RSI, fuku_register_index::FUKU_REG_INDEX_SI, fuku_operand_size::FUKU_OPERAND_SIZE_64, true, false},
+    {FUKU_REG_ESI, fuku_register_index::FUKU_REG_INDEX_SI, fuku_operand_size::FUKU_OPERAND_SIZE_32, false, false},
+    {FUKU_REG_SI,  fuku_register_index::FUKU_REG_INDEX_SI, fuku_operand_size::FUKU_OPERAND_SIZE_16, false, false},
+    {FUKU_REG_SIL, fuku_register_index::FUKU_REG_INDEX_SI, fuku_operand_size::FUKU_OPERAND_SIZE_8,	true, false},
+
+    {FUKU_REG_RDI, fuku_register_index::FUKU_REG_INDEX_DI, fuku_operand_size::FUKU_OPERAND_SIZE_64, true, false},
+    {FUKU_REG_EDI, fuku_register_index::FUKU_REG_INDEX_DI, fuku_operand_size::FUKU_OPERAND_SIZE_32, false, false},
+    {FUKU_REG_DI,  fuku_register_index::FUKU_REG_INDEX_DI, fuku_operand_size::FUKU_OPERAND_SIZE_16, false, false},
+    {FUKU_REG_DIL, fuku_register_index::FUKU_REG_INDEX_DI, fuku_operand_size::FUKU_OPERAND_SIZE_8,	true, false},
+
+    {FUKU_REG_R8,  fuku_register_index::FUKU_REG_INDEX_R8, fuku_operand_size::FUKU_OPERAND_SIZE_64, true, true},
+    {FUKU_REG_R8D, fuku_register_index::FUKU_REG_INDEX_R8, fuku_operand_size::FUKU_OPERAND_SIZE_32, true, true},
+    {FUKU_REG_R8W, fuku_register_index::FUKU_REG_INDEX_R8, fuku_operand_size::FUKU_OPERAND_SIZE_16, true, true},
+    {FUKU_REG_R8B, fuku_register_index::FUKU_REG_INDEX_R8, fuku_operand_size::FUKU_OPERAND_SIZE_8,	true, true},
+
+    {FUKU_REG_R9,  fuku_register_index::FUKU_REG_INDEX_R9, fuku_operand_size::FUKU_OPERAND_SIZE_64, true, true},
+    {FUKU_REG_R9D, fuku_register_index::FUKU_REG_INDEX_R9, fuku_operand_size::FUKU_OPERAND_SIZE_32, true, true},
+    {FUKU_REG_R9W, fuku_register_index::FUKU_REG_INDEX_R9, fuku_operand_size::FUKU_OPERAND_SIZE_16, true, true},
+    {FUKU_REG_R9B, fuku_register_index::FUKU_REG_INDEX_R9, fuku_operand_size::FUKU_OPERAND_SIZE_8,	true, true},
+
+    {FUKU_REG_R10,  fuku_register_index::FUKU_REG_INDEX_R10, fuku_operand_size::FUKU_OPERAND_SIZE_64, true, true},
+    {FUKU_REG_R10D, fuku_register_index::FUKU_REG_INDEX_R10, fuku_operand_size::FUKU_OPERAND_SIZE_32, true, true},
+    {FUKU_REG_R10W, fuku_register_index::FUKU_REG_INDEX_R10, fuku_operand_size::FUKU_OPERAND_SIZE_16, true, true},
+    {FUKU_REG_R10B, fuku_register_index::FUKU_REG_INDEX_R10, fuku_operand_size::FUKU_OPERAND_SIZE_8,  true, true},
+
+    {FUKU_REG_R11,  fuku_register_index::FUKU_REG_INDEX_R11, fuku_operand_size::FUKU_OPERAND_SIZE_64, true, true},
+    {FUKU_REG_R11D, fuku_register_index::FUKU_REG_INDEX_R11, fuku_operand_size::FUKU_OPERAND_SIZE_32, true, true},
+    {FUKU_REG_R11W, fuku_register_index::FUKU_REG_INDEX_R11, fuku_operand_size::FUKU_OPERAND_SIZE_16, true, true},
+    {FUKU_REG_R11B, fuku_register_index::FUKU_REG_INDEX_R11, fuku_operand_size::FUKU_OPERAND_SIZE_8,  true, true},
+
+    {FUKU_REG_R12,  fuku_register_index::FUKU_REG_INDEX_R12, fuku_operand_size::FUKU_OPERAND_SIZE_64, true, true},
+    {FUKU_REG_R12D, fuku_register_index::FUKU_REG_INDEX_R12, fuku_operand_size::FUKU_OPERAND_SIZE_32, true, true},
+    {FUKU_REG_R12W, fuku_register_index::FUKU_REG_INDEX_R12, fuku_operand_size::FUKU_OPERAND_SIZE_16, true, true},
+    {FUKU_REG_R12B, fuku_register_index::FUKU_REG_INDEX_R12, fuku_operand_size::FUKU_OPERAND_SIZE_8,  true, true},
+
+    {FUKU_REG_R13,  fuku_register_index::FUKU_REG_INDEX_R13, fuku_operand_size::FUKU_OPERAND_SIZE_64, true, true},
+    {FUKU_REG_R13D, fuku_register_index::FUKU_REG_INDEX_R13, fuku_operand_size::FUKU_OPERAND_SIZE_32, true, true},
+    {FUKU_REG_R13W, fuku_register_index::FUKU_REG_INDEX_R13, fuku_operand_size::FUKU_OPERAND_SIZE_16, true, true},
+    {FUKU_REG_R13B, fuku_register_index::FUKU_REG_INDEX_R13, fuku_operand_size::FUKU_OPERAND_SIZE_8,  true, true},
+
+    {FUKU_REG_R14,  fuku_register_index::FUKU_REG_INDEX_R14, fuku_operand_size::FUKU_OPERAND_SIZE_64, true, true},
+    {FUKU_REG_R14D, fuku_register_index::FUKU_REG_INDEX_R14, fuku_operand_size::FUKU_OPERAND_SIZE_32, true, true},
+    {FUKU_REG_R14W, fuku_register_index::FUKU_REG_INDEX_R14, fuku_operand_size::FUKU_OPERAND_SIZE_16, true, true},
+    {FUKU_REG_R14B, fuku_register_index::FUKU_REG_INDEX_R14, fuku_operand_size::FUKU_OPERAND_SIZE_8,  true, true},
+
+    {FUKU_REG_R15,  fuku_register_index::FUKU_REG_INDEX_R15, fuku_operand_size::FUKU_OPERAND_SIZE_64, true, true},
+    {FUKU_REG_R15D, fuku_register_index::FUKU_REG_INDEX_R15, fuku_operand_size::FUKU_OPERAND_SIZE_32, true, true},
+    {FUKU_REG_R15W, fuku_register_index::FUKU_REG_INDEX_R15, fuku_operand_size::FUKU_OPERAND_SIZE_16, true, true},
+    {FUKU_REG_R15B, fuku_register_index::FUKU_REG_INDEX_R15, fuku_operand_size::FUKU_OPERAND_SIZE_8,  true, true},
+};
+
+
+
+fuku_register_enum cap_to_fuku_table[] = {
+    FUKU_REG_NONE,
+    FUKU_REG_AH, FUKU_REG_AL, FUKU_REG_AX, FUKU_REG_BH, FUKU_REG_BL,
+    FUKU_REG_BP, FUKU_REG_BPL, FUKU_REG_BX, FUKU_REG_CH, FUKU_REG_CL,
+    FUKU_REG_NONE, FUKU_REG_CX, FUKU_REG_DH, FUKU_REG_DI, FUKU_REG_DIL,
+    FUKU_REG_DL, FUKU_REG_NONE, FUKU_REG_DX, FUKU_REG_EAX, FUKU_REG_EBP,
+    FUKU_REG_EBX, FUKU_REG_ECX, FUKU_REG_EDI, FUKU_REG_EDX, FUKU_REG_NONE,
+    FUKU_REG_NONE, FUKU_REG_NONE, FUKU_REG_NONE, FUKU_REG_ESI, FUKU_REG_ESP,
+    FUKU_REG_NONE, FUKU_REG_NONE, FUKU_REG_NONE, FUKU_REG_NONE, FUKU_REG_RAX,
+    FUKU_REG_RBP, FUKU_REG_RBX, FUKU_REG_RCX, FUKU_REG_RDI, FUKU_REG_RDX,
+    FUKU_REG_NONE, FUKU_REG_NONE, FUKU_REG_RSI, FUKU_REG_RSP, FUKU_REG_SI,
+    FUKU_REG_SIL, FUKU_REG_SP, FUKU_REG_SPL, FUKU_REG_NONE, FUKU_REG_NONE,
+    FUKU_REG_NONE, FUKU_REG_NONE, FUKU_REG_NONE, FUKU_REG_NONE, FUKU_REG_NONE,
+    FUKU_REG_NONE, FUKU_REG_NONE, FUKU_REG_NONE, FUKU_REG_NONE, FUKU_REG_NONE,
+    FUKU_REG_NONE, FUKU_REG_NONE, FUKU_REG_NONE, FUKU_REG_NONE, FUKU_REG_NONE,
+    FUKU_REG_NONE, FUKU_REG_NONE, FUKU_REG_NONE, FUKU_REG_NONE, FUKU_REG_NONE,
+    FUKU_REG_NONE, FUKU_REG_NONE, FUKU_REG_NONE, FUKU_REG_NONE, FUKU_REG_NONE,
+    FUKU_REG_NONE, FUKU_REG_NONE, FUKU_REG_NONE, FUKU_REG_NONE, FUKU_REG_NONE,
+    FUKU_REG_NONE, FUKU_REG_NONE, FUKU_REG_NONE, FUKU_REG_NONE, FUKU_REG_NONE,
+    FUKU_REG_NONE, FUKU_REG_NONE, FUKU_REG_NONE, FUKU_REG_NONE,
+    FUKU_REG_NONE, FUKU_REG_NONE, FUKU_REG_NONE, FUKU_REG_NONE, FUKU_REG_NONE,
+    FUKU_REG_NONE, FUKU_REG_NONE, FUKU_REG_NONE, FUKU_REG_NONE, FUKU_REG_NONE,
+    FUKU_REG_NONE, FUKU_REG_NONE, FUKU_REG_NONE, FUKU_REG_NONE, FUKU_REG_NONE,
+    FUKU_REG_NONE, FUKU_REG_R8, FUKU_REG_R9, FUKU_REG_R10, FUKU_REG_R11,
+    FUKU_REG_R12, FUKU_REG_R13, FUKU_REG_R14, FUKU_REG_R15,
+    FUKU_REG_NONE, FUKU_REG_NONE, FUKU_REG_NONE, FUKU_REG_NONE,
+    FUKU_REG_NONE, FUKU_REG_NONE, FUKU_REG_NONE, FUKU_REG_NONE,
+    FUKU_REG_NONE, FUKU_REG_NONE, FUKU_REG_NONE, FUKU_REG_NONE, FUKU_REG_NONE,
+    FUKU_REG_NONE, FUKU_REG_NONE, FUKU_REG_NONE, FUKU_REG_NONE, FUKU_REG_NONE,
+    FUKU_REG_NONE, FUKU_REG_NONE, FUKU_REG_NONE, FUKU_REG_NONE, FUKU_REG_NONE,
+    FUKU_REG_NONE, FUKU_REG_NONE, FUKU_REG_NONE, FUKU_REG_NONE, FUKU_REG_NONE,
+    FUKU_REG_NONE, FUKU_REG_NONE, FUKU_REG_NONE, FUKU_REG_NONE, FUKU_REG_NONE,
+    FUKU_REG_NONE, FUKU_REG_NONE, FUKU_REG_NONE, FUKU_REG_NONE, FUKU_REG_NONE,
+    FUKU_REG_NONE, FUKU_REG_NONE, FUKU_REG_NONE, FUKU_REG_NONE, FUKU_REG_NONE,
+    FUKU_REG_NONE, FUKU_REG_NONE, FUKU_REG_NONE, FUKU_REG_NONE, FUKU_REG_NONE,
+    FUKU_REG_NONE, FUKU_REG_NONE, FUKU_REG_NONE, FUKU_REG_NONE, FUKU_REG_NONE,
+    FUKU_REG_NONE, FUKU_REG_NONE, FUKU_REG_NONE, FUKU_REG_NONE, FUKU_REG_NONE,
+    FUKU_REG_NONE, FUKU_REG_NONE, FUKU_REG_NONE, FUKU_REG_NONE, FUKU_REG_NONE,
+    FUKU_REG_NONE, FUKU_REG_NONE, FUKU_REG_NONE, FUKU_REG_NONE, FUKU_REG_NONE,
+    FUKU_REG_NONE, FUKU_REG_NONE, FUKU_REG_NONE, FUKU_REG_NONE, FUKU_REG_NONE,
+    FUKU_REG_NONE, FUKU_REG_NONE, FUKU_REG_NONE, FUKU_REG_NONE, FUKU_REG_NONE,
+    FUKU_REG_NONE, FUKU_REG_NONE, FUKU_REG_NONE, FUKU_REG_NONE, FUKU_REG_NONE,
+    FUKU_REG_NONE, FUKU_REG_NONE, FUKU_REG_NONE, FUKU_REG_NONE, FUKU_REG_NONE,
+    FUKU_REG_NONE, FUKU_REG_NONE, FUKU_REG_NONE, FUKU_REG_NONE, FUKU_REG_NONE,
+    FUKU_REG_NONE, FUKU_REG_NONE, FUKU_REG_NONE, FUKU_REG_NONE, FUKU_REG_NONE,
+    FUKU_REG_NONE, FUKU_REG_NONE, FUKU_REG_NONE, FUKU_REG_NONE, FUKU_REG_NONE,
+    FUKU_REG_NONE, FUKU_REG_R8B, FUKU_REG_R9B, FUKU_REG_R10B, FUKU_REG_R11B,
+    FUKU_REG_R12B, FUKU_REG_R13B, FUKU_REG_R14B, FUKU_REG_R15B, FUKU_REG_R8D,
+    FUKU_REG_R9D, FUKU_REG_R10D, FUKU_REG_R11D, FUKU_REG_R12D, FUKU_REG_R13D,
+    FUKU_REG_R14D, FUKU_REG_R15D, FUKU_REG_R8W, FUKU_REG_R9W, FUKU_REG_R10W,
+    FUKU_REG_R11W, FUKU_REG_R12W, FUKU_REG_R13W, FUKU_REG_R14W, FUKU_REG_R15W,
+
+    FUKU_REG_MAX
+};
+
+fuku_register_enum registers64[] = { FUKU_REG_RAX, FUKU_REG_RCX, FUKU_REG_RDX,  FUKU_REG_RBX,  FUKU_REG_RSP,  FUKU_REG_RBP,  FUKU_REG_RSI,  FUKU_REG_RDI,
+                                FUKU_REG_R8,  FUKU_REG_R9,  FUKU_REG_R10,  FUKU_REG_R11,  FUKU_REG_R12,  FUKU_REG_R13,  FUKU_REG_R14,  FUKU_REG_R15 };
+fuku_register_enum registers32[] = { FUKU_REG_EAX, FUKU_REG_ECX, FUKU_REG_EDX,  FUKU_REG_EBX,  FUKU_REG_ESP,  FUKU_REG_EBP,  FUKU_REG_ESI,  FUKU_REG_EDI,
+                                FUKU_REG_R8D, FUKU_REG_R9D, FUKU_REG_R10D, FUKU_REG_R11D, FUKU_REG_R12D, FUKU_REG_R13D, FUKU_REG_R14D, FUKU_REG_R15D };
+fuku_register_enum registers16[] = { FUKU_REG_AX,  FUKU_REG_CX,  FUKU_REG_DX,   FUKU_REG_BX,   FUKU_REG_SP,   FUKU_REG_BP,   FUKU_REG_SI,   FUKU_REG_DI,
+                                FUKU_REG_R8W, FUKU_REG_R9W, FUKU_REG_R10W, FUKU_REG_R11W, FUKU_REG_R12W, FUKU_REG_R13W, FUKU_REG_R14W, FUKU_REG_R15W };
+fuku_register_enum registers8[] = { FUKU_REG_AH,  FUKU_REG_CH,  FUKU_REG_DH,   FUKU_REG_BH,
+                                FUKU_REG_AL,  FUKU_REG_CL,  FUKU_REG_DL,   FUKU_REG_BL,   FUKU_REG_SPL,  FUKU_REG_BPL,  FUKU_REG_SIL,  FUKU_REG_DIL,
+                                FUKU_REG_R8B, FUKU_REG_R9B, FUKU_REG_R10B, FUKU_REG_R11B, FUKU_REG_R12B, FUKU_REG_R13B, FUKU_REG_R14B, FUKU_REG_R15B };
+
+x86_insn capstone_jcc[] = {
+    X86_INS_JO , X86_INS_JNO ,
+    X86_INS_JB , X86_INS_JAE ,
+    X86_INS_JE, X86_INS_JNE,
+    X86_INS_JBE , X86_INS_JA ,
+    X86_INS_JS , X86_INS_JNS ,
+    X86_INS_JP , X86_INS_JNP ,
+    X86_INS_JL , X86_INS_JGE ,
+    X86_INS_JLE , X86_INS_JG ,
+};
+
+x86_insn capstone_setcc[] = {
+    X86_INS_SETO , X86_INS_SETNO ,
+    X86_INS_SETB , X86_INS_SETAE ,
+    X86_INS_SETE, X86_INS_SETNE,
+    X86_INS_SETBE , X86_INS_SETA ,
+    X86_INS_SETS , X86_INS_SETNS ,
+    X86_INS_SETP , X86_INS_SETNP ,
+    X86_INS_SETL , X86_INS_SETGE ,
+    X86_INS_SETLE , X86_INS_SETG ,
+};
+x86_insn capstone_movcc[] = {
+    X86_INS_CMOVO , X86_INS_CMOVNO ,
+    X86_INS_CMOVB , X86_INS_CMOVAE ,
+    X86_INS_CMOVE, X86_INS_CMOVNE,
+    X86_INS_CMOVBE , X86_INS_CMOVA ,
+    X86_INS_CMOVS , X86_INS_CMOVNS ,
+    X86_INS_CMOVP , X86_INS_CMOVNP ,
+    X86_INS_CMOVL , X86_INS_CMOVGE ,
+    X86_INS_CMOVLE , X86_INS_CMOVG ,
+};
+
+
+uint64_t CONVERT_FUKU_REGISTER_TO_FLAG[] = {
+    0,
+
+    //x86-x32 registers
+    FLAG_REGISTER_IDX_RAX,
+    FLAG_REGISTER_IDX_EAX,
+    FLAG_REGISTER_IDX_AX,
+    FLAG_REGISTER_IDX_AX, FLAG_REGISTER_IDX_AL,
+
+    FLAG_REGISTER_IDX_RCX,
+    FLAG_REGISTER_IDX_ECX,
+    FLAG_REGISTER_IDX_CX,
+    FLAG_REGISTER_IDX_CX, FLAG_REGISTER_IDX_CL,
+
+    FLAG_REGISTER_IDX_RDX,
+    FLAG_REGISTER_IDX_EDX,
+    FLAG_REGISTER_IDX_DX,
+    FLAG_REGISTER_IDX_DX, FLAG_REGISTER_IDX_DL,
+
+    FLAG_REGISTER_IDX_RBX,
+    FLAG_REGISTER_IDX_EBX,
+    FLAG_REGISTER_IDX_BX,
+    FLAG_REGISTER_IDX_BX, FLAG_REGISTER_IDX_BL,
+
+    FLAG_REGISTER_IDX_RSP,
+    FLAG_REGISTER_IDX_ESP,
+    FLAG_REGISTER_IDX_SP,
+    FLAG_REGISTER_IDX_SPL,
+
+    FLAG_REGISTER_IDX_RBP,
+    FLAG_REGISTER_IDX_EBP,
+    FLAG_REGISTER_IDX_BP,
+    FLAG_REGISTER_IDX_BPL,
+
+    FLAG_REGISTER_IDX_RSI,
+    FLAG_REGISTER_IDX_ESI,
+    FLAG_REGISTER_IDX_SI,
+    FLAG_REGISTER_IDX_SIL,
+
+    FLAG_REGISTER_IDX_RDI,
+    FLAG_REGISTER_IDX_EDI,
+    FLAG_REGISTER_IDX_DI,
+    FLAG_REGISTER_IDX_DIL,
+
+    //x86-x64 registers
+    FLAG_REGISTER_IDX_R8,
+    FLAG_REGISTER_IDX_R8D,
+    FLAG_REGISTER_IDX_R8W,
+    FLAG_REGISTER_IDX_R8B,
+    FLAG_REGISTER_IDX_R9,
+    FLAG_REGISTER_IDX_R9D,
+    FLAG_REGISTER_IDX_R9W,
+    FLAG_REGISTER_IDX_R9B,
+
+    FLAG_REGISTER_IDX_R10,
+    FLAG_REGISTER_IDX_R10D,
+    FLAG_REGISTER_IDX_R10W,
+    FLAG_REGISTER_IDX_R10B,
+
+    FLAG_REGISTER_IDX_R11,
+    FLAG_REGISTER_IDX_R11D,
+    FLAG_REGISTER_IDX_R11W,
+    FLAG_REGISTER_IDX_R11B,
+
+    FLAG_REGISTER_IDX_R12,
+    FLAG_REGISTER_IDX_R12D,
+    FLAG_REGISTER_IDX_R12W,
+    FLAG_REGISTER_IDX_R12B,
+
+    FLAG_REGISTER_IDX_R13,
+    FLAG_REGISTER_IDX_R13D,
+    FLAG_REGISTER_IDX_R13W,
+    FLAG_REGISTER_IDX_R13B,
+
+    FLAG_REGISTER_IDX_R14,
+    FLAG_REGISTER_IDX_R14D,
+    FLAG_REGISTER_IDX_R14W,
+    FLAG_REGISTER_IDX_R14B,
+
+    FLAG_REGISTER_IDX_R15,
+    FLAG_REGISTER_IDX_R15D,
+    FLAG_REGISTER_IDX_R15W,
+    FLAG_REGISTER_IDX_R15B,
+};
+
+fuku_register_enum CONVERT_FLAG_REGISTER_TO_FUKU[] = {
+    FUKU_REG_AL,
+    FUKU_REG_CL,
+    FUKU_REG_DL,
+    FUKU_REG_BL,
+    FUKU_REG_SPL,
+    FUKU_REG_BPL,
+    FUKU_REG_SIL,
+    FUKU_REG_DIL,
+    FUKU_REG_R8B ,
+    FUKU_REG_R9B ,
+    FUKU_REG_R10B,
+    FUKU_REG_R11B,
+    FUKU_REG_R12B,
+    FUKU_REG_R13B,
+    FUKU_REG_R14B,
+    FUKU_REG_R15B,
+    //word
+    FUKU_REG_AX,
+    FUKU_REG_CX,
+    FUKU_REG_DX,
+    FUKU_REG_BX,
+    FUKU_REG_SP,
+    FUKU_REG_BP,
+    FUKU_REG_SI,
+    FUKU_REG_DI,
+    FUKU_REG_R8W ,
+    FUKU_REG_R9W ,
+    FUKU_REG_R10W,
+    FUKU_REG_R11W,
+    FUKU_REG_R12W,
+    FUKU_REG_R13W,
+    FUKU_REG_R14W,
+    FUKU_REG_R15W,
+    //dword
+    FUKU_REG_EAX,
+    FUKU_REG_ECX,
+    FUKU_REG_EDX,
+    FUKU_REG_EBX,
+    FUKU_REG_ESP,
+    FUKU_REG_EBP,
+    FUKU_REG_ESI,
+    FUKU_REG_EDI,
+    FUKU_REG_R8D ,
+    FUKU_REG_R9D ,
+    FUKU_REG_R10D,
+    FUKU_REG_R11D,
+    FUKU_REG_R12D,
+    FUKU_REG_R13D,
+    FUKU_REG_R14D,
+    FUKU_REG_R15D,
+    //qword
+    FUKU_REG_RAX,
+    FUKU_REG_RCX,
+    FUKU_REG_RDX,
+    FUKU_REG_RBX,
+    FUKU_REG_RSP,
+    FUKU_REG_RBP,
+    FUKU_REG_RSI,
+    FUKU_REG_RDI,
+    FUKU_REG_R8 ,
+    FUKU_REG_R9 ,
+    FUKU_REG_R10,
+    FUKU_REG_R11,
+    FUKU_REG_R12,
+    FUKU_REG_R13,
+    FUKU_REG_R14,
+    FUKU_REG_R15
+};
+
+#pragma warning(push)
+
+#pragma warning(disable:4838)
+
+uint64_t CONVERT_CAPSTONE_REGISTER_TO_FLAG[] = {
+    -2,
+    FLAG_REGISTER_AX, FLAG_REGISTER_AL, FLAG_REGISTER_AX, FLAG_REGISTER_BX, FLAG_REGISTER_BL,
+    FLAG_REGISTER_BP, FLAG_REGISTER_BPL, FLAG_REGISTER_BX, FLAG_REGISTER_CX, FLAG_REGISTER_CL,
+    -2, FLAG_REGISTER_CX, FLAG_REGISTER_DX, FLAG_REGISTER_DI, FLAG_REGISTER_DIL,
+    FLAG_REGISTER_DL, -2, FLAG_REGISTER_DX, FLAG_REGISTER_EAX, FLAG_REGISTER_EBP,
+    FLAG_REGISTER_EBX, FLAG_REGISTER_ECX, FLAG_REGISTER_EDI, FLAG_REGISTER_EDX, 0,
+    -2, -2, -2, FLAG_REGISTER_ESI, FLAG_REGISTER_ESP,
+    -2, -2, -2, -2, FLAG_REGISTER_RAX,
+    FLAG_REGISTER_RBP, FLAG_REGISTER_RBX, FLAG_REGISTER_RCX, FLAG_REGISTER_RDI, FLAG_REGISTER_RDX,
+    -2, -2, FLAG_REGISTER_RSI, FLAG_REGISTER_RSP, FLAG_REGISTER_SI,
+    FLAG_REGISTER_SIL, FLAG_REGISTER_SP, FLAG_REGISTER_SPL, -2, -2,
+    -2, -2, -2, -2, -2,
+    -2, -2, -2, -2, -2,
+    -2, -2, -2, -2, -2,
+    -2, -2, -2, -2, -2,
+    -2, -2, -2, -2, -2,
+    -2, -2, -2, -2, -2,
+    -2, -2, -2, -2, -2,
+    -2, -2, -2, -2,
+    -2, -2, -2, -2, -2,
+    -2, -2, -2, -2, -2,
+    -2, -2, -2, -2, -2,
+    -2, FLAG_REGISTER_R8, FLAG_REGISTER_R9, FLAG_REGISTER_R10, FLAG_REGISTER_R11,
+    FLAG_REGISTER_R12, FLAG_REGISTER_R13, FLAG_REGISTER_R14, FLAG_REGISTER_R15,
+    -2, -2, -2, -2,
+    -2, -2, -2, -2,
+    -2, -2, -2, -2, -2,
+    -2, -2, -2, -2, -2,
+    -2, -2, -2, -2, -2,
+    -2, -2, -2, -2, -2,
+    -2, -2, -2, -2, -2,
+    -2, -2, -2, -2, -2,
+    -2, -2, -2, -2, -2,
+    -2, -2, -2, -2, -2,
+    -2, -2, -2, -2, -2,
+    -2, -2, -2, -2, -2,
+    -2, -2, -2, -2, -2,
+    -2, -2, -2, -2, -2,
+    -2, -2, -2, -2, -2,
+    -2, -2, -2, -2, -2,
+    -2, -2, -2, -2, -2,
+    -2, -2, -2, -2, -2,
+    -2, -2, -2, -2, -2,
+    -2, -2, -2, -2, -2,
+    -2, -2, -2, -2, -2,
+    -2, FLAG_REGISTER_R8B, FLAG_REGISTER_R9B, FLAG_REGISTER_R10B, FLAG_REGISTER_R11B,
+    FLAG_REGISTER_R12B, FLAG_REGISTER_R13B, FLAG_REGISTER_R14B, FLAG_REGISTER_R15B, FLAG_REGISTER_R8D,
+    FLAG_REGISTER_R9D, FLAG_REGISTER_R10D, FLAG_REGISTER_R11D, FLAG_REGISTER_R12D, FLAG_REGISTER_R13D,
+    FLAG_REGISTER_R14D, FLAG_REGISTER_R15D, FLAG_REGISTER_R8W, FLAG_REGISTER_R9W, FLAG_REGISTER_R10W,
+    FLAG_REGISTER_R11W, FLAG_REGISTER_R12W, FLAG_REGISTER_R13W, FLAG_REGISTER_R14W, FLAG_REGISTER_R15W,
+    -2
+};
+
+#pragma warning(pop)
+
+uint64_t FULL_INCLUDE_FLAGS_TABLE[] = {
+    FLAG_REGISTER_RAX | FLAG_REGISTER_EAX | FLAG_REGISTER_AX | FLAG_REGISTER_AL,
+    FLAG_REGISTER_RCX | FLAG_REGISTER_ECX | FLAG_REGISTER_CX | FLAG_REGISTER_CL,
+    FLAG_REGISTER_RDX | FLAG_REGISTER_EDX | FLAG_REGISTER_DX | FLAG_REGISTER_DL,
+    FLAG_REGISTER_RBX | FLAG_REGISTER_EBX | FLAG_REGISTER_BX | FLAG_REGISTER_BL,
+    FLAG_REGISTER_RSP | FLAG_REGISTER_ESP | FLAG_REGISTER_SP | FLAG_REGISTER_SPL,
+    FLAG_REGISTER_RBP | FLAG_REGISTER_EBP | FLAG_REGISTER_BP | FLAG_REGISTER_BPL,
+    FLAG_REGISTER_RSI | FLAG_REGISTER_ESI | FLAG_REGISTER_SI | FLAG_REGISTER_SIL,
+    FLAG_REGISTER_RDI | FLAG_REGISTER_EDI | FLAG_REGISTER_DI | FLAG_REGISTER_DIL,
+    FLAG_REGISTER_R8 | FLAG_REGISTER_R8D | FLAG_REGISTER_R8W | FLAG_REGISTER_R8B,
+    FLAG_REGISTER_R9 | FLAG_REGISTER_R9D | FLAG_REGISTER_R9W | FLAG_REGISTER_R9B,
+    FLAG_REGISTER_R10 | FLAG_REGISTER_R10D | FLAG_REGISTER_R10W | FLAG_REGISTER_R10B,
+    FLAG_REGISTER_R11 | FLAG_REGISTER_R11D | FLAG_REGISTER_R11W | FLAG_REGISTER_R11B,
+    FLAG_REGISTER_R12 | FLAG_REGISTER_R12D | FLAG_REGISTER_R12W | FLAG_REGISTER_R12B,
+    FLAG_REGISTER_R13 | FLAG_REGISTER_R13D | FLAG_REGISTER_R13W | FLAG_REGISTER_R13B,
+    FLAG_REGISTER_R14 | FLAG_REGISTER_R14D | FLAG_REGISTER_R14W | FLAG_REGISTER_R14B,
+    FLAG_REGISTER_R15 | FLAG_REGISTER_R15D | FLAG_REGISTER_R15W | FLAG_REGISTER_R15B,
+};
+
+uint8_t indexsz_to_size[] = {
+    1,
+    2,
+    4,
+    8
+};
+uint8_t size_to_indexsz[] = {
+    0,
+    0,
+    1,
+    0,2,
+    0,0,0,3
+};
