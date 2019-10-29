@@ -2,6 +2,9 @@
 #include "fuku_internal_assambler.h"
 #include "fuku_internal_assambler_func_macro.h"
 
+#define fuku_asm_gen_name(prefix, sname, postfix) prefix##sname##postfix
+#define fuku_asm_ret_type void
+
 #define set_modrm(mod, reg, rm) \
     FUKU_ASSERT_GT(mod , 3);\
     raw_operand[0] = (mod << 6 | reg << 3 | rm);\

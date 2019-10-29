@@ -1,5 +1,11 @@
 #pragma once
 
+#define fuasm_reg  const fuku_register&
+#define fuasm_op   const fuku_operand&
+#define fuasm_imm  const fuku_immediate&
+
+#define fuku_asm_gen_name(prefix, sname, postfix) prefix##sname##postfix
+#define fuku_asm_ret_type void
 
 #define asm_def_noop(name, postfix) \
         fuku_asm_ret_type fuku_asm_gen_name(_,name,postfix)(fuku_assambler_ctx& ctx);
@@ -854,3 +860,10 @@ namespace fukutasm {
 #undef asm_def_3op
 #undef asm_def_cond_1op
 #undef asm_def_cond_2op
+
+#undef fuku_asm_ret_type
+#undef fuku_asm_gen_name
+
+#undef fuasm_reg
+#undef fuasm_op
+#undef fuasm_imm

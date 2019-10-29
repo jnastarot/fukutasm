@@ -1,5 +1,7 @@
 #pragma once
 
+#define fuku_asm_gen_name(prefix, sname, postfix) prefix##sname##postfix
+
 #define asm_def_noop_test(name, postfix, size) \
         fuku_asm_gen_name(_,name,postfix)(ctx);\
         test_no_arg( *ctx.inst , size);

@@ -10,6 +10,7 @@
 #include <cstdint>
 #include <random>  
 #include <intrin.h>
+#include <map>
 
 #include "..\capstone\include\capstone\capstone.h"
 #include "..\fukutasm\fukutasm.h"

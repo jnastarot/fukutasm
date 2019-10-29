@@ -51,29 +51,19 @@ enum fuku_assambler_arch {
     FUKU_ASSAMBLER_ARCH_X64,
 };
 
+enum fuku_asm_short_cfg {
+    FUKU_ASM_SHORT_CFG_USE_EAX_SHORT = 1,
+    FUKU_ASM_SHORT_CFG_USE_DISP_SHORT = 2,
+    FUKU_ASM_SHORT_CFG_USE_IMM_SHORT = 4,
+};
+
 
 #include "fuku_type.h"
 #include "fuku_inst.h"
 
 #include "fuku_register_math.h"
 #include "fuku_code_holder.h"
-
-#define fuku_asm_gen_name(prefix, sname, postfix) prefix##sname##postfix
-
-#define fuku_asm_ret_type void
-
-#define fuasm_reg  const fuku_register&
-#define fuasm_op   const fuku_operand&
-#define fuasm_imm  const fuku_immediate&
-
-enum fuku_asm_short_cfg {
-    FUKU_ASM_SHORT_CFG_USE_EAX_SHORT  = 1,
-    FUKU_ASM_SHORT_CFG_USE_DISP_SHORT = 2,
-    FUKU_ASM_SHORT_CFG_USE_IMM_SHORT  = 4,
-};
-
-
-#include "fuku_assambler.h"
-
 #include "fuku_code_analyzer.h"
 #include "fuku_code_profiler.h"
+
+#include "fuku_assambler.h"
